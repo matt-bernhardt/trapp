@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+# from trapp.database import Database
 
 
 class Player():
