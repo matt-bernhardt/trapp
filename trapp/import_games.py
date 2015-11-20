@@ -62,6 +62,9 @@ def importGame(game):
     g.loadByID(3)
     log.message(str(g.data))
 
+    gameData = {'MatchID':'bar'}
+    g.saveDict(gameData)
+
     log.message('')
     return True
 
