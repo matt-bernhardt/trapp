@@ -27,6 +27,9 @@ setup(
     dependency_links=[
         'http://dev.mysql.com/downloads/connector/python/',
     ],
+    entry_points={
+        'console_scripts': ['trapp=trapp.command_line:main'],
+    },
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intendend Audience :: Other Audience',
