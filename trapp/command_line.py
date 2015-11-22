@@ -5,6 +5,7 @@ import sys
 import argparse
 import trapp
 from trapp.log import Log
+from trapp.importer import Importer
 
 def main():
 	# I'm imagining a few different verbs:
@@ -33,21 +34,34 @@ def main():
 	)
 	parser.add_argument(
 		'verb',
-		choices=['import','compile','render','qa'],
+		choices=['import','import-games','compile','render','qa'],
 	)
 	args = parser.parse_args()
 
 	if (args.verb == 'import'):
 		print('Importing...')
+
+	elif (args.verb == 'import-games'):
+		print('Importing games...')
+		l = Log('trapp-import-games.log')
+		l.message('Beginning game import')
+		# Need to receive filename from command line
+		imp = Importer('c:/Users/mattj_000/Documents/GitHub/trapp/trapp/imports/games.xlsx')
+		# Check for required fields
+		requiredColumns = ([
+			'MatchTime',
+			'MatchTypeID',
+			'HTeamID',
+			'ATeamID'
+		])
+		l.end()
+
 	elif (args.verb == 'compile'):
 		print('Compiling...')
+
 	elif (args.verb == 'render'):
 		print('Rendering...')
+
 	else:
 		# qa
 		print('Testing...')
-
-	l = Log('trapp-' + args.verb + '.log')
-	l.message('Does this work?')
-	l.message(str(sys.argv))
-	l.end()
