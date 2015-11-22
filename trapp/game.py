@@ -34,7 +34,7 @@ class Game():
             self.data['MeanTemperature'] = records[0][9]
         return True
 
-    def saveDict(self, newData):
+    def saveDict(self, newData, log):
         # Verify that data is a dictionary
         if not (isinstance(newData, dict)):
             raise RuntimeError('saveDict requires a dictionary')
@@ -48,9 +48,26 @@ class Game():
         # Check if dictionary contains a gameID
         if ('MatchID' in newData.keys()):
             # Update
-            print('MatchID provided')
+            log.message('MatchID provided')
+            sql = ('UPDATE tbl_games ')
         else:
             # Insert
-            print('No MatchID')
+            log.message('No MatchID')
+            sql = ('INSERT INTO tbl_games '
+                   '(MatchTime, MatchTypeID, HTeamID, ATeamID)'
+                   'VALUES '
+                   '(%s, %s, %s, %s)')
+            rs = self.db.query(sql, (
+                self.db.convertDate(newData['MatchTime']),
+                newData['MatchTypeID'],
+                newData['HTeamID'],
+            #    newData['HScore'],
+                newData['ATeamID'],
+            #    newData['AScore'],
+            #    newData['Duration'],
+            #    newData['VenueID'],
+            #    newData['Attendance'],
+            #    newData['MeanTemperature'],
+            ))
 
         return True

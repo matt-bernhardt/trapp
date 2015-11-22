@@ -59,11 +59,8 @@ def importGame(game):
     log.message(str(game))
 
     g = Game()
-    g.loadByID(3)
-    log.message(str(g.data))
 
-    gameData = {'MatchID':'bar'}
-    g.saveDict(gameData)
+    g.saveDict(game, log)
 
     log.message('')
     return True
@@ -89,6 +86,8 @@ if __name__ == "__main__":
     records = []
     for row in xrange(1, sheet.nrows):
         d = {fields[col]: sheet.cell(row, col).value for col in xrange(sheet.ncols)}
+        # Need to convert match dates from numbers to Python date objects
+        d['MatchTime'] = source.recoverDate(d['MatchTime'])
         records.append(d)
 
     [importGame(game) for game in records]

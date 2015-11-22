@@ -1,5 +1,6 @@
 import mysql.connector
 import connection as connection
+import time
 
 
 class Database():
@@ -15,6 +16,10 @@ class Database():
     def disconnect(self):
         self.cursor.close()
         self.cnx.close()
+
+    def convertDate(self, date):
+        # This converts a python date object into a MySQL-format date string
+        return time.strftime('%Y-%m-%d %H:%M:%S', date)
 
     def query(self, query, params):
         self.cursor.execute(query, params)
