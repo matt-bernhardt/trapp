@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 import mysql.connector
-import connection as connection
+from trapp.connection import connection
 import time
 
 

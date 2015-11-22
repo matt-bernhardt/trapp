@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from database import Database
+from trapp.database import Database
 
 
 class Game():

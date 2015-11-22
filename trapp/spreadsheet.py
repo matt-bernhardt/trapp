@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
 from xlrd import open_workbook, xldate_as_tuple
 
 class Spreadsheet():
