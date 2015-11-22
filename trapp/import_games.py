@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-from database import Database
-from log import Log
-from spreadsheet import Spreadsheet
-from game import Game
+from trapp.database import Database
+from trapp.log import Log
+from trapp.spreadsheet import Spreadsheet
+from trapp.game import Game
 
 
 def checkData(data):
