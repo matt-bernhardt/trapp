@@ -9,6 +9,7 @@ def test_spreadsheet_init(excel):
     assert isinstance(s, Spreadsheet)
     # assert isinstance(s.data, xlrd)
 
+
 def test_spreadsheet_fields(excel):
-	s = Spreadsheet(excel)
-	assert s.fields() == ['foo', 'bar']
+    s = Spreadsheet(excel)
+    assert s.fields() == ['foo', 'bar']

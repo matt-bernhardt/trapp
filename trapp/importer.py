@@ -5,13 +5,14 @@ from trapp.spreadsheet import Spreadsheet
 
 class Importer():
 
-    def __init__(self, importFile):
+    def __init__(self, importFile, logFile):
         # This probably needs to check the submitted file type and read in the
         # appropriate shim.
         # For now, though, only Excel spreadsheets are supported.
         self.source = Spreadsheet(importFile)
         self.fields = self.source.fields()
         self.checkData()
+        self.setLog(logFile)
 
     def checkFields(self, fields):
         # This checks the imported spreadsheet for a dictionary of required fields
@@ -40,4 +41,10 @@ class Importer():
         return True
 
     def doImport(self):
+
+        return True
+
+    def setLog(self, log):
+        self.log = log
+        self.log.message('Log transferred')
         return True
