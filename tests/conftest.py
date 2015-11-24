@@ -10,9 +10,19 @@ def lineup():
 
 @pytest.fixture
 def excel():
-	return _fixture_path('test.xlsx')
+    return _fixture_path('test.xlsx')
+
+
+@pytest.fixture
+def excel_sheets():
+    return _fixture_path('test_sheets.xlsx')
+
+
+@pytest.fixture
+def excel_empty():
+    return _fixture_path('test_empty.xlsx')
 
 
 def _fixture_path(path):
-	current_dir = os.path.dirname(os.path.realpath(__file__))
-	return os.path.join(current_dir, 'fixtures', path)
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    return os.path.join(current_dir, 'fixtures', path)
