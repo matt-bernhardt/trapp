@@ -13,3 +13,8 @@ def test_spreadsheet_init(excel):
 def test_spreadsheet_fields(excel):
     s = Spreadsheet(excel)
     assert s.fields() == ['foo', 'bar']
+
+
+def test_spreadsheet_recoverDate(excel):
+    s = Spreadsheet(excel)
+    assert s.recoverDate(35168) == (1996, 4, 13, 0, 0, 0, 0, 0, 0)

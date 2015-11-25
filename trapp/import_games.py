@@ -1,24 +1,52 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-from database import Database
-from log import Log
-from spreadsheet import Spreadsheet
+from trapp.database import Database
+from trapp.log import Log
+from trapp.spreadsheet import Spreadsheet
+from trapp.game import Game
 
 
-def checkFields(fields):
-    log.message('Checking for required fields...')
-    # These columns are required:
+def checkData(data):
+    log.message('Checking submitted file...')
+    # This takes in a spreadsheet and performs needed verification steps
+
+    # 1: Check that data is an xlrd book
+    # log.message(str(type(data.data)))
+    # if (type(data.data) is 'xlrd.book.Book'):
+    #     raise RuntimeError('Submitted data is not a spreadsheet.')
+
+    # 2: Check that data has only one worksheet
+    if (len(data.data.sheets()) > 1):
+        raise RuntimeError('Submitted data has more than one worksheet.')
+    sheet = data.data.sheets()[0]
+
+    # 3: Check that data has at least one data row
+    if (sheet.nrows < 2):
+        raise RuntimeError('Submitted data has nothing to import.')
+
+    # 4: Check for required fields
     requiredColumns = ([
         'MatchTime',
         'MatchTypeID',
         'HTeamID',
         'ATeamID'
     ])
-    missingColumns = []
+    checkRequiredFields(requiredColumns, data)
 
-    for col in requiredColumns:
-        if col not in fields:
+    # 5: Log summary information about the data
+    log.message(str(len(data.data.sheets())) + ' sheets')
+    log.message(str(sheet.nrows) + ' rows')
+    log.message(str(sheet.ncols) + ' columns')
+    log.message('')
+    return sheet
+
+
+def checkRequiredFields(requiredFields, data):
+    data.fields()
+    missingColumns = []
+    for col in requiredFields:
+        if col not in data.fields:
             missingColumns.append(col)
     if (len(missingColumns) > 0):
         raise RuntimeError('Submitted data is missing the following columns: ' + str(missingColumns))
@@ -26,26 +54,15 @@ def checkFields(fields):
     return True
 
 
-def prepareData(data, log):
-    log.message('Preparing submitted data...')
-    # Check that file has one worksheet
-    log.message(str(len(data.data.sheets())) + ' sheets')
-    if (len(source.data.sheets()) > 1):
-        raise RuntimeError('Submitted data has more than one worksheet.')
-    sheet = data.data.sheets()[0]
+def importGame(game):
+    log.message('Importing game...')
+    log.message(str(game))
 
-    # Check that file has at least one data row
-    if (sheet.nrows < 2):
-        raise RuntimeError('Submitted data has nothing to import.')
+    g = Game()
 
-    # Summarize data size in the log
-    log.message(str(sheet.nrows) + ' rows')
-    log.message(str(sheet.ncols) + ' columns')
+    g.saveDict(game, log)
 
-    return sheet
-
-
-def importGame():
+    log.message('')
     return True
 
 
@@ -53,22 +70,28 @@ if __name__ == "__main__":
 
     # Initialize
     log = Log('logs/import_games.log')
-    db = Database()
-    db.connect()
     log.message('Started')
 
     # Read in CSV to data frame
     source = Spreadsheet('imports/games.xlsx')
-    sheet = prepareData(source, log)
 
-    # Check for validity of import - right fields?
-    fields = source.fields()
-    checkFields(fields)
+    # Check data for validity
+    sheet = checkData(source)
+
+    # Grab field names from first row
+    fields = [sheet.cell(0, c).value for c in xrange(sheet.ncols)]
 
     # Iterate over data, processing each line
-    importGame()
+    # This ends with a list of dictionaries
+    records = []
+    for row in xrange(1, sheet.nrows):
+        d = {fields[col]: sheet.cell(row, col).value for col in xrange(sheet.ncols)}
+        # Need to convert match dates from numbers to Python date objects
+        d['MatchTime'] = source.recoverDate(d['MatchTime'])
+        records.append(d)
+
+    [importGame(game) for game in records]
 
     log.end()
-    db.disconnect()
 
     print('Finished!')

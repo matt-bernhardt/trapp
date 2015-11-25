@@ -38,7 +38,6 @@ def main():
     parser.add_argument(
         'infile',
         nargs='?',
-        type=argparse.FileType('r'),
         help='filename submitted along with verb',
         default='trapp/imports/import.xlsx'
     )
