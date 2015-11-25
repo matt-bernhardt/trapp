@@ -41,7 +41,9 @@ class Importer():
         return True
 
     def doImport(self):
-
+        # need to prepare records
+        self.records = self.source.buildRecords()
+        # need to iterate over records
         return True
 
     def setLog(self, log):

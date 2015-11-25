@@ -8,6 +8,19 @@ class Spreadsheet():
     def __init__(self, file):
         self.data = open_workbook(file)
 
+    def buildRecords(self):
+        self.records = []
+        self.sheet = self.buildSheet()
+        for row in xrange(1, self.sheet.nrows):
+            d = {self.fields[col]: self.sheet.cell(row, col).value for col in xrange(self.sheet.ncols)}
+            print(str(d))
+            self.records.append(d)
+        return self.records
+
+    def buildSheet(self):
+        self.sheet = self.data.sheets()[0]
+        return self.sheet
+
     def recoverDate(self, number):
         # This implements xlrd's 'xldate_as_tuple' method, which is then
         # rebuilt as a 9-item tuple rather than 6. Because reasons.
