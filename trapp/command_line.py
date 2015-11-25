@@ -50,7 +50,7 @@ def main():
     elif (args.verb == 'import-games'):
         print('Importing games from ' + str(args.infile))
         log = Log('trapp-import-games.log')
-        # Need to receive filename from command line
+        # sample trapp/imports/games.xlsx
         importer = Importer(args.infile, log)
         # Check for required fields
         requiredColumns = ([
@@ -66,7 +66,8 @@ def main():
     elif (args.verb == 'import-players'):
         print('Importing players from ' + str(args.infile))
         log = Log('trapp-import-players.log')
-        importer = Importer('trapp/imports/players.xlsx', log)
+        # sample trapp/imports/players.xlsx
+        importer = Importer(args.infile, log)
         requiredColumns = ([
             'FirstName',
             'LastName',
