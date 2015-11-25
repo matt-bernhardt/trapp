@@ -35,17 +35,24 @@ def main():
         'verb',
         choices=['import', 'import-games', 'import-players', 'compile', 'render', 'qa'],
     )
-    # Need to add a filename argument
+    parser.add_argument(
+        'infile',
+        nargs='?',
+        type=argparse.FileType('r'),
+        help='filename submitted along with verb',
+        default='trapp/imports/import.xlsx'
+    )
+    # Need to add an optional filename argument
     args = parser.parse_args()
 
     if (args.verb == 'import'):
         print('Importing...')
 
     elif (args.verb == 'import-games'):
-        print('Importing games...')
+        print('Importing games from ' + str(args.infile))
         log = Log('trapp-import-games.log')
         # Need to receive filename from command line
-        importer = Importer('trapp/imports/games.xlsx', log)
+        importer = Importer(args.infile, log)
         # Check for required fields
         requiredColumns = ([
             'MatchTime',
@@ -58,7 +65,7 @@ def main():
         log.end()
 
     elif (args.verb == 'import-players'):
-        print('Importing players...')
+        print('Importing players from ' + str(args.infile))
         log = Log('trapp-import-players.log')
         importer = Importer('trapp/imports/players.xlsx', log)
         requiredColumns = ([
