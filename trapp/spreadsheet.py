@@ -13,7 +13,7 @@ class Spreadsheet():
         self.sheet = self.buildSheet()
         for row in xrange(1, self.sheet.nrows):
             d = {self.fields[col]: self.sheet.cell(row, col).value for col in xrange(self.sheet.ncols)}
-            d['MatchTime'] = self.recoverDate(d['MatchTime'])
+            # d['MatchTime'] = self.recoverDate(d['MatchTime'])
             self.records.append(d)
         return self.records
 
