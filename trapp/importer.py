@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from trapp.spreadsheet import Spreadsheet
+# from trapp.game import Game
 
 
 class Importer():
@@ -41,7 +42,17 @@ class Importer():
         return True
 
     def doImport(self):
+        # need to prepare records
+        self.records = self.source.buildRecords()
+        # need to iterate over records
+        [self.importRecord(record) for record in self.records]
+        return True
 
+    def importRecord(self, record):
+        print('Importing record...')
+        print(str(record))
+        # g = Game()
+        # g.saveDict(record, self.log)
         return True
 
     def setLog(self, log):
