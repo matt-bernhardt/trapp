@@ -44,8 +44,14 @@ class Importer():
     def doImport(self):
         # need to prepare records
         self.records = self.source.buildRecords()
+
+        # need to correct dates
+        for record in self.records:
+            record['MatchTime'] = self.source.recoverDate(record['MatchTime'])
+
         # need to iterate over records
         [self.importRecord(record) for record in self.records]
+
         return True
 
     def importRecord(self, record):
