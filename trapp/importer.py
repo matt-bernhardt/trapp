@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from trapp.spreadsheet import Spreadsheet
-# from trapp.game import Game
+from trapp.game import Game
 
 
 class Importer():
@@ -51,8 +51,9 @@ class Importer():
     def importRecord(self, record):
         print('Importing record...')
         print(str(record))
-        # g = Game()
-        # g.saveDict(record, self.log)
+        g = Game()
+        g.connectDB()
+        g.saveDict(record, self.log)
         return True
 
     def setLog(self, log):
