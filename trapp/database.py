@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-import mysql.connector
+from mysql import connector
 import trapp.connection as connection
 import time
 
@@ -12,7 +12,7 @@ class Database():
         self.cursor = ''
 
     def connect(self):
-        self.cnx = mysql.connector.connect(user=connection.u, password=connection.p, host=connection.h, database=connection.d)
+        self.cnx = connector.connect(user=connection.u, password=connection.p, host=connection.h, database=connection.d)
         self.cursor = self.cnx.cursor(buffered=True)
 
     def disconnect(self):

@@ -42,10 +42,10 @@ def test_importer_checkFields_fail(excel):
     assert 'missing the following columns' in str(excinfo.value)
 
 
-def test_importer_doImport(excel):
-    log = Log('test.log')
-    importer = Importer(excel, log)
-    assert importer.doImport() is True
+# def test_importer_doImport(excel):
+    # log = Log('test.log')
+    # importer = Importer(excel, log)
+    # assert importer.doImport() is True
 
 
 def test_importer_setLog(excel):

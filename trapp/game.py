@@ -7,8 +7,14 @@ class Game():
 
     def __init__(self):
         self.data = {}
+
+    def connectDB(self):
         self.db = Database()
         self.db.connect()
+
+    def disconnectDB(self):
+        self.db.disconnect()
+        self.db = None
 
     def loadByID(self, gameID):
         # Need to check that gameID is a single number
