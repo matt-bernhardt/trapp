@@ -10,6 +10,8 @@ Trapp provides several tools for the user to work with soccer data:
 2. Compiler
 3. Renderer
 
+Each of these will be described in more detail as the project progresses. For now, efforts are focused on the first tool, an importer capable of harvesting spreadsheet data into the appropriate database tables.
+
 ## For more information
 
 More information about this project can be found on the [Massive Report Data blog](http://www.massivereportdata.com/blog). To contact the author, please email Matt Bernhardt at matt [at] massivereportdata [dot] com.
