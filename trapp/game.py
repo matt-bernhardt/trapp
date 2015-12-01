@@ -87,7 +87,7 @@ class Game():
         # - HTeamID (ID needed, not team name - these are too ambiguous)
         # - ATeamID (ID needed, not team name - these are too ambiguous)
         if not (isinstance(data, dict)):
-            raise RuntimeError('saveDict requires a dictionary')
+            raise RuntimeError('lookupID requires a dictionary')
 
         # Check data for required fields
         missing = []
