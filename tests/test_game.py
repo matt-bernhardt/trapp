@@ -20,11 +20,20 @@ def test_game_lookupID():
     # This is commented out pending my figuring out mock
     # g.connectDB()
 
-    # This should raise an error
+    # This should raise a format error
     with pytest.raises(RuntimeError) as excinfo:
         needle = '1996-04-13'
         g.lookupID(needle, log)
     assert 'lookupID requires a dictionary' in str(excinfo.value)
+
+    # This should raise a missing-fields error
+    with pytest.raises(RuntimeError) as excinfo:
+        needle = {
+            'MatchTime': '1996-04-13',
+            'HTeamID': 11
+        }
+        g.lookupID(needle, log)
+    assert 'Submitted data is missing the following fields' in str(excinfo.value)
 
     # This is commented out pending my figuring out mock
     # This should bring back one record
