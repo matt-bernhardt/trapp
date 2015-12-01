@@ -78,3 +78,44 @@ class Game():
             ))
 
         return True
+
+    def lookupID(self, data, log):
+        # This takes a dictionary and validates it against existing records
+        # Do we already have record of these teams playing on this date?
+        # data must be a dictionary with the following keys:
+        # - MatchTime (MM/DD/YYYY at least, time not needed)
+        # - HTeamID (ID needed, not team name - these are too ambiguous)
+        # - ATeamID (ID needed, not team name - these are too ambiguous)
+        if not (isinstance(data, dict)):
+            raise RuntimeError('saveDict requires a dictionary')
+
+        # Check data for required fields
+        missing = []
+        required = ['MatchTime', 'HTeamID', 'ATeamID']
+        for term in required:
+            if term not in data:
+                missing.append(term)
+        if (len(missing) > 0):
+            raise RuntimeError('Submitted data is missing the following fields: ' + str(missing))
+
+        # See if any game matches these three terms
+        sql = ('SELECT ID '
+               'FROM tbl_games '
+               'WHERE MatchTime = %s AND HTeamID = %s AND ATeamID = %s')
+        rs = self.db.query(sql, (data, ))
+        if (rs.with_rows):
+            records = rs.fetchall()
+        games = []
+        for game in records:
+            games.append(game['ID'])
+
+        # How many games matched this data?
+        if (len(games) == 1):
+            self.data['MatchID'] = games[0]
+            return True
+        elif (len(games) > 1):
+            # Found more than one game
+            return False
+        else:
+            # Found no games that match
+            return False
