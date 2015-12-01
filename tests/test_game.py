@@ -15,7 +15,7 @@ def test_game_init():
 
 def test_game_lookupID():
     # Setup
-    log = Log()
+    log = Log('test.log')
     g = Game()
     g.connectDB()
 
