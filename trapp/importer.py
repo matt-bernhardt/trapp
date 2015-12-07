@@ -55,11 +55,17 @@ class Importer():
         return True
 
     def importRecord(self, record):
-        print('Importing record...')
-        print(str(record))
+        print('Importing record ' + str(record))
         g = Game()
         g.connectDB()
-        g.saveDict(record, self.log)
+        # Look up whether the record already exists
+        found = g.lookupID(record, self.log)
+        if (len(found) == 0):
+            # Nothing found, so we import
+            g.saveDict(record, self.log)
+        else:
+            # Some other number of games was found
+            print('Found ' + str(found) + ' games already exist')
         return True
 
     def setLog(self, log):
