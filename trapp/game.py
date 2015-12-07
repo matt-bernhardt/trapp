@@ -101,21 +101,13 @@ class Game():
         # See if any game matches these three terms
         sql = ('SELECT ID '
                'FROM tbl_games '
-               'WHERE MatchTime = %s AND HTeamID = %s AND ATeamID = %s')
-        rs = self.db.query(sql, (data, ))
+               'WHERE YEAR(MatchTime) = %s AND MONTH(MatchTime) = %s AND DAY(MatchTime) = %s AND HTeamID = %s AND ATeamID = %s')
+        rs = self.db.query(sql, (data['MatchTime'][0], data['MatchTime'][1], data['MatchTime'][2], data['HTeamID'], data['ATeamID'], ))
         if (rs.with_rows):
             records = rs.fetchall()
         games = []
         for game in records:
-            games.append(game['ID'])
+            games.append(game[0])
 
         # How many games matched this data?
-        if (len(games) == 1):
-            self.data['MatchID'] = games[0]
-            return True
-        elif (len(games) > 1):
-            # Found more than one game
-            return False
-        else:
-            # Found no games that match
-            return False
+        return games
