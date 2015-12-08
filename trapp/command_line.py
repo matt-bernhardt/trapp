@@ -73,7 +73,7 @@ def main():
             'LastName',
             'Position',
             'DOB',
-            'Citizenship'
+            'Hometown'
         ])
         importer.checkFields(requiredColumns)
         importer.doImport()
