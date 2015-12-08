@@ -63,5 +63,19 @@ class Player():
     def saveDict(self, newData, log):
         if not (isinstance(newData, dict)):
             raise RuntimeError('saveDict requires a dictionary')
+        log.message('Saving player record to database')
+
+        if ('PlayerID' in newData.keys()):
+            # Update
+            log.message('  ...Updating')
+            sql = ('')
+        else:
+            # Insert
+            log.message('  ...Inserting')
+            sql = ('INSERT INTO tbl_games '
+                   '(%s) '
+                   'VALUES '
+                   '(%s)')
+            rs = self.db.query(sql, (newData.keys(), newData.values(), ))
 
         return True
