@@ -11,6 +11,14 @@ class Player():
         self.data["LastName"] = ''
         self.data["ID"] = 0
 
+    def connectDB(self):
+        self.db = Database()
+        self.db.connect()
+
+    def disconnectDB(self):
+        self.db.disconnect()
+        self.db = None
+
     def loadByID(self, playerID):
         if not (isinstance(playerID, int)):
             raise RuntimeError('loadByID requires an integer')
