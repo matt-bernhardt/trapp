@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+import pytest
 from trapp.player import Player
+from trapp.log import Log
 
 
 def test_player_init():
@@ -20,6 +22,18 @@ def test_player_load():
     assert p.data['ID'] == 1
     assert p.data['FirstName'] == 'Matt'
     assert p.data['LastName'] == 'Bernhardt'
+
+
+def test_player_lookupID():
+    # Setup
+    log = Log('test.log')
+    p = Player()
+
+    # Format error
+    with pytest.raises(RuntimeError) as excinfo:
+        needle = 'Wil'
+        p.lookupID(needle, log)
+    assert 'lookupID requires a dictionary' in str(excinfo.value)
 
 
 def test_player_merge():
