@@ -21,12 +21,20 @@ class Player():
         return True
 
     def lookupID(self, data, log):
+        # This takes a dictionary and validates it against existing records
+        # Do we already have record of this player?
+        # data must be a dictionary with the following keys:
+        # - FirstName (string - may be blank for players with one name)
+        # - LastName (string - players with one name use this)
+        # - Position (string - 'Goalkeeper', 'Defender', 'Midfielder', 'Forward')
+        # - DOB (date object)
+        # - Hometown ('City, ST' for US/Canada, 'City, Country' otherwise)
         if not (isinstance(data, dict)):
             raise RuntimeError('lookupID requires a dictionary')
 
         # check for required fields
         missing = []
-        required = ['FirstName', 'LastName', 'DOB', 'Hometown']
+        required = ['FirstName', 'LastName', 'Position', 'DOB', 'Hometown']
         for term in required:
             if term not in data:
                 missing.append(term)
@@ -36,8 +44,8 @@ class Player():
         # See if any game matches these three terms
         sql = ('SELECT ID '
                'FROM tbl_players '
-               'WHERE FirstName = %s AND LastName = %s AND YEAR(DOB) = %s AND MONTH(DOB) = %s AND DAY(DOB) = %s AND Hometown = %s')
-        rs = self.db.query(sql, (data['FirstName'], data['LastName'], data['DOB'][0], data['DOB'][1], data['DOB'][2], data['Hometown'], ))
+               'WHERE FirstName = %s AND LastName = %s AND Position = %s AND YEAR(DOB) = %s AND MONTH(DOB) = %s AND DAY(DOB) = %s AND Hometown = %s')
+        rs = self.db.query(sql, (data['FirstName'], data['LastName'], data['Position'], data['DOB'][0], data['DOB'][1], data['DOB'][2], data['Hometown'], ))
         if (rs.with_rows):
             records = rs.fetchall()
         players = []
