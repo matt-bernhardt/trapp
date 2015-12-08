@@ -18,7 +18,16 @@ def test_player_init():
 
 def test_player_load():
     p = Player()
-    p.loadByID(1)
+
+    # Format error
+    with pytest.raises(RuntimeError) as excinfo:
+        needle = 'Foo'
+        p.loadByID(needle)
+    assert 'loadByID requires an integer' in str(excinfo.value)
+
+    # Actual lookup
+    needle = 1
+    p.loadByID(needle)
     assert p.data['ID'] == 1
     assert p.data['FirstName'] == 'Matt'
     assert p.data['LastName'] == 'Bernhardt'
@@ -44,7 +53,20 @@ def test_player_lookupID():
         p.lookupID(needle, log)
     assert 'Submitted data is missing the following fields' in str(excinfo.value)
 
+    # Need a test of successful lookups
+
 
 def test_player_merge():
     p = Player()
     assert p.merge(1, 2) is False
+
+
+def test_player_saveDict():
+    log = Log('test.log')
+    p = Player()
+
+    # Format error
+    with pytest.raises(RuntimeError) as excinfo:
+        needle = 'Foo'
+        p.saveDict(needle, log)
+    assert 'saveDict requires a dictionary' in str(excinfo.value)

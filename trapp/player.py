@@ -12,6 +12,9 @@ class Player():
         self.data["ID"] = 0
 
     def loadByID(self, playerID):
+        if not (isinstance(playerID, int)):
+            raise RuntimeError('loadByID requires an integer')
+
         # This loads a player record by ID from a database.
         record = {"ID": 1, "FirstName": "Matt", "LastName": "Bernhardt"}
         self.data = record
@@ -48,3 +51,9 @@ class Player():
         # This merges one player record into another.
         # It includes all related tables.
         return False
+
+    def saveDict(self, newData, log):
+        if not (isinstance(newData, dict)):
+            raise RuntimeError('saveDict requires a dictionary')
+
+        return True
