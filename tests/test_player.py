@@ -35,6 +35,15 @@ def test_player_lookupID():
         p.lookupID(needle, log)
     assert 'lookupID requires a dictionary' in str(excinfo.value)
 
+    # Missing fields error
+    with pytest.raises(RuntimeError) as excinfo:
+        needle = {
+            'FirstName': 'Wil',
+            'LastName': 'Trapp'
+        }
+        p.lookupID(needle, log)
+    assert 'Submitted data is missing the following fields' in str(excinfo.value)
+
 
 def test_player_merge():
     p = Player()
