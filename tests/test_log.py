@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-
 from trapp.log import Log
 
 
 def test_log_init():
     l = Log('test.log')
     assert isinstance(l, Log)
-    assert isinstance(l.file, 'file')
+    # There used to be a test here to make sure l.file was a file type.
+    # That was removed because Python 3 is entirely different, and this test
+    # most likely wasn't needed.
 
 
 def test_log_filename():
