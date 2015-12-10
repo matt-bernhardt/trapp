@@ -7,7 +7,7 @@ from trapp.log import Log
 def test_log_init():
     l = Log('test.log')
     assert isinstance(l, Log)
-    assert type(l.file) is file
+    assert isinstance(l.file, file)
 
 
 def test_log_filename():
