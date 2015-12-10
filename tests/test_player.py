@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import pytest
 from trapp.player import Player
 from trapp.log import Log
+import datetime
 
 
 def test_player_init():
@@ -48,7 +49,8 @@ def test_player_load():
     assert p.data['PlayerID'] == 2
     assert p.data['FirstName'] == 'Bryheem'
     assert p.data['LastName'] == 'Hancock'
-    assert p.data['DOB'] == '1980-03-01'
+    assert isinstance(p.data['DOB'], datetime.date)
+    assert p.data['DOB'] == datetime.date(1980, 3, 1)
 
     p.disconnectDB()
 
