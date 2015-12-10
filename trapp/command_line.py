@@ -6,6 +6,55 @@ from trapp.log import Log
 from trapp.importer import Importer
 
 
+def importGames(infile):
+    # Feedback, setup
+    print('Importing games from ' + str(infile))
+    log = Log('trapp-import-games.log')
+    importer = Importer(infile, log)
+
+    # Check for required fields
+    requiredColumns = ([
+        'MatchTime',
+        'MatchTypeID',
+        'HTeamID',
+        'ATeamID'
+    ])
+    importer.checkFields(requiredColumns)
+
+    # Do the import
+    importer.doImport()
+
+    # Shutdown
+    log.end()
+
+    return True
+
+
+def importPlayers(infile):
+    # Feedback, setup
+    print('Importing players from ' + str(infile))
+    log = Log('trapp-import-players.log')
+    importer = Importer(infile, log)
+
+    # Check for required fields
+    requiredColumns = ([
+        'FirstName',
+        'LastName',
+        'Position',
+        'DOB',
+        'Hometown'
+    ])
+    importer.checkFields(requiredColumns)
+
+    # Do the import
+    importer.doImport()
+
+    # Shutdown
+    log.end()
+
+    return True
+
+
 def main():
     # I'm imagining a few different verbs:
     # import: harvest data out of supplied files
@@ -48,36 +97,10 @@ def main():
         print('Importing...')
 
     elif (args.verb == 'import-games'):
-        print('Importing games from ' + str(args.infile))
-        log = Log('trapp-import-games.log')
-        # sample trapp/imports/games.xlsx
-        importer = Importer(args.infile, log)
-        # Check for required fields
-        requiredColumns = ([
-            'MatchTime',
-            'MatchTypeID',
-            'HTeamID',
-            'ATeamID'
-        ])
-        importer.checkFields(requiredColumns)
-        importer.doImport()
-        log.end()
+        importGames(args.infile)
 
     elif (args.verb == 'import-players'):
-        print('Importing players from ' + str(args.infile))
-        log = Log('trapp-import-players.log')
-        # sample trapp/imports/players.xlsx
-        importer = Importer(args.infile, log)
-        requiredColumns = ([
-            'FirstName',
-            'LastName',
-            'Position',
-            'DOB',
-            'Hometown'
-        ])
-        importer.checkFields(requiredColumns)
-        importer.doImport()
-        log.end()
+        importPlayers(args.infile)
 
     elif (args.verb == 'compile'):
         print('Compiling...')
