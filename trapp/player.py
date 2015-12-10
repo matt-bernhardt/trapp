@@ -23,9 +23,29 @@ class Player():
         if not (isinstance(playerID, int)):
             raise RuntimeError('loadByID requires an integer')
 
-        # This loads a player record by ID from a database.
-        record = {"ID": 1, "FirstName": "Matt", "LastName": "Bernhardt"}
-        self.data = record
+        sql = ('SELECT FirstName, LastName, Position, RosterNumber, Height_Feet, Height_Inches, Weight, Birthplace, Hometown, Citizenship, DOB '
+               'FROM tbl_players p '
+               'WHERE ID = %s')
+        rs = self.db.query(sql, (playerID, ))
+        if (rs.with_rows):
+            records = rs.fetchall()
+
+        # Assemble final dictionary
+        self.data = {}
+        for term in records:
+            self.data['PlayerID'] = playerID
+            self.data['FirstName'] = records[0][0]
+            self.data['LastName'] = records[0][1]
+            self.data['Position'] = records[0][2]
+            self.data['RosterNumber'] = records[0][3]
+            self.data['Height_Feet'] = records[0][4]
+            self.data['Height_Inches'] = records[0][5]
+            self.data['Weight'] = records[0][6]
+            self.data['Birthplace'] = records[0][7]
+            self.data['Hometown'] = records[0][8]
+            self.data['Citizenship'] = records[0][9]
+            self.data['DOB'] = records[0][10]
+
         return True
 
     def lookupID(self, data, log):

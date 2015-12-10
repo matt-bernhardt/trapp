@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import pytest
 from trapp.player import Player
 from trapp.log import Log
+import datetime
 
 
 def test_player_init():
@@ -16,6 +17,21 @@ def test_player_init():
     assert p.data['LastName'] == ''
 
 
+def test_player_connect():
+    p = Player()
+    # Assert DB connection not present
+    # p.connectDB()
+    # Assert DB connection exists
+
+
+def test_player_disconnect():
+    p = Player()
+    # p.connectDB()
+    # Assert DB connection exists
+    # p.disconnectDB()
+    # Assert DB connection not present
+
+
 def test_player_load():
     p = Player()
 
@@ -26,11 +42,15 @@ def test_player_load():
     assert 'loadByID requires an integer' in str(excinfo.value)
 
     # Actual lookup
-    needle = 1
-    p.loadByID(needle)
-    assert p.data['ID'] == 1
-    assert p.data['FirstName'] == 'Matt'
-    assert p.data['LastName'] == 'Bernhardt'
+    # p.connectDB()
+    # needle = 2
+    # p.loadByID(needle)
+    # assert p.data['PlayerID'] == 2
+    # assert p.data['FirstName'] == 'Bryheem'
+    # assert p.data['LastName'] == 'Hancock'
+    # assert isinstance(p.data['DOB'], datetime.date)
+    # assert p.data['DOB'] == datetime.date(1980, 3, 1)
+    # p.disconnectDB()
 
 
 def test_player_lookupID():
