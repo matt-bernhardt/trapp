@@ -13,6 +13,16 @@ def test_game_init():
     # Default values
 
 
+def test_game_loadByID():
+    g = Game()
+
+    # This should raise a format error
+    with pytest.raises(RuntimeError) as excinfo:
+        needle = 'Foo'
+        g.loadByID(needle)
+    assert 'loadByID requires an integer' in str(excinfo.value)
+
+
 def test_game_lookupID():
     # Setup
     log = Log('test.log')
