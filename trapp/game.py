@@ -17,6 +17,10 @@ class Game():
         self.db = None
 
     def loadByID(self, gameID):
+        # Verify that gameID is an integer
+        if not (isinstance(gameID, int)):
+            raise RuntimeError('loadByID requires an integer')
+
         # Need to check that gameID is a single number
         sql = ('SELECT MatchTime, MatchTypeID, HTeamID, HScore, ATeamID, AScore, Duration, VenueID, Attendance, MeanTemperature '
                'FROM tbl_games g '
@@ -68,13 +72,13 @@ class Game():
                 self.db.convertDate(newData['MatchTime']),
                 newData['MatchTypeID'],
                 newData['HTeamID'],
-            #    newData['HScore'],
+                #    newData['HScore'],
                 newData['ATeamID'],
-            #    newData['AScore'],
-            #    newData['Duration'],
-            #    newData['VenueID'],
-            #    newData['Attendance'],
-            #    newData['MeanTemperature'],
+                #    newData['AScore'],
+                #    newData['Duration'],
+                #    newData['VenueID'],
+                #    newData['Attendance'],
+                #    newData['MeanTemperature'],
             ))
 
         return True

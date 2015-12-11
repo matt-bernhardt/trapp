@@ -13,6 +13,16 @@ def test_game_init():
     # Default values
 
 
+def test_game_loadByID():
+    g = Game()
+
+    # This should raise a format error
+    with pytest.raises(RuntimeError) as excinfo:
+        needle = 'Foo'
+        g.loadByID(needle)
+    assert 'loadByID requires an integer' in str(excinfo.value)
+
+
 def test_game_lookupID():
     # Setup
     log = Log('test.log')
@@ -44,3 +54,15 @@ def test_game_lookupID():
     # }
     # assert g.lookupID(needle, log) is True
     # assert g.data['MatchID'] == 10992
+
+
+def test_game_saveDict():
+    # Setup
+    log = Log('test.log')
+    g = Game()
+
+    # This should raise an error
+    with pytest.raises(RuntimeError) as excinfo:
+        testRecord = "fake player record"
+        g.saveDict(testRecord, log)
+    assert 'saveDict requires a dictionary' in str(excinfo.value)
