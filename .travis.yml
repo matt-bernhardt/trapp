@@ -28,6 +28,6 @@ before_script:
     Notes text,
     PRIMARY KEY (ID)
     ) ENGINE=MyISAM AUTO_INCREMENT=17216 DEFAULT CHARSET=utf8;'"
-  - sh -c "mysql -e < tests/fixtures/tbl_players.sql"
+  - sh -c "mysql < tests/fixtures/tbl_players.sql"
 script:
   - tox -e $TOX_ENV
