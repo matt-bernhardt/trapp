@@ -24,7 +24,7 @@ before_script:
     Attendance int(11) DEFAULT NULL,
     MeanTemperature int(3) unsigned DEFAULT NULL,
     Precipitation double(2,1) DEFAULT NULL,
-    WeatherEvents varchar(255) NOT NULL DEFAULT NULL,
+    WeatherEvents varchar(255) DEFAULT NULL,
     Notes text,
     PRIMARY KEY (ID)
     ) ENGINE=MyISAM AUTO_INCREMENT=17216 DEFAULT CHARSET=utf8;'"

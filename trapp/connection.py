@@ -1,4 +1,4 @@
-u = 'DBUSER'		
-p = 'DBPASSWORD'		
-h = 'DBHOST'		
-d = 'DBNAME'
+u = 'travis'
+p = ''
+h = 'localhost'
+d = 'trapp'
