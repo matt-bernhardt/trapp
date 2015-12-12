@@ -3,7 +3,7 @@ SQLyog Community v10.3
 MySQL - 5.5.28-log : Database - scouting
 *********************************************************************
 */
-USE TRAPP;
+USE trapp;
 
 /*!40101 SET NAMES utf8 */;
 
