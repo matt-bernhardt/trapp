@@ -11,5 +11,6 @@ services:
   - mysql
 before_script:
   - mysql -e 'create database trapp;'
+  - mysql -e os.path.join(current_dir, 'fixtures/tbl_games.sql')
 script:
   - tox -e $TOX_ENV
