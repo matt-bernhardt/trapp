@@ -2,7 +2,8 @@
 SQLyog Community v10.3 
 MySQL - 5.5.28-log : Database - scouting
 *********************************************************************
-*/
+*/
+USE trapp;
 
 /*!40101 SET NAMES utf8 */;
 
@@ -35,7 +36,7 @@ CREATE TABLE `tbl_games` (
   KEY `EventDate` (`MatchTime`),
   KEY `HTeamID` (`HteamID`),
   KEY `ATeamID` (`AteamID`)
-) ENGINE=MyISAM AUTO_INCREMENT=17216 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
