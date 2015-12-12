@@ -7,5 +7,9 @@ env:
   - TOX_ENV=coveralls
 install:
   - pip install tox
+services:
+  - mysql
+before_script:
+  - mysql -e 'create database trapp;'
 script:
   - tox -e $TOX_ENV
