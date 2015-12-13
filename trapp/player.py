@@ -17,7 +17,7 @@ class Player():
 
     def disconnectDB(self):
         self.db.disconnect()
-        self.db = None
+        del self.db
 
     def loadByID(self, playerID):
         if not (isinstance(playerID, int)):
