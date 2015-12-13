@@ -105,6 +105,26 @@ class ImporterGames(Importer):
         return True
 
 
+class ImporterLineups(Importer):
+
+    def correctValues(self):
+        for record in self.records:
+            record['Date'] = self.source.recoverDate(record['Date'])
+
+        return True
+
+    def importRecord(self, record):
+        self.log.message('Importing lineup ' + str(record))
+        # Need to identify gameID
+
+        # Parse lineup string
+
+        # Iterate over every player, keeping in mind that data may
+        # already exist
+
+        return True
+
+
 class ImporterPlayers(Importer):
 
     def correctValues(self):

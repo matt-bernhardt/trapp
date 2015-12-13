@@ -30,6 +30,35 @@ def importGames(infile):
     return True
 
 
+def importLineups(infile):
+    # Feedback, setup
+    print('Importing lineups from ' + str(infile))
+    log = Log('trapp-import-lineups.log')
+    importer = ImporterLineups(infile, log)
+
+    # Check for required fields
+    requiredColumns = ([
+        'Code',
+        'Date',
+        'H/A',
+        'Opponent',
+        'Score',
+        'WDL',
+        'Record',
+        'Goals',
+        'Lineup',
+    ])
+    importer.checkFields(requiredColumns)
+
+    # Do the import
+    importer.doImport()
+
+    # Shutdown
+    log.end()
+
+    return True
+
+
 def importPlayers(infile):
     # Feedback, setup
     print('Importing players from ' + str(infile))
@@ -82,7 +111,7 @@ def main():
     )
     parser.add_argument(
         'verb',
-        choices=['import', 'import-games', 'import-players', 'compile', 'render', 'qa'],
+        choices=['import-games', 'import-players', 'compile', 'render', 'qa'],
     )
     parser.add_argument(
         'infile',
@@ -93,14 +122,14 @@ def main():
     # Need to add an optional filename argument
     args = parser.parse_args()
 
-    if (args.verb == 'import'):
-        print('Importing...')
-
-    elif (args.verb == 'import-games'):
+    if (args.verb == 'import-games'):
         importGames(args.infile)
 
     elif (args.verb == 'import-players'):
         importPlayers(args.infile)
+
+    elif (args.verb == 'import-lineups'):
+        importLineups(args.infile)
 
     elif (args.verb == 'compile'):
         print('Compiling...')
