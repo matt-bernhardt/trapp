@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 from trapp.spreadsheet import Spreadsheet
 from trapp.game import Game
+from trapp.player import Player
 
 
 class Importer():
@@ -41,20 +42,25 @@ class Importer():
 
         return True
 
+    def correctValues(self):
+        # This is overwritten in child objects depending on the corrective
+        # steps needed with the data.
+        return True
+
     def doImport(self):
-        # need to prepare records
+        # Prepare records
         self.records = self.source.buildRecords()
 
-        # need to correct dates
-        for record in self.records:
-            record['MatchTime'] = self.source.recoverDate(record['MatchTime'])
+        # Correct values
+        self.correctValues()
 
-        # need to iterate over records
+        # Iterate over records
         [self.importRecord(record) for record in self.records]
 
         return True
 
     def importRecord(self, record):
+        # This is overwritten in child objects
         print('Importing record ' + str(record))
         g = Game()
         g.connectDB()
@@ -71,4 +77,54 @@ class Importer():
     def setLog(self, log):
         self.log = log
         self.log.message('Log transferred')
+        return True
+
+
+class ImporterGames(Importer):
+
+    def correctValues(self):
+        for record in self.records:
+            record['MatchTime'] = self.source.recoverDate(record['MatchTime'])
+
+        return True
+
+    def importRecord(self, record):
+        self.log.message('Importing game ' + str(record))
+        g = Game()
+        g.connectDB()
+
+        # Does the record exist?
+        found = g.lookupID(record, self.log)
+        if (len(found) == 0):
+            # Nothing found, so we import
+            g.saveDict(record, self.log)
+        else:
+            # Something(s) found, so we skip
+            self.log.message('Found ' + str(found) + ' matching games')
+
+        return True
+
+
+class ImporterPlayers(Importer):
+
+    def correctValues(self):
+        for record in self.records:
+            record['DOB'] = self.source.recoverDate(record['DOB'])
+
+        return True
+
+    def importRecord(self, record):
+        self.log.message('Importing player ' + str(record))
+        p = Player()
+        p.connectDB()
+
+        # Does the record exist?
+        found = p.lookupID(record, self.log)
+        if (len(found) == 0):
+            # Nothing found, so we import
+            p.saveDict(record, self.log)
+        else:
+            # Something(s) found, so we skip
+            self.log.message('Found ' + str(found) + ' matching players')
+
         return True

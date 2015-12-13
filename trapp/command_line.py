@@ -3,14 +3,14 @@ from __future__ import absolute_import
 
 import argparse
 from trapp.log import Log
-from trapp.importer import Importer
+from trapp.importer import Importer, ImporterPlayers, ImporterGames
 
 
 def importGames(infile):
     # Feedback, setup
     print('Importing games from ' + str(infile))
     log = Log('trapp-import-games.log')
-    importer = Importer(infile, log)
+    importer = ImporterGames(infile, log)
 
     # Check for required fields
     requiredColumns = ([
@@ -34,7 +34,7 @@ def importPlayers(infile):
     # Feedback, setup
     print('Importing players from ' + str(infile))
     log = Log('trapp-import-players.log')
-    importer = Importer(infile, log)
+    importer = ImporterPlayers(infile, log)
 
     # Check for required fields
     requiredColumns = ([
