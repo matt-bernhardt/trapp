@@ -100,10 +100,16 @@ class Player():
         else:
             # Insert
             log.message('  ...Inserting')
-            sql = ('INSERT INTO tbl_games '
-                   '(%s) '
+            sql = ('INSERT INTO tbl_players '
+                   '(FirstName, LastName, Position, DOB, Hometown) '
                    'VALUES '
-                   '(%s)')
-            rs = self.db.query(sql, (newData.keys(), newData.values(), ))
+                   '(%s, %s, %s, %s, %s)')
+            rs = self.db.query(sql, (
+                newData['FirstName'],
+                newData['LastName'],
+                newData['Position'],
+                self.db.convertDate(newData['DOB']),
+                newData['Hometown'],
+            ))
 
         return True
