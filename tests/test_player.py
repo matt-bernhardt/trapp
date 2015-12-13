@@ -19,17 +19,17 @@ def test_player_init():
 
 def test_player_connect():
     p = Player()
-    # Assert DB connection not present
-    # p.connectDB()
-    # Assert DB connection exists
+    assert hasattr(p, 'db') is False
+    p.connectDB()
+    assert hasattr(p, 'db')
 
 
 def test_player_disconnect():
     p = Player()
-    # p.connectDB()
-    # Assert DB connection exists
-    # p.disconnectDB()
-    # Assert DB connection not present
+    p.connectDB()
+    assert hasattr(p, 'db')
+    p.disconnectDB()
+    assert hasattr(p, 'db') is False
 
 
 def test_player_load():

@@ -13,6 +13,21 @@ def test_game_init():
     # Default values
 
 
+def test_game_connect():
+    g = Game()
+    assert hasattr(g, 'db') is False
+    g.connectDB()
+    assert hasattr(g, 'db')
+
+
+def test_game_disconnect():
+    g = Game()
+    g.connectDB()
+    assert hasattr(g, 'db')
+    g.disconnectDB()
+    assert hasattr(g, 'db') is False
+
+
 def test_game_loadByID():
     g = Game()
 
@@ -23,12 +38,36 @@ def test_game_loadByID():
     assert 'loadByID requires an integer' in str(excinfo.value)
 
 
+def test_game_saveDict():
+    # Setup
+    log = Log('test.log')
+    g = Game()
+    g.connectDB()
+
+    # This should raise an error
+    with pytest.raises(RuntimeError) as excinfo:
+        testRecord = "fake player record"
+        g.saveDict(testRecord, log)
+    assert 'saveDict requires a dictionary' in str(excinfo.value)
+
+    # This should work
+    sample = {
+        'MatchTime': (1980, 1, 1, 19, 30, 0, 0, 0, 0),
+        'MatchTypeID': 21,
+        'HTeamID': 11,
+        'HScore': 0,
+        'ATeamID': 12,
+        'AScore': 0,
+    }
+    assert g.saveDict(sample, log) is True
+    assert g.db.warnings() is None
+
+
 def test_game_lookupID():
     # Setup
     log = Log('test.log')
     g = Game()
-    # This is commented out pending my figuring out mock
-    # g.connectDB()
+    g.connectDB()
 
     # This should raise a format error
     with pytest.raises(RuntimeError) as excinfo:
@@ -45,24 +84,10 @@ def test_game_lookupID():
         g.lookupID(needle, log)
     assert 'Submitted data is missing the following fields' in str(excinfo.value)
 
-    # This is commented out pending my figuring out mock
     # This should bring back one record
-    # needle = {
-    #     'MatchTime': '1996-04-13',
-    #     'HTeamID': 11,
-    #     'ATeamID': 12
-    # }
-    # assert g.lookupID(needle, log) is True
-    # assert g.data['MatchID'] == 10992
-
-
-def test_game_saveDict():
-    # Setup
-    log = Log('test.log')
-    g = Game()
-
-    # This should raise an error
-    with pytest.raises(RuntimeError) as excinfo:
-        testRecord = "fake player record"
-        g.saveDict(testRecord, log)
-    assert 'saveDict requires a dictionary' in str(excinfo.value)
+    needle = {
+        'MatchTime': (1980, 1, 1, 0, 0, 0, 0, 0, 0),
+        'HTeamID': 11,
+        'ATeamID': 12
+    }
+    assert len(g.lookupID(needle, log)) >= 1

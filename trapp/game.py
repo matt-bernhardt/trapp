@@ -14,7 +14,7 @@ class Game():
 
     def disconnectDB(self):
         self.db.disconnect()
-        self.db = None
+        del self.db
 
     def loadByID(self, gameID):
         # Verify that gameID is an integer
