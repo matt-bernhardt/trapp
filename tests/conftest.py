@@ -23,6 +23,21 @@ def excel_empty():
     return _fixture_path('test_empty.xlsx')
 
 
+@pytest.fixture
+def excel_games():
+    return _fixture_path('test_games.xlsx')
+
+
+@pytest.fixture
+def excel_lineups():
+    return _fixture_path('test_lineups.xlsx')
+
+
+@pytest.fixture
+def excel_players():
+    return _fixture_path('test_players.xlsx')
+
+
 def _fixture_path(path):
     current_dir = os.path.dirname(os.path.realpath(__file__))
     return os.path.join(current_dir, 'fixtures', path)
