@@ -37,12 +37,7 @@ def test_importer_checkFields(excel):
     importer = Importer(excel, log)
     requiredFields = (['foo', 'bar'])
     assert importer.checkFields(requiredFields) is True
-
-
-def test_importer_checkFields_fail(excel):
     with pytest.raises(RuntimeError) as excinfo:
-        log = Log('test.log')
-        importer = Importer(excel, log)
         requiredFields = (['foo', 'none'])
         importer.checkFields(requiredFields)
     assert 'missing the following columns' in str(excinfo.value)
