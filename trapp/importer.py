@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from trapp.spreadsheet import Spreadsheet
 from trapp.game import Game
 from trapp.player import Player
+from trapp.team import Team
 
 
 class Importer():
@@ -15,6 +16,11 @@ class Importer():
         self.fields = self.source.fields()
         self.checkData()
         self.setLog(logFile)
+        # TODO: Variables to track outcomes of import steps:
+        #       - Successful import
+        #       - Duplicate records
+        #       - Other errors
+        # TODO: Method to check outcome counts
 
     def checkFields(self, fields):
         # This checks the imported spreadsheet for a dictionary of required fields
@@ -116,6 +122,39 @@ class ImporterLineups(Importer):
     def importRecord(self, record):
         self.log.message('Importing lineup ' + str(record))
         # Need to identify gameID
+        g = Game()
+        g.connectDB()
+        # TODO: Need to build a dictionary from record
+        # TODO: Need some way of determining this TeamID
+        # TODO: Need to lookup opposing TeamID from team name
+        # TODO: Need Teams model
+
+        # TeamID
+        teamID = 11
+
+        # OpponentID
+        opponentID = self.lookupTeamID(record['Opponent'])
+
+        # Sort home/away teams
+        if (record['H/A'] == 'H'):
+            homeID = teamID
+            awayID = opponentID
+        elif (record['H/A'] == 'A'):
+            homeID = opponentID
+            awayID = teamID
+
+        needle = {
+            'MatchTime': record['Date'],
+            'HTeamID': homeID,
+            'ATeamID': awayID,
+        }
+        game = g.lookupID(needle, self.log)
+
+        self.log.message('Found games: ' + str(game))
+        if (len(game) > 1):
+            self.log.message('Multiple games found')
+        elif (len(game) == 0):
+            self.log.message('No matching games found')
 
         # Parse lineup string
 
@@ -123,6 +162,16 @@ class ImporterLineups(Importer):
         # already exist
 
         return True
+
+    def lookupTeamID(self, teamname):
+        team = Team()
+        team.connectDB()
+        teamID = team.lookupID(teamname, self.log)
+        if (len(teamID) > 1):
+            raise RuntimeError('Ambiguous team name: ' + str(teamname))
+        elif (len(teamID) == 0):
+            raise RuntimeError('Team not found: ' + str(teamname))
+        return teamID
 
 
 class ImporterPlayers(Importer):

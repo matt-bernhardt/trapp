@@ -3,7 +3,7 @@ from __future__ import absolute_import
 
 import argparse
 from trapp.log import Log
-from trapp.importer import Importer, ImporterPlayers, ImporterGames
+from trapp.importer import Importer, ImporterPlayers, ImporterGames, ImporterLineups
 
 
 def importGames(infile):
@@ -31,6 +31,8 @@ def importGames(infile):
 
 
 def importLineups(infile):
+    # TODO: Lookup teams in a specified league and year?
+    # TODO: Iterate over team list, with separate Importer for each?
     # Feedback, setup
     print('Importing lineups from ' + str(infile))
     log = Log('trapp-import-lineups.log')
@@ -111,7 +113,7 @@ def main():
     )
     parser.add_argument(
         'verb',
-        choices=['import-games', 'import-players', 'compile', 'render', 'qa'],
+        choices=['import-games', 'import-players', 'import-lineups', 'compile', 'render', 'qa'],
     )
     parser.add_argument(
         'infile',
