@@ -130,7 +130,7 @@ class ImporterLineups(Importer):
         # TODO: Need Teams model
 
         # TeamID
-        teamID = 11
+        teamID = self.lookupTeamID(record['Team'])
 
         # OpponentID
         opponentID = self.lookupTeamID(record['Opponent'])
