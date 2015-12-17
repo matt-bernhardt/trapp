@@ -27,11 +27,6 @@ def importGames(infile):
     # Shutdown
     log.end()
 
-    # Report totals
-    print('Import results:')
-    print(str(importer.imported) + ' imported')
-    print(str(importer.skipped) + ' skipped')
-
     return True
 
 
@@ -56,11 +51,6 @@ def importPlayers(infile):
 
     # Shutdown
     log.end()
-
-    # Report totals
-    print('Import results:\n')
-    print(str(importer.imported) + ' imported')
-    print(str(importer.skipped) + ' skipped')
 
     return True
 

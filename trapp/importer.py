@@ -60,6 +60,8 @@ class Importer():
         # Iterate over records
         [self.importRecord(record) for record in self.records]
 
+        self.reportStatus()
+
         return True
 
     def importRecord(self, record):
@@ -80,6 +82,14 @@ class Importer():
     def setLog(self, log):
         self.log = log
         self.log.message('Log transferred')
+        return True
+
+    def reportStatus(self):
+        self.log.message('\nImport results:')
+        self.log.message(str(self.imported) + ' imported')
+        self.log.message(str(self.skipped) + ' skipped')
+        print(str(self.imported) + ' imported')
+        print(str(self.skipped) + ' skipped')
         return True
 
 
