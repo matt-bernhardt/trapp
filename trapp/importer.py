@@ -125,8 +125,6 @@ class ImporterLineups(Importer):
         g = Game()
         g.connectDB()
         # TODO: Need to build a dictionary from record
-        # TODO: Need some way of determining this TeamID
-        # TODO: Need to lookup opposing TeamID from team name
         # TODO: Need Teams model
 
         # TeamID
@@ -166,7 +164,7 @@ class ImporterLineups(Importer):
     def lookupTeamID(self, teamname):
         team = Team()
         team.connectDB()
-        teamID = team.lookupID(teamname, self.log)
+        teamID = team.lookupID({'teamname': teamname}, self.log)
         if (len(teamID) > 1):
             raise RuntimeError('Ambiguous team name: ' + str(teamname))
         elif (len(teamID) == 0):
