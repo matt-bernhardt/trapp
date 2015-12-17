@@ -8,6 +8,9 @@ from trapp.player import Player
 class Importer():
 
     def __init__(self, importFile, logFile):
+        # Counters for reporting outcomes
+        self.imported = 0
+        self.skipped = 0
         # This probably needs to check the submitted file type and read in the
         # appropriate shim.
         # For now, though, only Excel spreadsheets are supported.
@@ -98,9 +101,11 @@ class ImporterGames(Importer):
         if (len(found) == 0):
             # Nothing found, so we import
             g.saveDict(record, self.log)
+            self.imported += 1
         else:
             # Something(s) found, so we skip
             self.log.message('Found ' + str(found) + ' matching games')
+            self.skipped += 1
 
         return True
 
@@ -123,8 +128,10 @@ class ImporterPlayers(Importer):
         if (len(found) == 0):
             # Nothing found, so we import
             p.saveDict(record, self.log)
+            self.imported += 1
         else:
             # Something(s) found, so we skip
             self.log.message('Found ' + str(found) + ' matching players')
+            self.skipped += 1
 
         return True
