@@ -171,7 +171,9 @@ class ImporterLineups(Importer):
             raise RuntimeError('Ambiguous team name: ' + str(teamname))
         elif (len(teamID) == 0):
             raise RuntimeError('Team not found: ' + str(teamname))
-        return teamID
+        # At this point we know teamID is a list of length 1, so we return
+        # the first value only
+        return teamID[0]
 
 
 class ImporterPlayers(Importer):
