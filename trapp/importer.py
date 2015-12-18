@@ -155,7 +155,10 @@ class ImporterLineups(Importer):
             self.log.message('No matching games found')
 
         # Parse lineup string
+        self.parseLineup(record['Lineup'])
 
+        self.players = []
+        [self.parsePlayer(starter) for starter in self.starters]
         # Iterate over every player, keeping in mind that data may
         # already exist
 
@@ -172,6 +175,48 @@ class ImporterLineups(Importer):
         # At this point we know teamID is a list of length 1, so we return
         # the first value only
         return teamID[0]
+
+    def parseLineup(self, lineup):
+        # Build a list of starters and their substitutes
+        self.log.message(str(lineup))
+        self.starters = lineup.split(',')
+        if (len(self.starters) != 11):
+            self.log.message('Wrong number of starters')
+
+    def parsePlayer(self, starter):
+        # This takes a single record of players and replacements, and builds
+        # an array of time on, off, etc.
+        # Samples:
+        # ... , Brian McBride, ... (played full game)
+        # ... , Brian McBride (Pete Marino 70), ... (substitution at 70')
+        # ... , Brian McBride (sent off 44), ... (ejected at 44')
+        # ... , Brian McBride (Pete Marino 23 (Dante Washington 87)), ...
+        #       (dual substitution)
+        starter = starter.strip()
+        self.log.message('_' + str(starter) + '_')
+
+        # Define a record of a player in a game
+        record = {}
+        record['playername'] = ''
+        record['timeon'] = 0
+        record['timeoff'] = 90
+        record['ejected'] = False
+
+        # Is there a substitute or ejection?
+        if (starter.find('(') > 0 and starter.rfind(')') > 0):
+            # Found a pair of parentheses
+            first = starter[:starter.find('(')].strip()
+            second = starter[starter.find('(')+1:starter.rfind(')')].strip()
+            self.log.message('  _' + str(first) + '_')
+            self.log.message('  _' + str(second) + '_')
+            self.players.append({'playername': first})
+            self.players.append({'playername': second})
+        else:
+            record['playername'] = starter
+            self.players.append(record)
+
+        self.log.message(str(self.players))
+        return True
 
 
 class ImporterPlayers(Importer):
