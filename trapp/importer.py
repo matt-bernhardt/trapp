@@ -158,7 +158,7 @@ class ImporterLineups(Importer):
         self.parseLineup(record['Lineup'])
 
         self.players = []
-        [self.parsePlayer(starter) for starter in self.starters]
+        [self.parsePlayer(starter, game, teamID) for starter in self.starters]
         # Iterate over every player, keeping in mind that data may
         # already exist
 
@@ -183,7 +183,7 @@ class ImporterLineups(Importer):
         if (len(self.starters) != 11):
             self.log.message('Wrong number of starters')
 
-    def parsePlayer(self, starter):
+    def parsePlayer(self, starter, gameID, teamID):
         # This takes a single record of players and replacements, and builds
         # an array of time on, off, etc.
         # Samples:
@@ -195,11 +195,15 @@ class ImporterLineups(Importer):
         starter = starter.strip()
         self.log.message('_' + str(starter) + '_')
 
+        duration = 90
+
         # Define a record of a player in a game
         record = {}
         record['playername'] = ''
+        record['matchid'] = gameID
+        record['teamid'] = teamID
         record['timeon'] = 0
-        record['timeoff'] = 90
+        record['timeoff'] = duration
         record['ejected'] = False
 
         # Is there a substitute or ejection?
