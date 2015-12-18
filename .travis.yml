@@ -13,5 +13,6 @@ before_script:
   - mysql -e 'create database trapp;'
   - sh -c "mysql < tests/fixtures/tbl_games.sql"
   - sh -c "mysql < tests/fixtures/tbl_players.sql"
+  - sh -c "mysql < tests/fixtures/tbl_teams.sql"
 script:
   - tox -e $TOX_ENV
