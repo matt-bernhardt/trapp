@@ -116,7 +116,6 @@ class ImporterLineups(Importer):
     def correctValues(self):
         for record in self.records:
             record['Date'] = self.source.recoverDate(record['Date'])
-
         return True
 
     def importRecord(self, record):
@@ -124,13 +123,9 @@ class ImporterLineups(Importer):
         # Need to identify gameID
         g = Game()
         g.connectDB()
-        # TODO: Need to build a dictionary from record
-        # TODO: Need Teams model
 
-        # TeamID
+        # Team and Opponent ID
         teamID = self.lookupTeamID(record['Team'])
-
-        # OpponentID
         opponentID = self.lookupTeamID(record['Opponent'])
 
         # Sort home/away teams
@@ -141,6 +136,7 @@ class ImporterLineups(Importer):
             homeID = opponentID
             awayID = teamID
 
+        # Lookup this gameID
         needle = {
             'MatchTime': record['Date'],
             'HTeamID': homeID,
@@ -151,8 +147,12 @@ class ImporterLineups(Importer):
         self.log.message('Found games: ' + str(game))
         if (len(game) > 1):
             self.log.message('Multiple games found')
+            # If that's the case, then we need to abort processing this game
         elif (len(game) == 0):
             self.log.message('No matching games found')
+            # If that's the case, then we need to abort processing this game
+
+        # If we make it to this point, then procesing can continue
 
         # Parse lineup string
         self.parseLineup(record['Lineup'])
@@ -195,6 +195,8 @@ class ImporterLineups(Importer):
         starter = starter.strip()
         self.log.message('_' + str(starter) + '_')
 
+        # TODO: add Duration to parameter list, drawn from game data. This
+        #       will then be used as the default timeoff value
         duration = 90
 
         # Define a record of a player in a game
@@ -208,7 +210,7 @@ class ImporterLineups(Importer):
 
         # Is there a substitute or ejection?
         if (starter.find('(') > 0 and starter.rfind(')') > 0):
-            # Found a pair of parentheses
+            # Found a pair of parentheses, so process the replacement
             first = starter[:starter.find('(')].strip()
             second = starter[starter.find('(')+1:starter.rfind(')')].strip()
             self.log.message('  _' + str(first) + '_')
