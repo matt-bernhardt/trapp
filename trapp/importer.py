@@ -219,7 +219,29 @@ class ImporterLineups(Importer):
             record['playername'] = starter
             self.players.append(record)
 
+        # Ideally this replacement would get called repeatedly until an entire
+        # string of nested parentheses had been unpacked, i.e:
+        # Brian McBride (Pete Marino 5 (Dante Washington 75 (sent off 93+)))
+        # McBride started....
+        # replaced by Marino in 5th minute...
+        # replaced by Washington in the 75th minute...
+        # sent off in the 93rd minute (stoppage time, so corrected to 89)...
+        self.parseReplacement(starter, duration)
+
         self.log.message(str(self.players))
+        return True
+
+    def parseReplacement(self, starter, duration):
+        if (starter.find('(') > 0 and starter.rfind(')') > 0):
+            # Found a pair of parentheses
+            player = starter[:starter.find('(')].strip()
+            replacement = starter[starter.find('(')+1:starter.rfind(')')].strip()
+            # Replacement will end with a number
+            time = replacement[replacement.rfind(' '):].strip()
+            replacementPlayer = replacement[:replacement.rfind(' ')].strip()
+            self.log.message('    _' + str(player) + '_')
+            self.log.message('    _' + str(time) + '_')
+            self.log.message('    _' + str(replacementPlayer) + '_')
         return True
 
 
