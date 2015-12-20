@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 import pytest
 from trapp.log import Log
-from trapp.importer import Importer, ImporterGames, ImporterPlayers
+from trapp.importer import Importer, ImporterGames, ImporterPlayers, ImporterLineups
 
 
 def test_importer_init(excel):
@@ -47,6 +47,27 @@ def test_importer_checkFields(excel):
     # log = Log('test.log')
     # importer = Importer(excel, log)
     # assert importer.doImport() is True
+
+
+def test_importer_parseMinuteDoesNothing(excel):
+    log = Log('test.log')
+    importer = ImporterLineups(excel, log)
+    assert importer.parseMinute(15) == 15
+    assert importer.parseMinute(45) == 45
+    assert importer.parseMinute(89) == 89
+
+
+def test_importer_parseMinuteRemovesSingleQuote(excel):
+    log = Log('test.log')
+    importer = ImporterLineups(excel, log)
+    assert importer.parseMinute("64'") == 64
+
+
+def test_importer_parseMinuteFixesStoppageTime(excel):
+    log = Log('test.log')
+    importer = ImporterLineups(excel, log)
+    assert importer.parseMinute('46+') == 45
+    assert importer.parseMinute('91+') == 89
 
 
 def test_importer_setLog(excel):

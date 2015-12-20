@@ -80,6 +80,37 @@ class Importer():
             print('Found ' + str(found) + ' games already exist')
         return True
 
+    def parseMinute(self, minute):
+        # This reads in a string representing a minute denotation, and
+        # adjusts it for format:
+        # - removes ' characters
+        # - detects + notations, and reduces value to last half end
+
+        # Remove ', correct stoppage time
+        self.log.message("parsing _" + str(minute) + "_")
+        if (isinstance(minute, str)):
+            self.log.message("found a string")
+            if (minute.find("'") > 0):
+                self.log.message("Found '")
+                minute = int(minute.replace("'", ""))
+                return minute
+
+            if (minute.find('+') > 0):
+                self.log.message("Found +")
+                # Remove +
+                minute = int(minute.replace('+', ''))
+                # Correct to last break
+                if (minute > 120):
+                    minute = 119
+                elif (minute > 115):
+                    minute = 115
+                elif (minute > 90):
+                    minute = 89
+                else:
+                    minute = 45
+
+        return minute
+
     def setLog(self, log):
         self.log = log
         self.log.message('Log transferred')
@@ -244,6 +275,9 @@ class ImporterLineups(Importer):
             self.log.message('    _' + str(player) + '_')
             self.log.message('    _' + str(time) + '_')
             self.log.message('    _' + str(replacementPlayer) + '_')
+
+            time = self.parseMinute(time)
+            self.log.message('    Time corrected to _' + str(time) + '_')
         return True
 
 
