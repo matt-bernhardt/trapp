@@ -38,7 +38,7 @@ def test_game_lookupID(data_teams):
 
     # Populate table for later querying
     # TODO do this via setup/teardown?
-    sql = 'INSERT INTO tbl_teams (teamname) VALUES ("Columbus Crew")'
+    sql = 'INSERT INTO tbl_teams (teamname) VALUES ("Sample Team")'
     t.db.query(sql, ())
 
     # This should raise a format error
@@ -57,6 +57,6 @@ def test_game_lookupID(data_teams):
 
     # This should bring back one record
     needle = {
-        'teamname': 'Columbus Crew'
+        'teamname': 'Sample Team'
     }
     assert len(t.lookupID(needle, log)) >= 1
