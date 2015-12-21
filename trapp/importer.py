@@ -84,31 +84,37 @@ class Importer():
         # This reads in a string representing a minute denotation, and
         # adjusts it for format:
         # - removes ' characters
-        # - detects + notations, and reduces value to last half end
+        # - detects + notations, and reduces value to the end of that period
+        # It returns an integer
 
-        # Remove ', correct stoppage time
-        self.log.message("parsing _" + str(minute) + "_")
-        if (isinstance(minute, str)):
-            self.log.message("found a string")
-            if (minute.find("'") > 0):
-                self.log.message("Found '")
-                minute = int(minute.replace("'", ""))
-                return minute
+        # Cast to string so the next two steps don't fail
+        minute = str(minute)
+        self.log.message('Parsing _' + str(minute) + '_')
 
-            if (minute.find('+') > 0):
-                self.log.message("Found +")
-                # Remove +
-                minute = int(minute.replace('+', ''))
-                # Correct to last break
-                if (minute > 120):
-                    minute = 119
-                elif (minute > 115):
-                    minute = 115
-                elif (minute > 90):
-                    minute = 89
-                else:
-                    minute = 45
+        # Remove ' if found
+        if (minute.find("'") > 0):
+            self.log.message("Found '")
+            minute = minute.replace("'", "")
 
+        # Correct stoppage time back to end of that period
+        # This assumes 45 minute halves, and 15 minute extra time periods
+        # (those may not be valid assumptions)
+        if (minute.find('+') > 0):
+            self.log.message("Found +")
+            # Remove +
+            minute = int(minute.replace('+', ''))
+            # Correct to last break
+            if (minute > 120):
+                minute = 119
+            elif (minute > 105):
+                minute = 105
+            elif (minute > 90):
+                minute = 89
+            else:
+                minute = 45
+
+        # Cast back to integer
+        minute = int(minute)
         return minute
 
     def setLog(self, log):
