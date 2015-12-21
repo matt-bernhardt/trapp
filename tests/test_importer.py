@@ -53,8 +53,8 @@ def test_importer_parseMinuteDoesNothing(excel):
     log = Log('test.log')
     importer = ImporterLineups(excel, log)
     assert importer.parseMinute(15) == 15
-    assert importer.parseMinute(45) == 45
-    assert importer.parseMinute(89) == 89
+    assert importer.parseMinute(unicode(45)) == 45
+    assert importer.parseMinute('89') == 89
 
 
 def test_importer_parseMinuteRemovesSingleQuote(excel):
@@ -68,6 +68,8 @@ def test_importer_parseMinuteFixesStoppageTime(excel):
     importer = ImporterLineups(excel, log)
     assert importer.parseMinute('46+') == 45
     assert importer.parseMinute('91+') == 89
+    assert importer.parseMinute('106+') == 105
+    assert importer.parseMinute('122+') == 119
 
 
 def test_importer_setLog(excel):
