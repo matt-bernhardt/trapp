@@ -14,4 +14,4 @@ Each of these will be described in more detail as the project progresses. For no
 
 ## For more information
 
-More information about this project can be found on the [Massive Report Data blog](http://www.massivereportdata.com/blog). To contact the author, please email Matt Bernhardt at matt [at] massivereportdata [dot] com.
+More information about this project can be found on the [Massive Report Data blog](http://www.massivereportdata.com/blog). To contact the author, please email Matt Bernhardt at matt [at] massivereportdata [dot] com or on Twitter at [@BernhardtSoccer](https://twitter.com/bernhardtsoccer).
