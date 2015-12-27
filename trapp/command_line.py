@@ -78,7 +78,9 @@ def main():
 
     # Initialize argument parser
     parser = argparse.ArgumentParser(
-        description='Where does this appear?'
+        description=('Trapp is a Python library for linking, analyzing, '
+                     'and extending soccer data. '
+                     'https://github.com/matt-bernhardt/trapp')
     )
     parser.add_argument(
         'verb',
