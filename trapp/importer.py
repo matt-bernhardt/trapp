@@ -199,6 +199,30 @@ class ImporterLineups(Importer):
         # Parse lineup string
         self.parseLineup(record['Lineup'])
 
+        test = 'Sample Player'
+        self.log.message('Starting Alt')
+        foo = self.parsePlayerAlt(test)
+        self.log.message(str(foo))
+        self.log.message('Finished Alt')
+
+        test = 'Sample Player (Substitute Player 50)'
+        self.log.message('Starting Alt')
+        foo = self.parsePlayerAlt(test)
+        self.log.message(str(foo))
+        self.log.message('Finished Alt')
+
+        test = 'Sample Player (Substitute Player 50 (Third Substitute 76))'
+        self.log.message('Starting Alt')
+        foo = self.parsePlayerAlt(test)
+        self.log.message(str(foo))
+        self.log.message('Finished Alt')
+
+        test = 'Sample Player (Substitute Player 50 (Third Substitute 76 (sent off 88)))'
+        self.log.message('Starting Alt')
+        foo = self.parsePlayerAlt(test)
+        self.log.message(str(foo))
+        self.log.message('Finished Alt')
+
         self.players = []
         [self.parsePlayer(starter, game, teamID) for starter in self.starters]
         # Iterate over every player, keeping in mind that data may
@@ -219,11 +243,65 @@ class ImporterLineups(Importer):
         return teamID[0]
 
     def parseLineup(self, lineup):
-        # Build a list of starters and their substitutes
+        # Build a list of starters and their substitutes. This gets stored
+        # as self.starters, so the method doesn't return anything.
         self.log.message(str(lineup))
         self.starters = lineup.split(',')
         if (len(self.starters) != 11):
             self.log.message('Wrong number of starters')
+            # TODO: Should the method fail in some what with <> 11 starters?
+
+    def parsePlayerTimeOn(self, string):
+        candidate = string[string.rfind(' '):].strip()
+        try:
+            timeon = int(candidate)
+        except ValueError:
+            timeon = 0
+        return timeon
+
+    def parsePlayerRemoveTime(self, string):
+        time = self.parsePlayerTimeOn(string)
+        if (time > 0):
+            return str(string[:string.rfind(' ')])
+        return string
+
+    def parsePlayerAlt(self, starter):
+        result = []
+        timeoff = 90
+
+        while (starter.find('(') > 0):
+            # calculate boundaries
+            begin = starter.find('(')
+            end = starter.rfind(')')
+            # split into outer and starter
+            outer = starter[:begin - 1]
+            starter = starter[begin + 1:end]
+            # split time from outer
+            timeon = self.parsePlayerTimeOn(outer)
+            outer = self.parsePlayerRemoveTime(outer)
+            # store outer
+            result.append({'playername': outer, 'timeon': timeon, 'timeoff': timeoff, 'ejected': False})
+
+        # parse last value
+        timeon = self.parsePlayerTimeOn(starter)
+        starter = self.parsePlayerRemoveTime(starter)
+        # store last value
+        result.append({'playername': starter, 'timeon': timeon, 'timeoff': timeoff, 'ejected': False})
+
+        # Need to track backwards through list, transferring timeoff
+        lastOff = timeoff
+        sentOff = False
+        for x in reversed(result):
+            x['timeoff'] = lastOff
+            if (sentOff is True):
+                x['ejected'] = True
+                sentOff = False
+            if (x['playername'] == 'sent off' or x['playername'] == 'ejected'):
+                result.remove(x)
+                sentOff = True
+            lastOff = x['timeon']
+
+        return result
 
     def parsePlayer(self, starter, gameID, teamID):
         # This takes a single record of players and replacements, and builds

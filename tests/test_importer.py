@@ -72,6 +72,53 @@ def test_importer_parseMinuteFixesStoppageTime(excel):
     assert importer.parseMinute('122+') == 119
 
 
+def test_importer_parseLineup(excel, lineup):
+    log = Log('test.log')
+    importer = ImporterLineups(excel, log)
+    assert hasattr(importer, 'starters') is False
+    importer.parseLineup(lineup)
+    assert hasattr(importer, 'starters') is True
+    assert len(importer.starters) == 11
+
+
+def test_importer_parsePlayer(excel, lineup):
+    # Need to test parsePlayer's ability to deal with strings of player(s)
+    log = Log('test.log')
+    importer = ImporterLineups(excel, log)
+    player = 'Sample Player'
+    result = importer.parsePlayerAlt(player)
+    assert len(result) == 1
+    assert result == [{'playername': 'Sample Player', 'timeon': 0, 'timeoff': 90, 'ejected': False}]
+    player = 'Sample Player (Substitution 50)'
+    result = importer.parsePlayerAlt(player)
+    assert len(result) == 2
+    player = 'Sample Player (First Substitution 50 (Second Substitution 76))'
+    result = importer.parsePlayerAlt(player)
+    assert len(result) == 3
+    player = 'Sample Player (First Substitution 50 (Second Substitution 76 (Third Substitution 84)))'
+    result = importer.parsePlayerAlt(player)
+    assert len(result) == 4
+    player = 'Sample Player (First Substitution 50 (Second Substitution 76 (Third Substitution 84 (sent off 88))))'
+    result = importer.parsePlayerAlt(player)
+    assert len(result) == 4
+
+    # starter = 'Sample Player'
+    # gameID = 1
+    # teamID = 1
+    # importer.parsePlayer(starter, gameID, teamID)
+
+
+def test_importer_parsePlayerRemoveTime(excel, lineup):
+    log = Log('test.log')
+    importer = ImporterLineups(excel, log)
+    player = 'Sample Player'
+    player = importer.parsePlayerRemoveTime(player)
+    assert player == 'Sample Player'
+    player = 'Sample Player 56'
+    player = importer.parsePlayerRemoveTime(player)
+    assert player == 'Sample Player'
+
+
 def test_importer_setLog(excel):
     log = Log('test.log')
     log2 = Log('test2.log')
