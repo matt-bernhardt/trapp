@@ -3,7 +3,7 @@ from __future__ import absolute_import
 
 import argparse
 from trapp.log import Log
-from trapp.importer import Importer, ImporterPlayers, ImporterGames
+from trapp.importer import Importer, ImporterPlayers, ImporterGames, ImporterLineups
 
 
 def importGames(infile):
@@ -18,6 +18,37 @@ def importGames(infile):
         'MatchTypeID',
         'HTeamID',
         'ATeamID'
+    ])
+    importer.checkFields(requiredColumns)
+
+    # Do the import
+    importer.doImport()
+
+    # Shutdown
+    log.end()
+
+    return True
+
+
+def importLineups(infile):
+    # TODO: Lookup teams in a specified league and year?
+    # TODO: Iterate over team list, with separate Importer for each?
+    # Feedback, setup
+    print('Importing lineups from ' + str(infile))
+    log = Log('trapp-import-lineups.log')
+    importer = ImporterLineups(infile, log)
+
+    # Check for required fields
+    requiredColumns = ([
+        'Code',
+        'Date',
+        'H/A',
+        'Opponent',
+        'Score',
+        'WDL',
+        'Record',
+        'Goals',
+        'Lineup',
     ])
     importer.checkFields(requiredColumns)
 
@@ -84,7 +115,7 @@ def main():
     )
     parser.add_argument(
         'verb',
-        choices=['import', 'import-games', 'import-players', 'compile', 'render', 'qa'],
+        choices=['import-games', 'import-players', 'import-lineups', 'compile', 'render', 'qa'],
     )
     parser.add_argument(
         'infile',
@@ -95,14 +126,14 @@ def main():
     # Need to add an optional filename argument
     args = parser.parse_args()
 
-    if (args.verb == 'import'):
-        print('Importing...')
-
-    elif (args.verb == 'import-games'):
+    if (args.verb == 'import-games'):
         importGames(args.infile)
 
     elif (args.verb == 'import-players'):
         importPlayers(args.infile)
+
+    elif (args.verb == 'import-lineups'):
+        importLineups(args.infile)
 
     elif (args.verb == 'compile'):
         print('Compiling...')

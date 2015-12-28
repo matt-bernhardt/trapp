@@ -17,14 +17,14 @@ def test_database_query():
            '(FirstName, LastName) '
            'VALUES '
            '(%s, %s)')
-    params = ('Brian', 'McBride', )
+    params = ('Delete', 'Me', )
     rs = d.query(sql, params)
     assert d.warnings() is None
     # Updates
     sql = ('UPDATE tbl_players '
            'SET Position = %s '
            'WHERE FirstName = %s AND LastName = %s')
-    rs = d.query(sql, ('Forward', 'Brian', 'McBride', ))
+    rs = d.query(sql, ('Defender', 'Delete', 'Me', ))
     assert d.warnings() is None
     # Selects
     sql = ('SELECT ID '
@@ -35,7 +35,7 @@ def test_database_query():
         records = rs.fetchall()
     for term in records:
         needleID = records[0][0]
-    assert needleID == 1
+    assert needleID > 0
     assert d.warnings() is None
     d.disconnect()
 

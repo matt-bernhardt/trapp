@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 import pytest
 from trapp.log import Log
-from trapp.importer import Importer
+from trapp.importer import Importer, ImporterGames, ImporterPlayers, ImporterLineups
 
 
 def test_importer_init(excel):
@@ -10,6 +10,12 @@ def test_importer_init(excel):
     importer = Importer(excel, log)
     assert isinstance(importer, Importer)
     assert importer.log.name == 'test.log'
+
+
+def test_importer_correctValues(excel):
+    log = Log('test.log')
+    importer = Importer(excel, log)
+    assert importer.correctValues() is True
 
 
 def test_importer_checkData_sheets(excel_sheets):
@@ -31,12 +37,7 @@ def test_importer_checkFields(excel):
     importer = Importer(excel, log)
     requiredFields = (['foo', 'bar'])
     assert importer.checkFields(requiredFields) is True
-
-
-def test_importer_checkFields_fail(excel):
     with pytest.raises(RuntimeError) as excinfo:
-        log = Log('test.log')
-        importer = Importer(excel, log)
         requiredFields = (['foo', 'none'])
         importer.checkFields(requiredFields)
     assert 'missing the following columns' in str(excinfo.value)
@@ -48,9 +49,106 @@ def test_importer_checkFields_fail(excel):
     # assert importer.doImport() is True
 
 
+def test_importer_parseMinuteDoesNothing(excel):
+    log = Log('test.log')
+    importer = ImporterLineups(excel, log)
+    assert importer.parseMinute(15) == 15
+    assert importer.parseMinute(unicode(45)) == 45
+    assert importer.parseMinute('89') == 89
+
+
+def test_importer_parseMinuteRemovesSingleQuote(excel):
+    log = Log('test.log')
+    importer = ImporterLineups(excel, log)
+    assert importer.parseMinute("64'") == 64
+
+
+def test_importer_parseMinuteFixesStoppageTime(excel):
+    log = Log('test.log')
+    importer = ImporterLineups(excel, log)
+    assert importer.parseMinute('46+') == 45
+    assert importer.parseMinute('91+') == 89
+    assert importer.parseMinute('106+') == 105
+    assert importer.parseMinute('122+') == 119
+
+
+def test_importer_parseLineup(excel, lineup):
+    log = Log('test.log')
+    importer = ImporterLineups(excel, log)
+    assert hasattr(importer, 'starters') is False
+    importer.parseLineup(lineup)
+    assert hasattr(importer, 'starters') is True
+    assert len(importer.starters) == 11
+
+
+def test_importer_parsePlayer(excel, lineup):
+    # Need to test parsePlayer's ability to deal with strings of player(s)
+    log = Log('test.log')
+    importer = ImporterLineups(excel, log)
+    player = 'Sample Player'
+    result = importer.parsePlayerAlt(player)
+    assert len(result) == 1
+    assert result == [{'playername': 'Sample Player', 'timeon': 0, 'timeoff': 90, 'ejected': False}]
+    player = 'Sample Player (Substitution 50)'
+    result = importer.parsePlayerAlt(player)
+    assert len(result) == 2
+    player = 'Sample Player (First Substitution 50 (Second Substitution 76))'
+    result = importer.parsePlayerAlt(player)
+    assert len(result) == 3
+    player = 'Sample Player (First Substitution 50 (Second Substitution 76 (Third Substitution 84)))'
+    result = importer.parsePlayerAlt(player)
+    assert len(result) == 4
+    player = 'Sample Player (First Substitution 50 (Second Substitution 76 (Third Substitution 84 (sent off 88))))'
+    result = importer.parsePlayerAlt(player)
+    assert len(result) == 4
+
+    # starter = 'Sample Player'
+    # gameID = 1
+    # teamID = 1
+    # importer.parsePlayer(starter, gameID, teamID)
+
+
+def test_importer_parsePlayerRemoveTime(excel, lineup):
+    log = Log('test.log')
+    importer = ImporterLineups(excel, log)
+    player = 'Sample Player'
+    player = importer.parsePlayerRemoveTime(player)
+    assert player == 'Sample Player'
+    player = 'Sample Player 56'
+    player = importer.parsePlayerRemoveTime(player)
+    assert player == 'Sample Player'
+
+
 def test_importer_setLog(excel):
     log = Log('test.log')
     log2 = Log('test2.log')
     importer = Importer(excel, log)
     importer.setLog(log2)
     assert importer.log.name == 'test2.log'
+
+
+def test_importerGames(excel_games):
+    log = Log('test.log')
+    importer = ImporterGames(excel_games, log)
+    requiredColumns = ([
+        'MatchTime',
+        'MatchTypeID',
+        'HTeamID',
+        'ATeamID'
+    ])
+    assert importer.checkFields(requiredColumns) is True
+    assert importer.doImport() is True
+
+
+def test_importerPlayers(excel_players):
+    log = Log('test.log')
+    importer = ImporterPlayers(excel_players, log)
+    requiredColumns = ([
+        'FirstName',
+        'LastName',
+        'Position',
+        'DOB',
+        'Hometown'
+    ])
+    assert importer.checkFields(requiredColumns) is True
+    assert importer.doImport() is True
