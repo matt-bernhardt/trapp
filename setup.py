@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Trapp, a python package for importing, linking and rendering soccer data.
+Trapp, a python package for linking, analyzing, and extending soccer data.
 """
 
 import io
@@ -14,7 +14,7 @@ with io.open('LICENSE') as f:
 setup(
     name='trapp',
     version='0.3.0-alpha1',
-    description='Import, build upon, and render soccer data',
+    description='Link, analyze, and extend soccer data',
     url='https://github.com/matt-bernhardt/trapp',
     license=license,
     author='Matt Bernhardt',
