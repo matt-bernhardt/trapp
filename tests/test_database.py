@@ -1,12 +1,38 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from trapp.database import Database
+import os
 
 
 def test_database_init():
     d = Database()
     assert d.cnx == ''
     assert d.cursor == ''
+    assert d.conn == {}
+
+
+"""
+def test_database_lookupConnection():
+    d = Database()
+    # os.environ['trapp.dbuser'] = 'foo'
+    # os.environ['trapp.dbpwd'] = 'bar'
+    # os.environ['trapp.dbhost'] = 'baz'
+    # os.environ['trapp.dbschema'] = 'none'
+    d.lookupConnection()
+    assert d.conn['user'] == 'foo'
+    assert d.conn['pwd'] == 'bar'
+    assert d.conn['host'] == 'baz'
+    assert d.conn['schema'] == 'none'
+    os.environ.clear('trapp.dbuser')
+    os.environ.clear('trapp.dbpwd')
+    os.environ.clear('trapp.dbhost')
+    os.environ.clear('trapp.dbschema')
+    d.lookupConnection()
+    assert d.conn['user'] == 'travis'
+    assert d.conn['pwd'] == ''
+    assert d.conn['host'] == 'localhost'
+    assert d.conn['schema'] == 'trapp'
+"""
 
 
 def test_database_query():
