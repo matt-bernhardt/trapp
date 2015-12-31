@@ -28,7 +28,10 @@ class Team():
             if term not in data:
                 missing.append(term)
         if (len(missing) > 0):
-            raise RuntimeError('Submitted data is missing the following fields: ' + str(missing))
+            raise RuntimeError(
+                'Submitted data is missing the following fields: ' +
+                str(missing)
+            )
 
         # see if any team matches this name
         sql = ('SELECT ID '

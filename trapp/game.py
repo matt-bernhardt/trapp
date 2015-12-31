@@ -22,7 +22,17 @@ class Game():
             raise RuntimeError('loadByID requires an integer')
 
         # Need to check that gameID is a single number
-        sql = ('SELECT MatchTime, MatchTypeID, HTeamID, HScore, ATeamID, AScore, Duration, VenueID, Attendance, MeanTemperature '
+        sql = ('SELECT '
+               '  MatchTime, '
+               '  MatchTypeID, '
+               '  HTeamID, '
+               '  HScore, '
+               '  ATeamID, '
+               '  AScore, '
+               '  Duration, '
+               '  VenueID, '
+               '  Attendance, '
+               '  MeanTemperature '
                'FROM tbl_games g '
                'WHERE ID = %s')
         rs = self.db.query(sql, (gameID, ))
@@ -100,13 +110,26 @@ class Game():
             if term not in data:
                 missing.append(term)
         if (len(missing) > 0):
-            raise RuntimeError('Submitted data is missing the following fields: ' + str(missing))
+            raise RuntimeError(
+                'Submitted data is missing the following fields: ' +
+                str(missing)
+            )
 
         # See if any game matches these three terms
         sql = ('SELECT ID '
                'FROM tbl_games '
-               'WHERE YEAR(MatchTime) = %s AND MONTH(MatchTime) = %s AND DAY(MatchTime) = %s AND HTeamID = %s AND ATeamID = %s')
-        rs = self.db.query(sql, (data['MatchTime'][0], data['MatchTime'][1], data['MatchTime'][2], data['HTeamID'], data['ATeamID'], ))
+               'WHERE YEAR(MatchTime) = %s '
+               '  AND MONTH(MatchTime) = %s '
+               '  AND DAY(MatchTime) = %s '
+               '  AND HTeamID = %s '
+               '  AND ATeamID = %s')
+        rs = self.db.query(sql, (
+            data['MatchTime'][0],
+            data['MatchTime'][1],
+            data['MatchTime'][2],
+            data['HTeamID'],
+            data['ATeamID'],
+        ))
         if (rs.with_rows):
             records = rs.fetchall()
         games = []

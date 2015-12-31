@@ -23,7 +23,17 @@ class Player():
         if not (isinstance(playerID, int)):
             raise RuntimeError('loadByID requires an integer')
 
-        sql = ('SELECT FirstName, LastName, Position, RosterNumber, Height_Feet, Height_Inches, Weight, Birthplace, Hometown, Citizenship, DOB '
+        sql = ('SELECT FirstName, '
+               '  LastName, '
+               '  Position, '
+               '  RosterNumber, '
+               '  Height_Feet, '
+               '  Height_Inches, '
+               '  Weight, '
+               '  Birthplace, '
+               '  Hometown, '
+               '  Citizenship, '
+               '  DOB '
                'FROM tbl_players p '
                'WHERE ID = %s')
         rs = self.db.query(sql, (playerID, ))
@@ -54,7 +64,8 @@ class Player():
         # data must be a dictionary with the following keys:
         # - FirstName (string - may be blank for players with one name)
         # - LastName (string - players with one name use this)
-        # - Position (string - 'Goalkeeper', 'Defender', 'Midfielder', 'Forward')
+        # - Position (string -
+        #   'Goalkeeper', 'Defender', 'Midfielder', 'Forward')
         # - DOB (date object)
         # - Hometown ('City, ST' for US/Canada, 'City, Country' otherwise)
         if not (isinstance(data, dict)):
@@ -67,13 +78,30 @@ class Player():
             if term not in data:
                 missing.append(term)
         if (len(missing) > 0):
-            raise RuntimeError('Submitted data is missing the following fields: ' + str(missing))
+            raise RuntimeError(
+                'Submitted data is missing the following fields: ' +
+                str(missing)
+            )
 
         # See if any game matches these three terms
         sql = ('SELECT ID '
                'FROM tbl_players '
-               'WHERE FirstName = %s AND LastName = %s AND Position = %s AND YEAR(DOB) = %s AND MONTH(DOB) = %s AND DAY(DOB) = %s AND Hometown = %s')
-        rs = self.db.query(sql, (data['FirstName'], data['LastName'], data['Position'], data['DOB'][0], data['DOB'][1], data['DOB'][2], data['Hometown'], ))
+               'WHERE FirstName = %s '
+               '  AND LastName = %s '
+               '  AND Position = %s '
+               '  AND YEAR(DOB) = %s '
+               '  AND MONTH(DOB) = %s '
+               '  AND DAY(DOB) = %s '
+               '  AND Hometown = %s')
+        rs = self.db.query(sql, (
+            data['FirstName'],
+            data['LastName'],
+            data['Position'],
+            data['DOB'][0],
+            data['DOB'][1],
+            data['DOB'][2],
+            data['Hometown'],
+        ))
         if (rs.with_rows):
             records = rs.fetchall()
         players = []

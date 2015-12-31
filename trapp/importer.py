@@ -25,15 +25,35 @@ class Importer():
         #       - Other errors
         # TODO: Method to check outcome counts
 
+    def adjustStoppageTime(self, minute):
+        # Remove +, cast to integer for numeric comparison
+        minute = int(minute.replace('+', ''))
+
+        # Correct to last break:
+        # - A minute before the end of a game/extra time
+        # - The exact minute for midpoints (45, 105)
+        if (minute > 120):
+            return 119
+        elif (minute > 105):
+            return 105
+        elif (minute > 90):
+            return 89
+
+        return 45
+
     def checkFields(self, fields):
-        # This checks the imported spreadsheet for a dictionary of required fields
+        # This checks the imported spreadsheet for a dictionary of required
+        # fields
         missingFields = []
 
         for col in fields:
             if col not in self.fields:
                 missingFields.append(col)
         if (len(missingFields) > 0):
-            raise RuntimeError('Submitted data is missing the following columns: ' + str(missingFields))
+            raise RuntimeError(
+                'Submitted data is missing the following columns: ' +
+                str(missingFields)
+            )
 
         return True
 
@@ -97,26 +117,14 @@ class Importer():
         self.log.message('Parsing _' + str(minute) + '_')
 
         # Remove ' if found
-        if (minute.find("'") > 0):
-            self.log.message("Found '")
-            minute = minute.replace("'", "")
+        minute = minute.replace("'", "")
 
         # Correct stoppage time back to end of that period
         # This assumes 45 minute halves, and 15 minute extra time periods
         # (those may not be valid assumptions)
         if (minute.find('+') > 0):
             self.log.message("Found +")
-            # Remove +
-            minute = int(minute.replace('+', ''))
-            # Correct to last break
-            if (minute > 120):
-                minute = 119
-            elif (minute > 105):
-                minute = 105
-            elif (minute > 90):
-                minute = 89
-            else:
-                minute = 45
+            minute = self.adjustStoppageTime(minute)
 
         # Cast back to integer
         minute = int(minute)
@@ -295,13 +303,23 @@ class ImporterLineups(Importer):
             timeon = self.parsePlayerTimeOn(outer)
             outer = self.parsePlayerRemoveTime(outer)
             # store outer
-            result.append({'playername': outer, 'timeon': timeon, 'timeoff': timeoff, 'ejected': False})
+            result.append({
+                'playername': outer,
+                'timeon': timeon,
+                'timeoff': timeoff,
+                'ejected': False
+            })
 
         # parse last value
         timeon = self.parsePlayerTimeOn(starter)
         starter = self.parsePlayerRemoveTime(starter)
         # store last value
-        result.append({'playername': starter, 'timeon': timeon, 'timeoff': timeoff, 'ejected': False})
+        result.append({
+            'playername': starter,
+            'timeon': timeon,
+            'timeoff': timeoff,
+            'ejected': False
+        })
 
         # Need to track backwards through list, transferring timeoff
         lastOff = timeoff
@@ -372,7 +390,8 @@ class ImporterLineups(Importer):
         if (starter.find('(') > 0 and starter.rfind(')') > 0):
             # Found a pair of parentheses
             player = starter[:starter.find('(')].strip()
-            replacement = starter[starter.find('(')+1:starter.rfind(')')].strip()
+            replacement = starter[starter.find('(')+1:starter.rfind(')')]\
+                .strip()
             # Replacement will end with a number
             time = replacement[replacement.rfind(' '):].strip()
             replacementPlayer = replacement[:replacement.rfind(' ')].strip()

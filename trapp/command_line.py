@@ -3,7 +3,12 @@ from __future__ import absolute_import
 
 import argparse
 from trapp.log import Log
-from trapp.importer import Importer, ImporterPlayers, ImporterGames, ImporterLineups
+from trapp.importer import (
+    Importer,
+    ImporterPlayers,
+    ImporterGames,
+    ImporterLineups
+)
 
 
 def importGames(infile):
@@ -115,7 +120,12 @@ def main():
     )
     parser.add_argument(
         'verb',
-        choices=['import-games', 'import-players', 'import-lineups', 'compile', 'render', 'qa'],
+        choices=['import-games',
+                 'import-players',
+                 'import-lineups',
+                 'compile',
+                 'render',
+                 'qa'],
     )
     parser.add_argument(
         'infile',

@@ -23,7 +23,12 @@ class Database():
             dbpwd = connection.p
             dbhost = connection.h
             dbschema = connection.d
-        self.cnx = connector.connect(user=dbuser, password=dbpwd, host=dbhost, database=dbschema)
+        self.cnx = connector.connect(
+            user=dbuser,
+            password=dbpwd,
+            host=dbhost,
+            database=dbschema
+        )
         self.cursor = self.cnx.cursor(buffered=True)
 
     def disconnect(self):
