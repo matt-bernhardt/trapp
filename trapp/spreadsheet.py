@@ -39,8 +39,8 @@ class Spreadsheet():
         return temp
 
     def fields(self):
-        # This assumes only one worksheet.
-        # It returns a list of the values across the top of the first worksheet.
+        # This assumes only one worksheet. It returns a list of the values
+        # across the top of the first worksheet.
         self.fields = []
         sheet = self.data.sheets()[0]
         for col in range(sheet.ncols):

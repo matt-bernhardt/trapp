@@ -26,14 +26,18 @@ class Importer():
         # TODO: Method to check outcome counts
 
     def checkFields(self, fields):
-        # This checks the imported spreadsheet for a dictionary of required fields
+        # This checks the imported spreadsheet for a dictionary of required
+        # fields
         missingFields = []
 
         for col in fields:
             if col not in self.fields:
                 missingFields.append(col)
         if (len(missingFields) > 0):
-            raise RuntimeError('Submitted data is missing the following columns: ' + str(missingFields))
+            raise RuntimeError(
+                'Submitted data is missing the following columns: '
+                + str(missingFields)
+            )
 
         return True
 
@@ -295,13 +299,23 @@ class ImporterLineups(Importer):
             timeon = self.parsePlayerTimeOn(outer)
             outer = self.parsePlayerRemoveTime(outer)
             # store outer
-            result.append({'playername': outer, 'timeon': timeon, 'timeoff': timeoff, 'ejected': False})
+            result.append({
+                'playername': outer,
+                'timeon': timeon,
+                'timeoff': timeoff,
+                'ejected': False
+            })
 
         # parse last value
         timeon = self.parsePlayerTimeOn(starter)
         starter = self.parsePlayerRemoveTime(starter)
         # store last value
-        result.append({'playername': starter, 'timeon': timeon, 'timeoff': timeoff, 'ejected': False})
+        result.append({
+            'playername': starter,
+            'timeon': timeon,
+            'timeoff': timeoff,
+            'ejected': False
+        })
 
         # Need to track backwards through list, transferring timeoff
         lastOff = timeoff
@@ -372,7 +386,8 @@ class ImporterLineups(Importer):
         if (starter.find('(') > 0 and starter.rfind(')') > 0):
             # Found a pair of parentheses
             player = starter[:starter.find('(')].strip()
-            replacement = starter[starter.find('(')+1:starter.rfind(')')].strip()
+            replacement = starter[starter.find('(')+1:starter.rfind(')')]\
+                .strip()
             # Replacement will end with a number
             time = replacement[replacement.rfind(' '):].strip()
             replacementPlayer = replacement[:replacement.rfind(' ')].strip()
