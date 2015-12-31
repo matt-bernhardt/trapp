@@ -12,6 +12,7 @@ class Importer():
         # Counters for reporting outcomes
         self.imported = 0
         self.skipped = 0
+        self.errored = 0
         # This probably needs to check the submitted file type and read in the
         # appropriate shim.
         # For now, though, only Excel spreadsheets are supported.
@@ -134,8 +135,10 @@ class Importer():
         self.log.message('\nImport results:')
         self.log.message(str(self.imported) + ' imported')
         self.log.message(str(self.skipped) + ' skipped')
+        self.log.message(str(self.errored) + ' errored')
         print(str(self.imported) + ' imported')
         print(str(self.skipped) + ' skipped')
+        print(str(self.errored) + ' errored')
         return True
 
 
@@ -267,7 +270,7 @@ class ImporterLineups(Importer):
         self.starters = lineup.split(',')
         if (len(self.starters) != 11):
             self.log.message('Wrong number of starters')
-            # TODO: Should the method fail in some what with <> 11 starters?
+            self.errored += 1
 
     def parsePlayerTimeOn(self, string):
         candidate = string[string.rfind(' '):].strip()
