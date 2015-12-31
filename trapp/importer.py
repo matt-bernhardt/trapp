@@ -101,9 +101,7 @@ class Importer():
         self.log.message('Parsing _' + str(minute) + '_')
 
         # Remove ' if found
-        if (minute.find("'") > 0):
-            self.log.message("Found '")
-            minute = minute.replace("'", "")
+        minute = minute.replace("'", "")
 
         # Correct stoppage time back to end of that period
         # This assumes 45 minute halves, and 15 minute extra time periods
