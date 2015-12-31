@@ -19,7 +19,6 @@ class Importer():
         self.fields = self.source.fields()
         self.checkData()
         self.setLog(logFile)
-        # TODO: Method to check outcome counts
 
     def adjustStoppageTime(self, minute):
         # Remove +, cast to integer for numeric comparison
