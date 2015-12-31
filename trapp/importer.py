@@ -25,6 +25,22 @@ class Importer():
         #       - Other errors
         # TODO: Method to check outcome counts
 
+    def adjustStoppageTime(self, minute):
+        # Remove +, cast to integer for numeric comparison
+        minute = int(minute.replace('+', ''))
+
+        # Correct to last break:
+        # - A minute before the end of a game/extra time
+        # - The exact minute for midpoints (45, 105)
+        if (minute > 120):
+            return 119
+        elif (minute > 105):
+            return 105
+        elif (minute > 90):
+            return 89
+
+        return 45
+
     def checkFields(self, fields):
         # This checks the imported spreadsheet for a dictionary of required
         # fields
@@ -108,17 +124,7 @@ class Importer():
         # (those may not be valid assumptions)
         if (minute.find('+') > 0):
             self.log.message("Found +")
-            # Remove +
-            minute = int(minute.replace('+', ''))
-            # Correct to last break
-            if (minute > 120):
-                minute = 119
-            elif (minute > 105):
-                minute = 105
-            elif (minute > 90):
-                minute = 89
-            else:
-                minute = 45
+            minute = self.adjustStoppageTime(minute)
 
         # Cast back to integer
         minute = int(minute)
