@@ -343,8 +343,6 @@ class ImporterLineups(Importer):
         starter = starter.strip()
         self.log.message('_' + str(starter) + '_')
 
-        # TODO: add Duration to parameter list, drawn from game data. This
-        #       will then be used as the default timeoff value
         duration = 90
 
         # Define a record of a player in a game
