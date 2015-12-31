@@ -29,8 +29,8 @@ class Team():
                 missing.append(term)
         if (len(missing) > 0):
             raise RuntimeError(
-                'Submitted data is missing the following fields: '
-                + str(missing)
+                'Submitted data is missing the following fields: ' +
+                str(missing)
             )
 
         # see if any team matches this name

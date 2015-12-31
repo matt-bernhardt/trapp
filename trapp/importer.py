@@ -35,8 +35,8 @@ class Importer():
                 missingFields.append(col)
         if (len(missingFields) > 0):
             raise RuntimeError(
-                'Submitted data is missing the following columns: '
-                + str(missingFields)
+                'Submitted data is missing the following columns: ' +
+                str(missingFields)
             )
 
         return True

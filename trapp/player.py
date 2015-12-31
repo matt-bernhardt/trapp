@@ -79,8 +79,8 @@ class Player():
                 missing.append(term)
         if (len(missing) > 0):
             raise RuntimeError(
-                'Submitted data is missing the following fields: '
-                + str(missing)
+                'Submitted data is missing the following fields: ' +
+                str(missing)
             )
 
         # See if any game matches these three terms
