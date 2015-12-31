@@ -19,10 +19,6 @@ class Importer():
         self.fields = self.source.fields()
         self.checkData()
         self.setLog(logFile)
-        # TODO: Variables to track outcomes of import steps:
-        #       - Successful import
-        #       - Duplicate records
-        #       - Other errors
         # TODO: Method to check outcome counts
 
     def adjustStoppageTime(self, minute):
