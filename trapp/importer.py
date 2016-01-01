@@ -171,6 +171,22 @@ class ImporterGames(Importer):
 
 class ImporterLineups(Importer):
 
+    def adjustTimeOff(self, result, lastOff):
+        sentOff = False
+
+        # Need to track backwards through list, transferring timeoff
+        for x in reversed(result):
+            x['timeoff'] = lastOff
+            if (sentOff is True):
+                x['ejected'] = True
+                sentOff = False
+            if (x['playername'] == 'sent off' or x['playername'] == 'ejected'):
+                result.remove(x)
+                sentOff = True
+            lastOff = x['timeon']
+
+        return result
+
     def correctValues(self):
         for record in self.records:
             record['Date'] = self.source.recoverDate(record['Date'])
@@ -319,18 +335,8 @@ class ImporterLineups(Importer):
             'ejected': False
         })
 
-        # Need to track backwards through list, transferring timeoff
-        lastOff = timeoff
-        sentOff = False
-        for x in reversed(result):
-            x['timeoff'] = lastOff
-            if (sentOff is True):
-                x['ejected'] = True
-                sentOff = False
-            if (x['playername'] == 'sent off' or x['playername'] == 'ejected'):
-                result.remove(x)
-                sentOff = True
-            lastOff = x['timeon']
+        # Transfer timeon values to previous player's timeoff
+        result = self.adjustTimeOff(result, timeoff)
 
         return result
 
