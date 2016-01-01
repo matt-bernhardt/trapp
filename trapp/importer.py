@@ -12,6 +12,7 @@ class Importer():
         # Counters for reporting outcomes
         self.imported = 0
         self.skipped = 0
+        self.errored = 0
         # This probably needs to check the submitted file type and read in the
         # appropriate shim.
         # For now, though, only Excel spreadsheets are supported.
@@ -19,11 +20,6 @@ class Importer():
         self.fields = self.source.fields()
         self.checkData()
         self.setLog(logFile)
-        # TODO: Variables to track outcomes of import steps:
-        #       - Successful import
-        #       - Duplicate records
-        #       - Other errors
-        # TODO: Method to check outcome counts
 
     def adjustStoppageTime(self, minute):
         # Remove +, cast to integer for numeric comparison
@@ -139,8 +135,10 @@ class Importer():
         self.log.message('\nImport results:')
         self.log.message(str(self.imported) + ' imported')
         self.log.message(str(self.skipped) + ' skipped')
+        self.log.message(str(self.errored) + ' errored')
         print(str(self.imported) + ' imported')
         print(str(self.skipped) + ' skipped')
+        print(str(self.errored) + ' errored')
         return True
 
 
@@ -172,6 +170,22 @@ class ImporterGames(Importer):
 
 
 class ImporterLineups(Importer):
+
+    def adjustTimeOff(self, result, lastOff):
+        sentOff = False
+
+        # Need to track backwards through list, transferring timeoff
+        for x in reversed(result):
+            x['timeoff'] = lastOff
+            if (sentOff is True):
+                x['ejected'] = True
+                sentOff = False
+            if (x['playername'] == 'sent off' or x['playername'] == 'ejected'):
+                result.remove(x)
+                sentOff = True
+            lastOff = x['timeon']
+
+        return result
 
     def correctValues(self):
         for record in self.records:
@@ -272,7 +286,7 @@ class ImporterLineups(Importer):
         self.starters = lineup.split(',')
         if (len(self.starters) != 11):
             self.log.message('Wrong number of starters')
-            # TODO: Should the method fail in some what with <> 11 starters?
+            self.errored += 1
 
     def parsePlayerTimeOn(self, string):
         candidate = string[string.rfind(' '):].strip()
@@ -321,18 +335,8 @@ class ImporterLineups(Importer):
             'ejected': False
         })
 
-        # Need to track backwards through list, transferring timeoff
-        lastOff = timeoff
-        sentOff = False
-        for x in reversed(result):
-            x['timeoff'] = lastOff
-            if (sentOff is True):
-                x['ejected'] = True
-                sentOff = False
-            if (x['playername'] == 'sent off' or x['playername'] == 'ejected'):
-                result.remove(x)
-                sentOff = True
-            lastOff = x['timeon']
+        # Transfer timeon values to previous player's timeoff
+        result = self.adjustTimeOff(result, timeoff)
 
         return result
 
@@ -348,8 +352,6 @@ class ImporterLineups(Importer):
         starter = starter.strip()
         self.log.message('_' + str(starter) + '_')
 
-        # TODO: add Duration to parameter list, drawn from game data. This
-        #       will then be used as the default timeoff value
         duration = 90
 
         # Define a record of a player in a game
