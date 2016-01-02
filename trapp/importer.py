@@ -236,30 +236,6 @@ class ImporterLineups(Importer):
         # Parse lineup string
         self.parseLineup(record['Lineup'])
 
-        test = 'Sample Player'
-        self.log.message('Starting Alt')
-        foo = self.parsePlayer(test, game, teamID)
-        self.log.message(str(foo))
-        self.log.message('Finished Alt')
-
-        test = "Sample Player (Substitute Player 50')"
-        self.log.message('Starting Alt')
-        foo = self.parsePlayer(test, game, teamID)
-        self.log.message(str(foo))
-        self.log.message('Finished Alt')
-
-        test = 'Sample Player (Substitute Player 50 (Third Substitute 76))'
-        self.log.message('Starting Alt')
-        foo = self.parsePlayer(test, game, teamID)
-        self.log.message(str(foo))
-        self.log.message('Finished Alt')
-
-        test = 'Sample Player (Substitute Player 50 (Third Substitute 76 (sent off 88)))'
-        self.log.message('Starting Alt')
-        foo = self.parsePlayer(test, game, teamID)
-        self.log.message(str(foo))
-        self.log.message('Finished Alt')
-
         self.players = []
         for starter in self.starters:
             batch = self.parsePlayer(starter, game, teamID)
