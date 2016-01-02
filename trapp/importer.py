@@ -250,12 +250,16 @@ class ImporterLineups(Importer):
         return teamID[0]
 
     def parseLineup(self, lineup, game, teamID):
-        # Build a list of starters and their substitutes. This gets stored
-        # as self.starters, so the method doesn't return anything.
+        # Parses a long string of starters and substitutes, populating
+        # self.players with records for each player who appeared in the
+        # game.
         self.log.message(str(lineup))
         self.starters = lineup.split(',')
         if (len(self.starters) != 11):
-            self.log.message('Wrong number of starters')
+            # We don't raise an error for a short lineup, as the records
+            # can still be safely parsed and stored - just log for inspection
+            # later.
+            self.log.message('ERROR: Wrong number of starters')
             self.errored += 1
 
         self.players = []
@@ -264,6 +268,8 @@ class ImporterLineups(Importer):
             for item in batch:
                 self.players.append(item)
         self.log.message(str(self.players))
+        # This method returns nothing, as its work is recorded in
+        # self.starters and self.players.
 
     def parsePlayerTimeOn(self, string):
         # This splits off the last word/blob in a player string, and parses
