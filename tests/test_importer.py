@@ -73,34 +73,42 @@ def test_importer_parseMinuteFixesStoppageTime(excel):
 
 
 def test_importer_parseLineup(excel, lineup):
+    game = 1
+    team = 1
     log = Log('test.log')
     importer = ImporterLineups(excel, log)
     assert hasattr(importer, 'starters') is False
-    importer.parseLineup(lineup)
+    importer.parseLineup(lineup, game, team)
     assert hasattr(importer, 'starters') is True
     assert len(importer.starters) == 11
 
 
 def test_importer_parsePlayer(excel, lineup):
     # Need to test parsePlayer's ability to deal with strings of player(s)
+    game = 1
+    team = 1
     log = Log('test.log')
     importer = ImporterLineups(excel, log)
     player = 'Sample Player'
-    result = importer.parsePlayerAlt(player)
+    result = importer.parsePlayer(player, game, team)
     assert len(result) == 1
-    assert result == [{'playername': 'Sample Player', 'timeon': 0, 'timeoff': 90, 'ejected': False}]
-    player = 'Sample Player (Substitution 50)'
-    result = importer.parsePlayerAlt(player)
+    assert result == [{'playername': 'Sample Player', 'timeon': 0, 'timeoff': 90, 'ejected': False, 'matchid': 1, 'teamid': 1}]
+    player = "Sample Player (Substitution 50')"
+    result = importer.parsePlayer(player, game, team)
     assert len(result) == 2
     player = 'Sample Player (First Substitution 50 (Second Substitution 76))'
-    result = importer.parsePlayerAlt(player)
+    result = importer.parsePlayer(player, game, team)
     assert len(result) == 3
-    player = 'Sample Player (First Substitution 50 (Second Substitution 76 (Third Substitution 84)))'
-    result = importer.parsePlayerAlt(player)
+    player = 'Sample Player (First Substitution 50 (Second Substitution 76 (Third Substitution 92+)))'
+    result = importer.parsePlayer(player, game, team)
     assert len(result) == 4
     player = 'Sample Player (First Substitution 50 (Second Substitution 76 (Third Substitution 84 (sent off 88))))'
-    result = importer.parsePlayerAlt(player)
+    result = importer.parsePlayer(player, game, team)
     assert len(result) == 4
+    assert result[3]['playername'] == 'Third Substitution'
+    assert result[3]['ejected'] is True
+    assert result[3]['timeon'] == 84
+    assert result[3]['timeoff'] == 88
 
     # starter = 'Sample Player'
     # gameID = 1
