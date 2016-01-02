@@ -91,13 +91,13 @@ def test_importer_parsePlayer(excel, lineup):
     result = importer.parsePlayer(player, game, team)
     assert len(result) == 1
     assert result == [{'playername': 'Sample Player', 'timeon': 0, 'timeoff': 90, 'ejected': False, 'matchid': 1, 'teamid': 1}]
-    player = 'Sample Player (Substitution 50)'
+    player = "Sample Player (Substitution 50')"
     result = importer.parsePlayer(player, game, team)
     assert len(result) == 2
     player = 'Sample Player (First Substitution 50 (Second Substitution 76))'
     result = importer.parsePlayer(player, game, team)
     assert len(result) == 3
-    player = 'Sample Player (First Substitution 50 (Second Substitution 76 (Third Substitution 84)))'
+    player = 'Sample Player (First Substitution 50 (Second Substitution 76 (Third Substitution 92+)))'
     result = importer.parsePlayer(player, game, team)
     assert len(result) == 4
     player = 'Sample Player (First Substitution 50 (Second Substitution 76 (Third Substitution 84 (sent off 88))))'
