@@ -110,7 +110,6 @@ class Importer():
 
         # Cast to string so the next two steps don't fail
         minute = str(minute)
-        self.log.message('Parsing _' + str(minute) + '_')
 
         # Remove ' if found
         minute = minute.replace("'", "")
@@ -119,7 +118,6 @@ class Importer():
         # This assumes 45 minute halves, and 15 minute extra time periods
         # (those may not be valid assumptions)
         if (minute.find('+') > 0):
-            self.log.message("Found +")
             minute = self.adjustStoppageTime(minute)
 
         # Cast back to integer
