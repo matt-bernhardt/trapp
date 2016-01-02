@@ -221,10 +221,12 @@ class ImporterLineups(Importer):
         self.log.message('Found games: ' + str(game))
         if (len(game) > 1):
             self.log.message('Multiple games found')
+            self.skipped += 1
             return False
             # If that's the case, then we need to abort processing this game
         elif (len(game) == 0):
             self.log.message('No matching games found')
+            self.skipped += 1
             return False
             # If that's the case, then we need to abort processing this game
 
