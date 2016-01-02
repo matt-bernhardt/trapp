@@ -230,18 +230,10 @@ class ImporterLineups(Importer):
 
         # If we make it to this point, then procesing can continue
 
-        # Need to look up game duration, will be needed in parsePlayer to set
-        # TimeOff value
-
         # Parse lineup string
-        self.parseLineup(record['Lineup'])
+        self.parseLineup(record['Lineup'], game, teamID)
 
-        self.players = []
-        for starter in self.starters:
-            batch = self.parsePlayer(starter, game, teamID)
-            for item in batch:
-                self.players.append(item)
-        self.log.message(str(self.players))
+        # At this point we have self.players - but need to store them
 
         return True
 
@@ -257,7 +249,7 @@ class ImporterLineups(Importer):
         # the first value only
         return teamID[0]
 
-    def parseLineup(self, lineup):
+    def parseLineup(self, lineup, game, teamID):
         # Build a list of starters and their substitutes. This gets stored
         # as self.starters, so the method doesn't return anything.
         self.log.message(str(lineup))
@@ -265,6 +257,13 @@ class ImporterLineups(Importer):
         if (len(self.starters) != 11):
             self.log.message('Wrong number of starters')
             self.errored += 1
+
+        self.players = []
+        for starter in self.starters:
+            batch = self.parsePlayer(starter, game, teamID)
+            for item in batch:
+                self.players.append(item)
+        self.log.message(str(self.players))
 
     def parsePlayerTimeOn(self, string):
         # This splits off the last word/blob in a player string, and parses

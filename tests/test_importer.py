@@ -73,10 +73,12 @@ def test_importer_parseMinuteFixesStoppageTime(excel):
 
 
 def test_importer_parseLineup(excel, lineup):
+    game = 1
+    team = 1
     log = Log('test.log')
     importer = ImporterLineups(excel, log)
     assert hasattr(importer, 'starters') is False
-    importer.parseLineup(lineup)
+    importer.parseLineup(lineup, game, team)
     assert hasattr(importer, 'starters') is True
     assert len(importer.starters) == 11
 
