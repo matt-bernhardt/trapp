@@ -238,32 +238,34 @@ class ImporterLineups(Importer):
 
         test = 'Sample Player'
         self.log.message('Starting Alt')
-        foo = self.parsePlayerAlt(test)
+        foo = self.parsePlayer(test, game, teamID)
         self.log.message(str(foo))
         self.log.message('Finished Alt')
 
-        test = 'Sample Player (Substitute Player 50)'
+        test = "Sample Player (Substitute Player 50')"
         self.log.message('Starting Alt')
-        foo = self.parsePlayerAlt(test)
+        foo = self.parsePlayer(test, game, teamID)
         self.log.message(str(foo))
         self.log.message('Finished Alt')
 
         test = 'Sample Player (Substitute Player 50 (Third Substitute 76))'
         self.log.message('Starting Alt')
-        foo = self.parsePlayerAlt(test)
+        foo = self.parsePlayer(test, game, teamID)
         self.log.message(str(foo))
         self.log.message('Finished Alt')
 
         test = 'Sample Player (Substitute Player 50 (Third Substitute 76 (sent off 88)))'
         self.log.message('Starting Alt')
-        foo = self.parsePlayerAlt(test)
+        foo = self.parsePlayer(test, game, teamID)
         self.log.message(str(foo))
         self.log.message('Finished Alt')
 
         self.players = []
-        [self.parsePlayer(starter, game, teamID) for starter in self.starters]
-        # Iterate over every player, keeping in mind that data may
-        # already exist
+        for starter in self.starters:
+            batch = self.parsePlayer(starter, game, teamID)
+            for item in batch:
+                self.players.append(item)
+        self.log.message(str(self.players))
 
         return True
 
@@ -289,20 +291,26 @@ class ImporterLineups(Importer):
             self.errored += 1
 
     def parsePlayerTimeOn(self, string):
+        # This splits off the last word/blob in a player string, and parses
+        # it as a time denotation. If it passes, this is the time the player
+        # entered the game. If it is not a time, then it is the player's last
+        # name, and they started the game.
         candidate = string[string.rfind(' '):].strip()
         try:
-            timeon = int(candidate)
+            timeon = self.parseMinute(candidate)
         except ValueError:
             timeon = 0
         return timeon
 
     def parsePlayerRemoveTime(self, string):
+        # This strips away a time designation from a player string, and
+        # returns only the player name.
         time = self.parsePlayerTimeOn(string)
         if (time > 0):
             return str(string[:string.rfind(' ')])
         return string
 
-    def parsePlayerAlt(self, starter):
+    def parsePlayer(self, starter, gameID, teamID):
         result = []
         timeoff = 90
 
@@ -318,10 +326,12 @@ class ImporterLineups(Importer):
             outer = self.parsePlayerRemoveTime(outer)
             # store outer
             result.append({
-                'playername': outer,
+                'playername': outer.strip(),
                 'timeon': timeon,
                 'timeoff': timeoff,
-                'ejected': False
+                'ejected': False,
+                'matchid': gameID,
+                'teamid': teamID
             })
 
         # parse last value
@@ -329,81 +339,18 @@ class ImporterLineups(Importer):
         starter = self.parsePlayerRemoveTime(starter)
         # store last value
         result.append({
-            'playername': starter,
+            'playername': starter.strip(),
             'timeon': timeon,
             'timeoff': timeoff,
-            'ejected': False
+            'ejected': False,
+            'matchid': gameID,
+            'teamid': teamID
         })
 
         # Transfer timeon values to previous player's timeoff
         result = self.adjustTimeOff(result, timeoff)
 
         return result
-
-    def parsePlayer(self, starter, gameID, teamID):
-        # This takes a single record of players and replacements, and builds
-        # an array of time on, off, etc.
-        # Samples:
-        # ... , Brian McBride, ... (played full game)
-        # ... , Brian McBride (Pete Marino 70), ... (substitution at 70')
-        # ... , Brian McBride (sent off 44), ... (ejected at 44')
-        # ... , Brian McBride (Pete Marino 23 (Dante Washington 87)), ...
-        #       (dual substitution)
-        starter = starter.strip()
-        self.log.message('_' + str(starter) + '_')
-
-        duration = 90
-
-        # Define a record of a player in a game
-        record = {}
-        record['playername'] = ''
-        record['matchid'] = gameID
-        record['teamid'] = teamID
-        record['timeon'] = 0
-        record['timeoff'] = duration
-        record['ejected'] = False
-
-        # Is there a substitute or ejection?
-        if (starter.find('(') > 0 and starter.rfind(')') > 0):
-            # Found a pair of parentheses, so process the replacement
-            first = starter[:starter.find('(')].strip()
-            second = starter[starter.find('(')+1:starter.rfind(')')].strip()
-            self.log.message('  _' + str(first) + '_')
-            self.log.message('  _' + str(second) + '_')
-            self.players.append({'playername': first})
-            self.players.append({'playername': second})
-        else:
-            record['playername'] = starter
-            self.players.append(record)
-
-        # Ideally this replacement would get called repeatedly until an entire
-        # string of nested parentheses had been unpacked, i.e:
-        # Brian McBride (Pete Marino 5 (Dante Washington 75 (sent off 93+)))
-        # McBride started....
-        # replaced by Marino in 5th minute...
-        # replaced by Washington in the 75th minute...
-        # sent off in the 93rd minute (stoppage time, so corrected to 89)...
-        self.parseReplacement(starter, duration)
-
-        self.log.message(str(self.players))
-        return True
-
-    def parseReplacement(self, starter, duration):
-        if (starter.find('(') > 0 and starter.rfind(')') > 0):
-            # Found a pair of parentheses
-            player = starter[:starter.find('(')].strip()
-            replacement = starter[starter.find('(')+1:starter.rfind(')')]\
-                .strip()
-            # Replacement will end with a number
-            time = replacement[replacement.rfind(' '):].strip()
-            replacementPlayer = replacement[:replacement.rfind(' ')].strip()
-            self.log.message('    _' + str(player) + '_')
-            self.log.message('    _' + str(time) + '_')
-            self.log.message('    _' + str(replacementPlayer) + '_')
-
-            time = self.parseMinute(time)
-            self.log.message('    Time corrected to _' + str(time) + '_')
-        return True
 
 
 class ImporterPlayers(Importer):
