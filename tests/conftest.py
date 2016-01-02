@@ -9,6 +9,11 @@ def lineup():
 
 
 @pytest.fixture
+def lineup_short():
+    return "Steve Clark, Harrison Afful, Michael Parkhurst, Gaston Sauro"
+
+
+@pytest.fixture
 def excel():
     return _fixture_path('test.xlsx')
 

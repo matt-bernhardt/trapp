@@ -83,6 +83,16 @@ def test_importer_parseLineup(excel, lineup):
     assert len(importer.starters) == 11
 
 
+def test_importer_parseLineupFailsWhenShort(excel, lineup_short):
+    game = 1
+    team = 1
+    log = Log('test.log')
+    importer = ImporterLineups(excel, log)
+    assert importer.errored == 0
+    importer.parseLineup(lineup_short, game, team)
+    assert importer.errored == 1
+
+
 def test_importer_parsePlayer(excel, lineup):
     # Need to test parsePlayer's ability to deal with strings of player(s)
     game = 1
