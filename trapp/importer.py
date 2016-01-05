@@ -305,8 +305,16 @@ class ImporterLineups(Importer):
             # split time from outer
             timeon = self.parsePlayerTimeOn(outer)
             outer = self.parsePlayerRemoveTime(outer)
+            # Lookup player ID
+            playerID = 0
+            p = Player()
+            needle = {
+                'PlayerName': outer.strip(),
+            }
+            # playerID = p.lookupID(needle, self.log)
             # store outer
             result.append({
+                'PlayerID': playerID,
                 'PlayerName': outer.strip(),
                 'TimeOn': timeon,
                 'TimeOff': timeoff,
@@ -318,8 +326,16 @@ class ImporterLineups(Importer):
         # parse last value
         timeon = self.parsePlayerTimeOn(starter)
         starter = self.parsePlayerRemoveTime(starter)
+        # Lookup player ID
+        playerID = 0
+        p = Player()
+        needle = {
+            'PlayerName': starter.strip(),
+        }
+        # playerID = p.lookupID(needle, self.log)
         # store last value
         result.append({
+            'PlayerID': playerID,
             'PlayerName': starter.strip(),
             'TimeOn': timeon,
             'TimeOff': timeoff,

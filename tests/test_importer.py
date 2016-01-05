@@ -102,7 +102,7 @@ def test_importer_parsePlayer(excel, lineup):
     player = 'Sample Player'
     result = importer.parsePlayer(player, game, team)
     assert len(result) == 1
-    assert result == [{'PlayerName': 'Sample Player', 'TimeOn': 0, 'TimeOff': 90, 'Ejected': False, 'GameID': 1, 'TeamID': 1}]
+    assert result == [{'PlayerID': 0, 'PlayerName': 'Sample Player', 'TimeOn': 0, 'TimeOff': 90, 'Ejected': False, 'GameID': 1, 'TeamID': 1}]
     player = "Sample Player (Substitution 50')"
     result = importer.parsePlayer(player, game, team)
     assert len(result) == 2
