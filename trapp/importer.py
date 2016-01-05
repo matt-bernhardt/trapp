@@ -262,12 +262,16 @@ class ImporterLineups(Importer):
             self.log.message('ERROR: Wrong number of starters')
             self.errored += 1
 
+        # self.starters has strings for every starter, combined with any
+        # substitutes or sendings off. These need to be split into separate
+        # records for every player, which is done in parsePlayer
         self.players = []
         for starter in self.starters:
             batch = self.parsePlayer(starter, game, teamID)
             for item in batch:
                 self.players.append(item)
         self.log.message(str(self.players))
+
         # This method returns nothing, as its work is recorded in
         # self.starters and self.players.
 
