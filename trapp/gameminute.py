@@ -33,7 +33,7 @@ class GameMinute():
                    'Ejected = %s '
                    'WHERE ID = %s')
             rs = self.db.query(sql, (
-                data['MatchID'],
+                data['GameID'],
                 data['TeamID'],
                 data['PlayerID'],
                 data['TimeOn'],
@@ -48,7 +48,7 @@ class GameMinute():
                    'VALUES '
                    '(%s, %s, %s, %s, %s, %s)')
             rs = self.db.query(sql, (
-                data['MatchID'],
+                data['GameID'],
                 data['TeamID'],
                 data['PlayerID'],
                 data['TimeOn'],

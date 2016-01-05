@@ -41,7 +41,7 @@ def test_gameminute_saveDict():
 
     # Inserts
     data = {
-        'MatchID': 1,
+        'GameID': 1,
         'TeamID': 1,
         'PlayerID': 1,
         'TimeOn': 0,
@@ -54,7 +54,7 @@ def test_gameminute_saveDict():
     # Updates
     data = {
         'ID': 1,
-        'MatchID': 2,
+        'GameID': 2,
         'TeamID': 2,
         'PlayerID': 2,
         'TimeOn': 0,

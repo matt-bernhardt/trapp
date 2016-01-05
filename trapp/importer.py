@@ -174,14 +174,14 @@ class ImporterLineups(Importer):
 
         # Need to track backwards through list, transferring timeoff
         for x in reversed(result):
-            x['timeoff'] = lastOff
+            x['TimeOff'] = lastOff
             if (sentOff is True):
-                x['ejected'] = True
+                x['Ejected'] = True
                 sentOff = False
-            if (x['playername'] == 'sent off' or x['playername'] == 'ejected'):
+            if (x['PlayerName'] == 'sent off' or x['PlayerName'] == 'ejected'):
                 result.remove(x)
                 sentOff = True
-            lastOff = x['timeon']
+            lastOff = x['TimeOn']
 
         return result
 
@@ -307,12 +307,12 @@ class ImporterLineups(Importer):
             outer = self.parsePlayerRemoveTime(outer)
             # store outer
             result.append({
-                'playername': outer.strip(),
-                'timeon': timeon,
-                'timeoff': timeoff,
-                'ejected': False,
-                'matchid': gameID,
-                'teamid': teamID
+                'PlayerName': outer.strip(),
+                'TimeOn': timeon,
+                'TimeOff': timeoff,
+                'Ejected': False,
+                'GameID': gameID,
+                'TeamID': teamID
             })
 
         # parse last value
@@ -320,12 +320,12 @@ class ImporterLineups(Importer):
         starter = self.parsePlayerRemoveTime(starter)
         # store last value
         result.append({
-            'playername': starter.strip(),
-            'timeon': timeon,
-            'timeoff': timeoff,
-            'ejected': False,
-            'matchid': gameID,
-            'teamid': teamID
+            'PlayerName': starter.strip(),
+            'TimeOn': timeon,
+            'TimeOff': timeoff,
+            'Ejected': False,
+            'GameID': gameID,
+            'TeamID': teamID
         })
 
         # Transfer timeon values to previous player's timeoff
