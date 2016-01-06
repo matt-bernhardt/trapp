@@ -111,6 +111,38 @@ class Player():
         # How many games matched this data?
         return players
 
+    def lookupIDbyName(self, data, log):
+        # This takes in a player's name and looks up player ID based on that
+        # alone
+        if not (isinstance(data, dict)):
+            raise RuntimeError('lookupIDbyName requires a dictionary')
+
+        missing = []
+        required = ['PlayerName', ]
+        for term in required:
+            if term not in data:
+                missing.append(term)
+        if (len(missing) > 0):
+            raise RuntimeError(
+                'Submitted data is missing the following fields: ' +
+                str(missing)
+            )
+
+        # See if any game matches these three terms
+        sql = ('SELECT ID '
+               'FROM tbl_players '
+               'WHERE CONCAT(FirstName," ",LastName) = %s')
+        rs = self.db.query(sql, (
+            data['PlayerName'],
+        ))
+        if (rs.with_rows):
+            records = rs.fetchall()
+        players = []
+        for player in records:
+            players.append(player[0])
+
+        return players
+
     def merge(self, fromID, intoID):
         # This merges one player record into another.
         # It includes all related tables.
