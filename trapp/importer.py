@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 from trapp.spreadsheet import Spreadsheet
 from trapp.game import Game
+from trapp.gameminute import GameMinute
 from trapp.player import Player
 from trapp.team import Team
 
@@ -237,6 +238,25 @@ class ImporterLineups(Importer):
         self.parseLineup(record['Lineup'], game, teamID)
 
         # At this point we have self.players - but need to store them
+        for player in self.players:
+            self.log.message(str(player))
+            gm = GameMinute()
+            gm.connectDB()
+            appearanceID = gm.lookupID(player, self.log)
+            if (len(appearanceID) > 1):
+                # We have more than one record of this player/team/game.
+                # This is a problem.
+                self.errored += 1
+                # TODO: need to skip now to next for iteration
+            elif (len(appearanceID) == 1):
+                # We already have a record of this player/team/game.
+                # We add that appearanceID, to ensure an update operation.
+                player['ID'] = appearanceID[0]
+                gm.saveDict(player, self.log)
+                self.imported += 1
+            else:
+                gm.saveDict(player, self.log)
+                self.imported += 1
 
         return True
 
