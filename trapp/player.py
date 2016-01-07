@@ -131,7 +131,7 @@ class Player():
         # See if any game matches these three terms
         sql = ('SELECT ID '
                'FROM tbl_players '
-               'WHERE CONCAT(FirstName," ",LastName) = %s')
+               'WHERE TRIM(CONCAT(FirstName," ",LastName)) = %s')
         rs = self.db.query(sql, (
             data['PlayerName'],
         ))
