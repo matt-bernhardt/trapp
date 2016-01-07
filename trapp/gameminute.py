@@ -16,6 +16,41 @@ class GameMinute():
         self.db.disconnect()
         del self.db
 
+    def lookupID(self, data, log):
+        # Do we have a record of player X appearing in game Y for team Z?
+        if not (isinstance(data, dict)):
+            raise RuntimeError('lookupID requires a dictionary')
+
+        # Check data for required fields
+        missing = []
+        required = ['GameID', 'TeamID', 'PlayerID']
+        for term in required:
+            if term not in data:
+                missing.append(term)
+        if (len(missing) > 0):
+            raise RuntimeError(
+                'Submitted data is missing the following fields: ' +
+                str(missing)
+            )
+
+        sql = ('SELECT ID '
+               'FROM tbl_gameminutes '
+               'WHERE GameID = %s '
+               '  AND TeamID = %s '
+               '  AND PlayerID = %s')
+        rs = self.db.query(sql, (
+            data['GameID'],
+            data['TeamID'],
+            data['PlayerID']
+        ))
+        if (rs.with_rows):
+            records = rs.fetchall()
+        appearances = []
+        for item in records:
+            appearances.append(item[0])
+
+        return appearances
+
     def saveDict(self, data, log):
         # Verify that data is a dictionary
         if not (isinstance(data, dict)):
