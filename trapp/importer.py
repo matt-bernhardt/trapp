@@ -315,20 +315,28 @@ class ImporterLineups(Importer):
             # Lookup player ID
             playerID = 0
             p = Player()
+            p.connectDB()
             needle = {
                 'PlayerName': outer.strip(),
             }
-            # playerID = p.lookupID(needle, self.log)
-            # store outer
-            result.append({
-                'PlayerID': playerID,
-                'PlayerName': outer.strip(),
-                'TimeOn': timeon,
-                'TimeOff': timeoff,
-                'Ejected': False,
-                'GameID': gameID,
-                'TeamID': teamID
-            })
+            playerID = p.lookupIDbyName(needle, self.log)
+            self.log.message(str(playerID))
+            if (len(playerID) == 1):
+                playerID = playerID[0]
+                # store outer
+                result.append({
+                    'PlayerID': playerID,
+                    'PlayerName': outer.strip(),
+                    'TimeOn': timeon,
+                    'TimeOff': timeoff,
+                    'Ejected': False,
+                    'GameID': gameID,
+                    'TeamID': teamID
+                })
+            else:
+                self.skipped += 1
+                self.log.message('_' + str(outer.strip()) + '_ returned ' +
+                                 str(len(playerID)) + ' matches')
 
         # parse last value
         timeon = self.parsePlayerTimeOn(starter)
@@ -336,20 +344,28 @@ class ImporterLineups(Importer):
         # Lookup player ID
         playerID = 0
         p = Player()
+        p.connectDB()
         needle = {
             'PlayerName': starter.strip(),
         }
-        # playerID = p.lookupID(needle, self.log)
-        # store last value
-        result.append({
-            'PlayerID': playerID,
-            'PlayerName': starter.strip(),
-            'TimeOn': timeon,
-            'TimeOff': timeoff,
-            'Ejected': False,
-            'GameID': gameID,
-            'TeamID': teamID
-        })
+        playerID = p.lookupIDbyName(needle, self.log)
+        self.log.message(str(playerID))
+        if (len(playerID) == 1):
+            playerID = playerID[0]
+            # store last value
+            result.append({
+                'PlayerID': playerID,
+                'PlayerName': starter.strip(),
+                'TimeOn': timeon,
+                'TimeOff': timeoff,
+                'Ejected': False,
+                'GameID': gameID,
+                'TeamID': teamID
+            })
+        else:
+            self.skipped += 1
+            self.log.message('_' + str(starter.strip()) + '_ returned ' +
+                             str(len(playerID)) + ' matches')
 
         # Transfer timeon values to previous player's timeoff
         result = self.adjustTimeOff(result, timeoff)
