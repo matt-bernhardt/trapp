@@ -227,6 +227,9 @@ class ImporterLineups(Importer):
             self.skipped += 1
             return False
             # If that's the case, then we need to abort processing this game
+        else:
+            # Need to convert gameID from a list of 1 number to an integer
+            game = game[0]
 
         # If we make it to this point, then procesing can continue
 
