@@ -333,13 +333,14 @@ class ImporterLineups(Importer):
             timeon = self.parsePlayerTimeOn(outer)
             outer = self.parsePlayerRemoveTime(outer)
             # Lookup player ID
-            playerID = 0
-            p = Player()
-            p.connectDB()
-            needle = {
-                'PlayerName': outer.strip(),
-            }
-            playerID = p.lookupIDbyName(needle, self.log)
+            playerID = [0]
+            if (outer.strip() != 'sent off' and outer.strip() != 'ejected'):
+                p = Player()
+                p.connectDB()
+                needle = {
+                    'PlayerName': outer.strip(),
+                }
+                playerID = p.lookupIDbyName(needle, self.log)
             self.log.message(str(playerID))
             if (len(playerID) == 1):
                 playerID = playerID[0]
@@ -362,13 +363,14 @@ class ImporterLineups(Importer):
         timeon = self.parsePlayerTimeOn(starter)
         starter = self.parsePlayerRemoveTime(starter)
         # Lookup player ID
-        playerID = 0
-        p = Player()
-        p.connectDB()
-        needle = {
-            'PlayerName': starter.strip(),
-        }
-        playerID = p.lookupIDbyName(needle, self.log)
+        playerID = [0]
+        if (starter.strip() != 'sent off' and starter.strip() != 'ejected'):
+            p = Player()
+            p.connectDB()
+            needle = {
+                'PlayerName': starter.strip(),
+            }
+            playerID = p.lookupIDbyName(needle, self.log)
         self.log.message(str(playerID))
         if (len(playerID) == 1):
             playerID = playerID[0]
