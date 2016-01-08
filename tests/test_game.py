@@ -58,6 +58,7 @@ def test_game_saveDict():
         'HScore': 0,
         'ATeamID': 12,
         'AScore': 0,
+        'VenueID': 1,
     }
     assert g.saveDict(sample, log) is True
     assert g.db.warnings() is None

@@ -70,14 +70,28 @@ class Game():
         if ('MatchID' in newData.keys()):
             # Update
             log.message('MatchID provided')
-            sql = ('UPDATE tbl_games ')
+            sql = ('UPDATE tbl_games SET '
+                   'MatchTime = %s, '
+                   'MatchTypeID = %s, '
+                   'HTeamID = %s, '
+                   'ATeamID = %s, '
+                   'VenueID = %s '
+                   'WHERE ID = %s')
+            rs = self.db.query(sql, (
+                self.db.convertDate(newData['MatchTime']),
+                newData['MatchTypeID'],
+                newData['HTeamID'],
+                newData['ATeamID'],
+                newData['VenueID'],
+                newData['MatchID'],
+            ))
         else:
             # Insert
             log.message('No MatchID')
             sql = ('INSERT INTO tbl_games '
-                   '(MatchTime, MatchTypeID, HTeamID, ATeamID)'
+                   '(MatchTime, MatchTypeID, HTeamID, ATeamID, VenueID)'
                    'VALUES '
-                   '(%s, %s, %s, %s)')
+                   '(%s, %s, %s, %s, %s)')
             rs = self.db.query(sql, (
                 self.db.convertDate(newData['MatchTime']),
                 newData['MatchTypeID'],
@@ -86,7 +100,7 @@ class Game():
                 newData['ATeamID'],
                 #    newData['AScore'],
                 #    newData['Duration'],
-                #    newData['VenueID'],
+                newData['VenueID'],
                 #    newData['Attendance'],
                 #    newData['MeanTemperature'],
             ))
