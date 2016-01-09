@@ -15,5 +15,6 @@ before_script:
   - sh -c "mysql < tests/fixtures/tbl_games.sql"
   - sh -c "mysql < tests/fixtures/tbl_players.sql"
   - sh -c "mysql < tests/fixtures/tbl_teams.sql"
+  - sh -c "mysql < tests/fixtures/test_data.sql"
 script:
   - tox -e $TOX_ENV
