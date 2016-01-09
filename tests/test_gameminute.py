@@ -28,6 +28,47 @@ def test_gameminute_disconnect():
     assert hasattr(gm, 'db') is False
 
 
+def test_gameminute_checkData():
+    gm = GameMinute()
+    required = ['GameID', 'TeamID', 'PlayerID']
+
+    # This should raise a format error
+    with pytest.raises(RuntimeError) as excinfo:
+        needle = 'Foo'
+        gm.checkData(needle, required)
+    assert 'lookupID requires a dictionary' in str(excinfo.value)
+
+    # This should raise a field error
+    with pytest.raises(RuntimeError) as excinfo:
+        needle = {
+            'Foo': 'Bar'
+        }
+        gm.checkData(needle, required)
+    assert 'Submitted data is missing the following fields' in str(excinfo.value)
+
+
+def test_gameminute_lookupID():
+    log = Log('test.log')
+    gm = GameMinute()
+    gm.connectDB()
+
+    needle = {
+        'GameID': 1,
+        'TeamID': 2,
+        'PlayerID': 3
+    }
+    result = gm.lookupID(needle, log)
+    assert len(result) == 1
+
+    needle = {
+        'GameID': 0,
+        'TeamID': 0,
+        'PlayerID': 0
+    }
+    result = gm.lookupID(needle, log)
+    assert len(result) == 0
+
+
 def test_gameminute_saveDict():
     log = Log('test.log')
     gm = GameMinute()
