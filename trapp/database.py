@@ -13,21 +13,12 @@ class Database():
         self.cursor = ''
 
     def connect(self):
-        try:
-            dbuser = os.environ['trapp.dbuser']
-            dbpwd = os.environ['trapp.dbpwd']
-            dbhost = os.environ['trapp.dbhost']
-            dbschema = os.environ['trapp.dbschema']
-        except KeyError:
-            dbuser = connection.u
-            dbpwd = connection.p
-            dbhost = connection.h
-            dbschema = connection.d
+        conn = self.loadConnection()
         self.cnx = connector.connect(
-            user=dbuser,
-            password=dbpwd,
-            host=dbhost,
-            database=dbschema
+            user=conn['dbuser'],
+            password=conn['dbpwd'],
+            host=conn['dbhost'],
+            database=conn['dbschema']
         )
         self.cursor = self.cnx.cursor(buffered=True)
 
@@ -38,6 +29,14 @@ class Database():
     def convertDate(self, date):
         # This converts a python date object into a MySQL-format date string
         return time.strftime('%Y-%m-%d %H:%M:%S', date)
+
+    def loadConnection(self):
+        conn = {}
+        conn['dbuser'] = os.getenv('TRAPP_DBUSER', connection.u)
+        conn['dbpwd'] = os.getenv('TRAPP_DBPWD', connection.p)
+        conn['dbhost'] = os.getenv('TRAPP_DBHOST', connection.h)
+        conn['dbschema'] = os.getenv('TRAPP_DBSCHEMA', connection.d)
+        return conn
 
     def query(self, query, params):
         self.cursor.execute(query, params)
