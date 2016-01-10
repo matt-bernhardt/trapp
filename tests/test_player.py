@@ -103,9 +103,10 @@ def test_player_lookupIDbyName():
     assert p.lookupIDbyName(needle, log) == []
 
     needle = {
-        'PlayerName': 'Delete Me',
+        'PlayerName': 'Sample Player',
     }
-    assert len(p.lookupIDbyName(needle, log)) > 1
+    assert len(p.lookupIDbyName(needle, log)) == 1
+
 
 def test_player_merge():
     p = Player()

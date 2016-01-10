@@ -37,6 +37,11 @@ def test_database_query():
         needleID = records[0][0]
     assert needleID > 0
     assert d.warnings() is None
+    # Deletes
+    sql = ('DELETE FROM tbl_players '
+           'WHERE FirstName = %s AND LastName = %s')
+    rs = d.query(sql, params)
+    assert d.warnings() is None
     d.disconnect()
 
 
