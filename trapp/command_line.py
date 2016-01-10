@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-
 import argparse
+from trapp.database import Database
 from trapp.log import Log
 from trapp.importer import (
     Importer,
@@ -9,6 +9,25 @@ from trapp.importer import (
     ImporterGames,
     ImporterLineups
 )
+
+
+def checkDB():
+    print('Checking database connection\n')
+    # Read and output the connection details
+    db = Database()
+    connection = db.loadConnection()
+    print('Current credentials:')
+    print('dbuser:   ' + str(connection['dbuser']))
+    print('dbpwd:    ' + str(connection['dbpwd']))
+    print('dbhost:   ' + str(connection['dbhost']))
+    print('dbschema: ' + str(connection['dbschema']))
+    print('')
+    # Try to establish the connection
+    print('Testing connection:')
+    db.connect()
+    print(str(db.cnx))
+    print(str(db.cursor))
+    print('Warnings: ' + str(db.warnings()))
 
 
 def importGames(infile):
@@ -121,7 +140,8 @@ def main():
     )
     parser.add_argument(
         'verb',
-        choices=['import-games',
+        choices=['check-db',
+                 'import-games',
                  'import-players',
                  'import-lineups',
                  'compile',
@@ -137,7 +157,10 @@ def main():
     # Need to add an optional filename argument
     args = parser.parse_args()
 
-    if (args.verb == 'import-games'):
+    if (args.verb == 'check-db'):
+        checkDB()
+
+    elif (args.verb == 'import-games'):
         importGames(args.infile)
 
     elif (args.verb == 'import-players'):
