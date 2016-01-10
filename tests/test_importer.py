@@ -137,6 +137,17 @@ def test_importer_parsePlayerRemoveTime(excel, lineup):
     assert player == 'Sample Player'
 
 
+def test_importer_parsePlayerSplit(excel):
+    log = Log('test.log')
+    importer = ImporterLineups(excel, log)
+    string = 'Player Name'
+    assert importer.parsePlayerSplit(string) == ['Player Name']
+    string = 'Player Name (Substitute 63)'
+    assert importer.parsePlayerSplit(string) == ['Player Name', 'Substitute 63']
+    string = 'Sample Player (First Substitution 50 (Second Substitution 76 (Third Substitution 84 (sent off 88))))'
+    assert importer.parsePlayerSplit(string) == ['Sample Player', 'First Substitution 50', 'Second Substitution 76', 'Third Substitution 84', 'sent off 88']
+
+
 def test_importer_setLog(excel):
     log = Log('test.log')
     log2 = Log('test2.log')

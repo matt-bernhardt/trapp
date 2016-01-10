@@ -200,7 +200,6 @@ class ImporterLineups(Importer):
             # We have more than one record of this player/team/game.
             # This is a problem.
             self.errored += 1
-            # TODO: need to skip now to next for iteration
         elif (len(appearanceID) == 1):
             # We already have a record of this player/team/game.
             # We add that appearanceID, to ensure an update operation.
@@ -239,21 +238,15 @@ class ImporterLineups(Importer):
         game = g.lookupID(needle, self.log)
 
         self.log.message('Found games: ' + str(game))
-        if (len(game) > 1):
-            self.log.message('Multiple games found')
-            self.skipped += 1
-            return False
-            # If that's the case, then we need to abort processing this game
-        elif (len(game) == 0):
-            self.log.message('No matching games found')
-            self.skipped += 1
-            return False
-            # If that's the case, then we need to abort processing this game
-        else:
-            # Need to convert gameID from a list of 1 number to an integer
-            game = game[0]
 
-        # If we make it to this point, then procesing can continue
+        if (len(game) != 1):
+            self.log.message('Found wrong number of games: ' + str(len(game)))
+            self.skipped += 1
+            # If we didn't find one gameID, then we abort processing this game
+            return False
+
+        # Need to convert gameID from a list of 1 number to an integer
+        game = game[0]
 
         # Parse lineup string
         self.parseLineup(record['Lineup'], game, teamID)
@@ -325,32 +318,31 @@ class ImporterLineups(Importer):
         result = []
         timeoff = 90
 
-        while (starter.find('(') > 0):
-            # calculate boundaries
-            begin = starter.find('(')
-            end = starter.rfind(')')
-            # split into outer and starter
-            outer = starter[:begin - 1]
-            starter = starter[begin + 1:end]
-            # split time from outer
-            timeon = self.parsePlayerTimeOn(outer)
-            outer = self.parsePlayerRemoveTime(outer)
-            # Lookup player ID
+        # Split the player string into a list
+        result = self.parsePlayerSplit(starter)
+
+        augmented = []
+        # parse each member of the list
+        for string in result:
+            # Split time from player name
+            timeon = self.parsePlayerTimeOn(string)
+            player = self.parsePlayerRemoveTime(string).strip()
+
+            # Look up playerID
             playerID = [0]
-            if (outer.strip() != 'sent off' and outer.strip() != 'ejected'):
+            if (player != 'sent off' and player != 'ejected'):
                 p = Player()
                 p.connectDB()
                 needle = {
-                    'PlayerName': outer.strip(),
+                    'PlayerName': player,
                 }
                 playerID = p.lookupIDbyName(needle, self.log)
-            self.log.message(str(playerID))
+
             if (len(playerID) == 1):
                 playerID = playerID[0]
-                # store outer
-                result.append({
+                augmented.append({
                     'PlayerID': playerID,
-                    'PlayerName': outer.strip(),
+                    'PlayerName': player,
                     'TimeOn': timeon,
                     'TimeOff': timeoff,
                     'Ejected': False,
@@ -359,41 +351,33 @@ class ImporterLineups(Importer):
                 })
             else:
                 self.skipped += 1
-                self.log.message('_' + str(outer.strip()) + '_ returned ' +
+                self.log.message('_' + str(player) + '_ returned ' +
                                  str(len(playerID)) + ' matches')
 
-        # parse last value
-        timeon = self.parsePlayerTimeOn(starter)
-        starter = self.parsePlayerRemoveTime(starter)
-        # Lookup player ID
-        playerID = [0]
-        if (starter.strip() != 'sent off' and starter.strip() != 'ejected'):
-            p = Player()
-            p.connectDB()
-            needle = {
-                'PlayerName': starter.strip(),
-            }
-            playerID = p.lookupIDbyName(needle, self.log)
-        self.log.message(str(playerID))
-        if (len(playerID) == 1):
-            playerID = playerID[0]
-            # store last value
-            result.append({
-                'PlayerID': playerID,
-                'PlayerName': starter.strip(),
-                'TimeOn': timeon,
-                'TimeOff': timeoff,
-                'Ejected': False,
-                'GameID': gameID,
-                'TeamID': teamID
-            })
-        else:
-            self.skipped += 1
-            self.log.message('_' + str(starter.strip()) + '_ returned ' +
-                             str(len(playerID)) + ' matches')
-
         # Transfer timeon values to previous player's timeoff
-        result = self.adjustTimeOff(result, timeoff)
+        result = self.adjustTimeOff(augmented, timeoff)
+
+        return result
+
+    def parsePlayerSplit(self, inputString):
+        # This takes in a string and splits it into a list. For example:
+        # "Player Name" -> ["Player Name"]
+        # "Player Name (Substitute 63)" -> ["Player Name", "Substitute 65"]
+        # ... and so fort
+        result = []
+
+        while (inputString.find('(') > 0):
+            # Find boundaries to split
+            begin = inputString.find('(')
+            end = inputString.rfind(')')
+            # Perform the split
+            outer = inputString[:begin - 1]
+            inputString = inputString[begin + 1:end]
+            # Append results
+            result.append(outer)
+
+        # Do stuff
+        result.append(inputString)
 
         return result
 
