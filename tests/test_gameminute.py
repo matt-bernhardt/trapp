@@ -94,7 +94,7 @@ def test_gameminute_saveDict():
 
     # Updates
     data = {
-        'ID': 1,
+        'ID': 2,
         'GameID': 2,
         'TeamID': 2,
         'PlayerID': 2,
