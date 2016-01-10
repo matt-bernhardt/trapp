@@ -200,7 +200,6 @@ class ImporterLineups(Importer):
             # We have more than one record of this player/team/game.
             # This is a problem.
             self.errored += 1
-            # TODO: need to skip now to next for iteration
         elif (len(appearanceID) == 1):
             # We already have a record of this player/team/game.
             # We add that appearanceID, to ensure an update operation.
