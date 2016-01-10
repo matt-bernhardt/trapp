@@ -102,7 +102,7 @@ def test_importer_parsePlayer(excel, lineup):
     player = 'Sample Player'
     result = importer.parsePlayer(player, game, team)
     assert len(result) == 1
-    assert result == [{'playername': 'Sample Player', 'timeon': 0, 'timeoff': 90, 'ejected': False, 'matchid': 1, 'teamid': 1}]
+    assert result == [{'PlayerID': 15, 'PlayerName': 'Sample Player', 'TimeOn': 0, 'TimeOff': 90, 'Ejected': False, 'GameID': 1, 'TeamID': 1}]
     player = "Sample Player (Substitution 50')"
     result = importer.parsePlayer(player, game, team)
     assert len(result) == 2
@@ -115,10 +115,10 @@ def test_importer_parsePlayer(excel, lineup):
     player = 'Sample Player (First Substitution 50 (Second Substitution 76 (Third Substitution 84 (sent off 88))))'
     result = importer.parsePlayer(player, game, team)
     assert len(result) == 4
-    assert result[3]['playername'] == 'Third Substitution'
-    assert result[3]['ejected'] is True
-    assert result[3]['timeon'] == 84
-    assert result[3]['timeoff'] == 88
+    assert result[3]['PlayerName'] == 'Third Substitution'
+    assert result[3]['Ejected'] is True
+    assert result[3]['TimeOn'] == 84
+    assert result[3]['TimeOff'] == 88
 
     # starter = 'Sample Player'
     # gameID = 1
@@ -135,6 +135,17 @@ def test_importer_parsePlayerRemoveTime(excel, lineup):
     player = 'Sample Player 56'
     player = importer.parsePlayerRemoveTime(player)
     assert player == 'Sample Player'
+
+
+def test_importer_parsePlayerSplit(excel):
+    log = Log('test.log')
+    importer = ImporterLineups(excel, log)
+    string = 'Player Name'
+    assert importer.parsePlayerSplit(string) == ['Player Name']
+    string = 'Player Name (Substitute 63)'
+    assert importer.parsePlayerSplit(string) == ['Player Name', 'Substitute 63']
+    string = 'Sample Player (First Substitution 50 (Second Substitution 76 (Third Substitution 84 (sent off 88))))'
+    assert importer.parsePlayerSplit(string) == ['Sample Player', 'First Substitution 50', 'Second Substitution 76', 'Third Substitution 84', 'sent off 88']
 
 
 def test_importer_setLog(excel):

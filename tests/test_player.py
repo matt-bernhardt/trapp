@@ -76,6 +76,37 @@ def test_player_lookupID():
     # Need a test of successful lookups
 
 
+def test_player_lookupIDbyName():
+    # Setup
+    log = Log('test.log')
+    p = Player()
+    p.connectDB()
+
+    # Format error
+    with pytest.raises(RuntimeError) as excinfo:
+        needle = 'Wil'
+        p.lookupIDbyName(needle, log)
+    assert 'lookupIDbyName requires a dictionary' in str(excinfo.value)
+
+    # Missing fields error
+    with pytest.raises(RuntimeError) as excinfo:
+        needle = {
+            'FirstName': 'Wil',
+            'LastName': 'Trapp'
+        }
+        p.lookupIDbyName(needle, log)
+    assert 'Submitted data is missing the following fields' in str(excinfo.value)
+
+    needle = {
+        'PlayerName': 'asdf',
+    }
+    assert p.lookupIDbyName(needle, log) == []
+
+    needle = {
+        'PlayerName': 'Delete Me',
+    }
+    assert len(p.lookupIDbyName(needle, log)) > 1
+
 def test_player_merge():
     p = Player()
     assert p.merge(1, 2) is False
