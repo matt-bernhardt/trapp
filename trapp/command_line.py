@@ -22,7 +22,8 @@ def importGames(infile):
         'MatchTime',
         'MatchTypeID',
         'HTeamID',
-        'ATeamID'
+        'ATeamID',
+        'VenueID'
     ])
     importer.checkFields(requiredColumns)
 

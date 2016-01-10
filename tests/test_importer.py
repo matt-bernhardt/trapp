@@ -163,7 +163,8 @@ def test_importerGames(excel_games):
         'MatchTime',
         'MatchTypeID',
         'HTeamID',
-        'ATeamID'
+        'ATeamID',
+        'VenueID'
     ])
     assert importer.checkFields(requiredColumns) is True
     assert importer.doImport() is True
