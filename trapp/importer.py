@@ -173,6 +173,87 @@ class ImporterGames(Importer):
         return True
 
 
+class ImporterGoals(Importer):
+
+    def correctValues(self):
+        # 1. The goalscorers string needs to be expanded
+        # 2. The game date needs to be converted
+        self.log.message('Correcting values...')
+        for record in self.records:
+            record['Date'] = self.source.recoverDate(record['Date'])
+            record['Events'] = self.parseGoals(record['Goals'])
+            self.log.message(str(record))
+        return True
+
+    def importRecord(self, record):
+        self.log.message('Importing ' + str(record))
+
+        # Init
+        self.events = []
+
+        # event records need to be assembled
+
+        # GameID and TeamID are set for all events in this string
+        # GameID
+        # TeamID
+
+        # At this point, we need to parse the event string for multiple event
+        # sub-records
+
+        # MinuteID
+        # Event
+
+        # PlayerID
+        # Lookup player
+
+        # Notes (penalty?)
+        # If this is a penalty (denoted by assist line), then store a note
+
+        # iterate over events, saving (upsert) into tbl_gameevents
+        return True
+
+    def parseEventTime(self, inputString):
+        candidate = inputString[inputString.rfind(' '):].strip()
+        try:
+            time = self.parseMinute(candidate)
+        except ValueError:
+            time = 0
+
+        return time
+
+    def parseOneGoal(self, inputString):
+        # This takes in a string describing a single goal.
+        # It returns a list of dictionaries, one for the goal and then up to
+        # two for the assists.
+
+        # Need to check format. Expects:
+        # Lastname (Assist, Assist) Minute
+        # If no assist, then:
+        # Lastname (unassisted) Minute
+        # If a penalty, then:
+        # Lastname (penalty) Minute
+        records = []
+
+        minute = self.parseEventTime(inputString)
+        records.append({'event': inputString, 'minute': minute, 'eventID': 1})
+
+        return records
+
+    def parseGoals(self, inputString):
+        # This takes in a string listing all goals scored in a game.
+        # It returns a list of dictionaries, one per event. Please note that
+        # this should include assists.
+        self.log.message('parsing goal string: ' + str(inputString))
+        events = []
+        goals = inputString.split(';')
+        for goal in goals:
+            records = self.parseOneGoal(goal)
+            for item in records:
+                events.append(item)
+        self.log.message(str(events))
+        return events
+
+
 class ImporterLineups(Importer):
 
     def adjustTimeOff(self, result, lastOff):

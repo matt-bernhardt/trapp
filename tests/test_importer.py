@@ -2,7 +2,13 @@
 from __future__ import absolute_import
 import pytest
 from trapp.log import Log
-from trapp.importer import Importer, ImporterGames, ImporterPlayers, ImporterLineups
+from trapp.importer import (
+    Importer,
+    ImporterGames,
+    ImporterGoals,
+    ImporterPlayers,
+    ImporterLineups
+)
 
 
 def test_importer_init(excel):
@@ -47,6 +53,21 @@ def test_importer_checkFields(excel):
     # log = Log('test.log')
     # importer = Importer(excel, log)
     # assert importer.doImport() is True
+
+
+def test_importer_parseGoals(excel):
+    log = Log('test_parseGoals.log')
+    importer = ImporterGoals(excel, log)
+    goals = ""
+    # assert importer.parseGoals(goals) == [{}]
+    goals = "Player (unassisted) 78"
+    assert importer.parseGoals(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1}]
+    goals = "Player (Potter) 78"
+    assert importer.parseGoals(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1}, {'playername': 'Potter', 'minute': 78, 'eventID': 2}]
+    goals = "Player (Potter, Rains) 78"
+    assert importer.parseGoals(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1}, {'playername': 'Potter', 'minute': 78, 'eventID': 2}, {'playername': 'Potter', 'minute': 78, 'eventID': 3}]
+    goals = "Player (unassisted) 78; Player (unassisted) 89"
+    assert importer.parseGoals(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1}, {'playername': 'Player', 'minute': 89, 'eventID': 1}]
 
 
 def test_importer_parseMinuteDoesNothing(excel):
