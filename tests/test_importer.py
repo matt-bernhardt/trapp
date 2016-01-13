@@ -55,19 +55,21 @@ def test_importer_checkFields(excel):
     # assert importer.doImport() is True
 
 
-def test_importer_parseGoals(excel):
-    log = Log('test_parseGoals.log')
+def test_importer_parseOneGoal(excel):
+    log = Log('test_parseOneGoal.log')
     importer = ImporterGoals(excel, log)
     goals = ""
     # assert importer.parseGoals(goals) == [{}]
     goals = "Player (unassisted) 78"
-    assert importer.parseGoals(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1}]
-    goals = "Player (Potter) 78"
-    assert importer.parseGoals(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1}, {'playername': 'Potter', 'minute': 78, 'eventID': 2}]
-    goals = "Player (Potter, Rains) 78"
-    assert importer.parseGoals(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1}, {'playername': 'Potter', 'minute': 78, 'eventID': 2}, {'playername': 'Potter', 'minute': 78, 'eventID': 3}]
-    goals = "Player (unassisted) 78; Player (unassisted) 89"
-    assert importer.parseGoals(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1}, {'playername': 'Player', 'minute': 89, 'eventID': 1}]
+    assert importer.parseOneGoal(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1, 'notes': ''}]
+    goals = "Player (penalty) 78"
+    assert importer.parseOneGoal(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1, 'notes': 'penalty kick'}]
+    # goals = "Player (Potter) 78"
+    # assert importer.parseOneGoal(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1}, {'playername': 'Potter', 'minute': 78, 'eventID': 2}]
+    # goals = "Player (Potter, Rains) 78"
+    # assert importer.parseOneGoal(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1}, {'playername': 'Potter', 'minute': 78, 'eventID': 2}, {'playername': 'Potter', 'minute': 78, 'eventID': 3}]
+    # goals = "Player (unassisted)"
+    # assert importer.parseOneGoal(goals) == []
 
 
 def test_importer_parseMinuteDoesNothing(excel):
@@ -175,6 +177,15 @@ def test_importer_setLog(excel):
     importer = Importer(excel, log)
     importer.setLog(log2)
     assert importer.log.name == 'test2.log'
+
+
+def test_importer_splitGoals(excel):
+    log = Log('test.log')
+    importer = ImporterGoals(excel, log)
+    goals = "Player (Potter, Rains) 78"
+    assert importer.splitGoals(goals) == ['Player (Potter, Rains) 78']
+    goals = "Player (unassisted) 78; Player (unassisted) 89"
+    assert importer.splitGoals(goals) == ['Player (unassisted) 78', 'Player (unassisted) 89']
 
 
 def test_importerGames(excel_games):

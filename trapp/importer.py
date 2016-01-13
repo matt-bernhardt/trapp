@@ -176,13 +176,24 @@ class ImporterGames(Importer):
 class ImporterGoals(Importer):
 
     def correctValues(self):
-        # 1. The goalscorers string needs to be expanded
-        # 2. The game date needs to be converted
+        # This takes in all rows of the imported spreadsheet, and performs
+        # any needed repairs / adjustments
         self.log.message('Correcting values...')
         for record in self.records:
+
+            # 1. The goalscorers string needs to be expanded
+            record['Events'] = self.splitGoals(record['Goals'])
+            # record['Events'] is now a list of strings. We now need to parse
+            # each individual string into a dictionary.
+            for item in record['Events']:
+                item = self.parseOneGoal(item)
+
+            # 2. The game date needs to be converted
             record['Date'] = self.source.recoverDate(record['Date'])
-            record['Events'] = self.parseGoals(record['Goals'])
+
+            # Log the corrected record for later inspection
             self.log.message(str(record))
+
         return True
 
     def importRecord(self, record):
@@ -232,24 +243,48 @@ class ImporterGoals(Importer):
         # Lastname (unassisted) Minute
         # If a penalty, then:
         # Lastname (penalty) Minute
-        records = []
 
+        records = []
+        begin = inputString.find('(')
+        end = inputString.rfind(')')
+
+        # If there's no parenthesis, then increment skipped and head back
+        if not (inputString.find('(')):
+            self.skipped += 1
+            return records
+
+        # Isolate player name and substitute
+        playerName = inputString[:begin - 1].strip()
+
+        # Isolate substitute name
+        assistName = inputString[begin + 1:end].strip()
+
+        notes = ''
+        if assistName == 'penalty':
+            notes = 'penalty kick'
+
+        # Isolate minute
         minute = self.parseEventTime(inputString)
-        records.append({'event': inputString, 'minute': minute, 'eventID': 1})
+
+        records.append({
+            'playername': playerName,
+            'minute': minute,
+            'eventID': 1,
+            'notes': notes
+        })
+
+        self.log.message(str(records))
 
         return records
 
-    def parseGoals(self, inputString):
-        # This takes in a string listing all goals scored in a game.
-        # It returns a list of dictionaries, one per event. Please note that
-        # this should include assists.
+    def splitGoals(self, inputString):
+        # This takes ina string listing all goals scored in a game.
+        # It returns a list, with each goal separated.
+        # Downstream steps will perform additional parsing.
         self.log.message('parsing goal string: ' + str(inputString))
         events = []
-        goals = inputString.split(';')
-        for goal in goals:
-            records = self.parseOneGoal(goal)
-            for item in records:
-                events.append(item)
+        for goal in inputString.split(';'):
+            events.append(goal.strip())
         self.log.message(str(events))
         return events
 
