@@ -102,6 +102,18 @@ class Importer():
             print('Found ' + str(found) + ' games already exist')
         return True
 
+    def lookupTeamID(self, teamname):
+        team = Team()
+        team.connectDB()
+        teamID = team.lookupID({'teamname': teamname}, self.log)
+        if (len(teamID) > 1):
+            raise RuntimeError('Ambiguous team name: ' + str(teamname))
+        elif (len(teamID) == 0):
+            raise RuntimeError('Team not found: ' + str(teamname))
+        # At this point we know teamID is a list of length 1, so we return
+        # the first value only
+        return teamID[0]
+
     def parseMinute(self, minute):
         # This reads in a string representing a minute denotation, and
         # adjusts it for format:
@@ -376,18 +388,6 @@ class ImporterLineups(Importer):
         [self.importPlayer(player) for player in self.players]
 
         return True
-
-    def lookupTeamID(self, teamname):
-        team = Team()
-        team.connectDB()
-        teamID = team.lookupID({'teamname': teamname}, self.log)
-        if (len(teamID) > 1):
-            raise RuntimeError('Ambiguous team name: ' + str(teamname))
-        elif (len(teamID) == 0):
-            raise RuntimeError('Team not found: ' + str(teamname))
-        # At this point we know teamID is a list of length 1, so we return
-        # the first value only
-        return teamID[0]
 
     def parseLineup(self, lineup, game, teamID):
         # Parses a long string of starters and substitutes, populating
