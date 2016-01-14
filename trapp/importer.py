@@ -190,18 +190,64 @@ class ImporterGoals(Importer):
     def correctValues(self):
         # This takes in all rows of the imported spreadsheet, and performs
         # any needed repairs / adjustments
+
+        # We can re-use the same Game object inside the loop
+        g = Game()
+        g.connectDB()
+
         self.log.message('Correcting values...')
         for record in self.records:
 
-            # 1. The goalscorers string needs to be expanded
+            # Log the record when we begin
+            self.log.message(str(record))
+
+            # 1. TeamID lookup
+            teamID = self.lookupTeamID(record['Team'])
+
+            # 2. OpponentID lookup
+            opponentID = self.lookupTeamID(record['Opponent'])
+
+            # 3. Home or Away
+            if (record['H/A'] == 'H'):
+                homeID = teamID
+                awayID = opponentID
+            elif (record['H/A'] == 'A'):
+                homeID = opponentID
+                awayID = teamID
+
+            # Use home/away ID and game date to look up the game ID
+            needle = {
+                'MatchTime': record['Date'],
+                'HTeamID': homeID,
+                'ATeamID': awayID,
+            }
+            game = g.lookupID(needle, self.log)
+
+            self.log.message('Found games: ' + str(game))
+
+            if (len(game) != 1):
+                self.log.message('Found wrong number of games: ' + str(len(game)))
+                self.skipped += 1
+                # If we didn't find one gameID, then we abort processing this game
+                return False
+
+            # Need to convert gameID from a list of 1 number to an integer
+            game = game[0]
+
+            # 4. The game date needs to be converted
+            record['Date'] = self.source.recoverDate(record['Date'])
+
+            # 5. The goalscorers string needs to be expanded
             record['Events'] = self.splitGoals(record['Goals'])
+            record['NewEvents'] = []
             # record['Events'] is now a list of strings. We now need to parse
             # each individual string into a dictionary.
+            # TODO: Could we re-use record['Events'] instead of building a
+            #       new record['NewEvents']?
             for item in record['Events']:
-                item = self.parseOneGoal(item)
-
-            # 2. The game date needs to be converted
-            record['Date'] = self.source.recoverDate(record['Date'])
+                item = self.parseOneGoal(item, game, teamID)
+                for subitem in item:
+                    record['NewEvents'].append(subitem)
 
             # Log the corrected record for later inspection
             self.log.message(str(record))
@@ -235,6 +281,42 @@ class ImporterGoals(Importer):
         # iterate over events, saving (upsert) into tbl_gameevents
         return True
 
+    def parseAssists(self, recordList, minute, assists, gameID, teamID):
+        # This adds records to a list according to the assists in a string
+        # describing a goal.
+
+        # TODO: check argument formats / data types
+        # TODO: deal with teamID
+
+        # Is there a comma in the assist string?
+        self.log.message('Parsing assists in _' + str(assists) + '_')
+
+        # Split into a list, test its length
+        test = assists.split(',')
+        if (len(test) > 2):
+            self.skipped += 1
+            self.log.message('Found too many assists: '
+                             + str(test) + ' has ' + str(len(test)))
+            return recordList
+
+        # Parse each element in the list
+        eventID = 2
+        for item in test:
+            item = item.strip()
+            self.log.message(str(item))
+            recordList.append({
+                'GameID': gameID,
+                'TeamID': teamID,
+                'MinuteID': minute,
+                'Event': eventID,
+                'playername': item,
+                'Notes': ''
+            })
+            eventID += 1
+
+        self.log.message('Finished: \n' + str(recordList))
+        return recordList
+
     def parseEventTime(self, inputString):
         candidate = inputString[inputString.rfind(' '):].strip()
         try:
@@ -244,7 +326,7 @@ class ImporterGoals(Importer):
 
         return time
 
-    def parseOneGoal(self, inputString):
+    def parseOneGoal(self, inputString, gameID, teamID):
         # This takes in a string describing a single goal.
         # It returns a list of dictionaries, one for the goal and then up to
         # two for the assists.
@@ -255,6 +337,9 @@ class ImporterGoals(Importer):
         # Lastname (unassisted) Minute
         # If a penalty, then:
         # Lastname (penalty) Minute
+
+        # TODO: check for own goals
+        # TODO: check data format of arguments
 
         records = []
         begin = inputString.find('(')
@@ -279,11 +364,16 @@ class ImporterGoals(Importer):
         minute = self.parseEventTime(inputString)
 
         records.append({
+            'GameID': gameID,
+            'TeamID': teamID,
+            'MinuteID': minute,
+            'Event': 1,
             'playername': playerName,
-            'minute': minute,
-            'eventID': 1,
-            'notes': notes
+            'Notes': notes
         })
+
+        if (assistName != 'penalty' and assistName != 'unassisted'):
+            records = self.parseAssists(records, minute, assistName, gameID, teamID)
 
         self.log.message(str(records))
 

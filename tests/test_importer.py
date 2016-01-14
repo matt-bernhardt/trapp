@@ -55,19 +55,43 @@ def test_importer_checkFields(excel):
     # assert importer.doImport() is True
 
 
-def test_importer_parseOneGoal(excel):
-    log = Log('test_parseOneGoal.log')
+def test_importer_parseAssists(excel):
+    log = Log('test_parseAssists.log')
     importer = ImporterGoals(excel, log)
+    game = 1
+    team = 1
+    # Test single assist
+    record = []
+    minute = 78
+    assists = 'Player'
+    assert importer.parseAssists(record, minute, assists, game, team) == [{'GameID': 1, 'TeamID': 1, 'playername': 'Player', 'MinuteID': 78, 'Event': 2, 'Notes': ''}]
+    # Test two assists
+    record = []
+    assists = 'Player,Potter'
+    assert importer.parseAssists(record, minute, assists, game, team) == [{'GameID': 1, 'TeamID': 1, 'playername': 'Player', 'MinuteID': 78, 'Event': 2, 'Notes': ''}, {'GameID': 1, 'TeamID': 1, 'playername': 'Potter', 'MinuteID': 78, 'Event': 3, 'Notes': ''}]
+    # Test too many assists
+    record = []
+    assert importer.skipped == 0
+    assists = 'Player,Potter,Rains'
+    assert importer.parseAssists(record, minute, assists, game, team) == []
+    assert importer.skipped == 1
+
+
+def test_importer_parseOneGoal(excel):
+    log = Log('test.log')
+    importer = ImporterGoals(excel, log)
+    game = 1
+    team = 1
     goals = ""
     # assert importer.parseGoals(goals) == [{}]
     goals = "Player (unassisted) 78"
-    assert importer.parseOneGoal(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1, 'notes': ''}]
+    assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': '', 'GameID': 1, 'TeamID': 1}]
     goals = "Player (penalty) 78"
-    assert importer.parseOneGoal(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1, 'notes': 'penalty kick'}]
-    # goals = "Player (Potter) 78"
-    # assert importer.parseOneGoal(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1}, {'playername': 'Potter', 'minute': 78, 'eventID': 2}]
-    # goals = "Player (Potter, Rains) 78"
-    # assert importer.parseOneGoal(goals) == [{'playername': 'Player', 'minute': 78, 'eventID': 1}, {'playername': 'Potter', 'minute': 78, 'eventID': 2}, {'playername': 'Potter', 'minute': 78, 'eventID': 3}]
+    assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': 'penalty kick', 'GameID': 1, 'TeamID': 1}]
+    goals = "Player (Potter) 78"
+    assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': '', 'GameID': 1, 'TeamID': 1}, {'playername': 'Potter', 'MinuteID': 78, 'Event': 2, 'Notes': '', 'GameID': 1, 'TeamID': 1}]
+    goals = "Player (Potter, Rains) 78"
+    assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': '', 'GameID': 1, 'TeamID': 1}, {'playername': 'Potter', 'MinuteID': 78, 'Event': 2, 'Notes': '', 'GameID': 1, 'TeamID': 1}, {'playername': 'Rains', 'MinuteID': 78, 'Event': 3, 'Notes': '', 'GameID': 1, 'TeamID': 1}]
     # goals = "Player (unassisted)"
     # assert importer.parseOneGoal(goals) == []
 
