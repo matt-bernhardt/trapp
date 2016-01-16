@@ -215,6 +215,9 @@ class ImporterGoals(Importer):
                 homeID = opponentID
                 awayID = teamID
 
+            # 4. The game date needs to be converted
+            record['Date'] = self.source.recoverDate(record['Date'])
+
             # Use home/away ID and game date to look up the game ID
             needle = {
                 'MatchTime': record['Date'],
@@ -233,9 +236,6 @@ class ImporterGoals(Importer):
 
             # Need to convert gameID from a list of 1 number to an integer
             game = game[0]
-
-            # 4. The game date needs to be converted
-            record['Date'] = self.source.recoverDate(record['Date'])
 
             # 5. The goalscorers string needs to be expanded
             record['Events'] = self.splitGoals(record['Goals'])
