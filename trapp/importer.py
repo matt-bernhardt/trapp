@@ -199,7 +199,8 @@ class ImporterGoals(Importer):
         for record in self.records:
 
             # Log the record when we begin
-            self.log.message(str(record))
+            self.log.message('\nParsing game record:')
+            # self.log.message('  ' + str(record) + '\n')
 
             # 1. TeamID lookup
             teamID = self.lookupTeamID(record['Team'])
@@ -224,9 +225,10 @@ class ImporterGoals(Importer):
                 'HTeamID': homeID,
                 'ATeamID': awayID,
             }
+            self.log.message('  Looking up needle: ' + str(needle))
             game = g.lookupID(needle, self.log)
 
-            self.log.message('Found games: ' + str(game))
+            self.log.message('  Found games: ' + str(game) + '\n')
 
             if (len(game) != 1):
                 self.log.message('Found wrong number of games: ' + str(len(game)))
@@ -250,16 +252,18 @@ class ImporterGoals(Importer):
                     record['NewEvents'].append(subitem)
 
             # Log the corrected record for later inspection
-            self.log.message(str(record))
+            self.log.message('  Outcome:\n  ' + str(record))
 
         return True
 
     def importRecord(self, record):
-        self.log.message('Importing ' + str(record))
+        self.log.message('\nImporting record:\n  ' + str(record))
 
         # Init
         self.events = []
 
+        for item in record['NewEvents']:
+            self.log.message(str(item))
         # event records need to be assembled
 
         # GameID and TeamID are set for all events in this string
@@ -289,7 +293,6 @@ class ImporterGoals(Importer):
         # TODO: deal with teamID
 
         # Is there a comma in the assist string?
-        self.log.message('Parsing assists in _' + str(assists) + '_')
 
         # Split into a list, test its length
         test = assists.split(',')
@@ -303,7 +306,6 @@ class ImporterGoals(Importer):
         eventID = 2
         for item in test:
             item = item.strip()
-            self.log.message(str(item))
             recordList.append({
                 'GameID': gameID,
                 'TeamID': teamID,
@@ -314,7 +316,6 @@ class ImporterGoals(Importer):
             })
             eventID += 1
 
-        self.log.message('Finished: \n' + str(recordList))
         return recordList
 
     def parseEventTime(self, inputString):
@@ -375,19 +376,17 @@ class ImporterGoals(Importer):
         if (assistName != 'penalty' and assistName != 'unassisted'):
             records = self.parseAssists(records, minute, assistName, gameID, teamID)
 
-        self.log.message(str(records))
-
         return records
 
     def splitGoals(self, inputString):
         # This takes ina string listing all goals scored in a game.
         # It returns a list, with each goal separated.
         # Downstream steps will perform additional parsing.
-        self.log.message('parsing goal string: ' + str(inputString))
+        self.log.message('  Parsing goal string: ' + str(inputString))
         events = []
         for goal in inputString.split(';'):
             events.append(goal.strip())
-        self.log.message(str(events))
+        self.log.message('  ' + str(events) + '\n')
         return events
 
 
