@@ -15,6 +15,10 @@ MySQL - 5.5.28-log : Database - trapp
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 USE `trapp`;
 
+/*Data for the table `tbl_gameevents` */
+
+insert  into `tbl_gameevents`(`ID`,`GameID`,`TeamID`,`PlayerID`,`MinuteID`,`Event`,`Notes`) values (1,1,2,3,4,1,'');
+
 /*Data for the table `tbl_gameminutes` */
 
 insert  into `tbl_gameminutes`(`ID`,`GameID`,`TeamID`,`PlayerID`,`TimeOn`,`TimeOff`,`Ejected`) values (1,1,2,3,0,90,0);
@@ -40,6 +44,11 @@ insert  into `tbl_players`(`ID`,`LastName`,`FirstName`,`Position`,`RosterNumber`
 insert  into `tbl_players`(`ID`,`LastName`,`FirstName`,`Position`,`RosterNumber`,`Picture`,`Class`,`Eligible`,`College`,`Current_Club`,`ContractStatus`,`LastClub`,`YouthClub`,`Height_Feet`,`Height_Inches`,`Birthplace`,`HomeTown`,`Citizenship`,`Bio`,`Visible`,`Award_Pts`,`Intl_Pts`,`Weight`,`DOB`,`Expansion2014`) values (17,'Substitution','First','Midfielder',NULL,'coming_soon.gif',0,'0','','',NULL,NULL,NULL,NULL,NULL,NULL,'Oneonta, NY',NULL,NULL,0,NULL,NULL,NULL,'1980-01-01',0);
 insert  into `tbl_players`(`ID`,`LastName`,`FirstName`,`Position`,`RosterNumber`,`Picture`,`Class`,`Eligible`,`College`,`Current_Club`,`ContractStatus`,`LastClub`,`YouthClub`,`Height_Feet`,`Height_Inches`,`Birthplace`,`HomeTown`,`Citizenship`,`Bio`,`Visible`,`Award_Pts`,`Intl_Pts`,`Weight`,`DOB`,`Expansion2014`) values (18,'Substitution','Second','Midfielder',NULL,'coming_soon.gif',0,'0','','',NULL,NULL,NULL,NULL,NULL,NULL,'Oneonta, NY',NULL,NULL,0,NULL,NULL,NULL,'1980-01-01',0);
 insert  into `tbl_players`(`ID`,`LastName`,`FirstName`,`Position`,`RosterNumber`,`Picture`,`Class`,`Eligible`,`College`,`Current_Club`,`ContractStatus`,`LastClub`,`YouthClub`,`Height_Feet`,`Height_Inches`,`Birthplace`,`HomeTown`,`Citizenship`,`Bio`,`Visible`,`Award_Pts`,`Intl_Pts`,`Weight`,`DOB`,`Expansion2014`) values (19,'Substitution','Third','Midfielder',NULL,'coming_soon.gif',0,'0','','',NULL,NULL,NULL,NULL,NULL,NULL,'Oneonta, NY',NULL,NULL,0,NULL,NULL,NULL,'1980-01-01',0);
+
+/*Data for the table `tbl_teams` */
+
+insert  into `tbl_teams`(`ID`,`teamname`) values (1,'Columbus Crew');
+insert  into `tbl_teams`(`ID`,`teamname`) values (2,'D.C. United');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

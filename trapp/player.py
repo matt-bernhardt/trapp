@@ -143,6 +143,46 @@ class Player():
 
         return players
 
+    def lookupIDbyGoal(self, data, log):
+        # This is meant for goalscorers. It takes in a player's last name,
+        # GameID, and TeamID, minute and returns the ID of the player on the
+        # field at that moment.
+
+        # Requires dictionary
+        if not (isinstance(data, dict)):
+            raise RuntimeError('lookupIDbyGoal requires a dictionary')
+
+        # Requires playername, TeamID, GameID
+        missing = []
+        required = ['playername', 'TeamID', 'GameID']
+        for term in required:
+            if term not in data:
+                missing.append(term)
+        if (len(missing) > 0):
+            raise RuntimeError(
+                'Submitted data is missing the following fields: ' +
+                str(missing)
+            )
+
+        # Perform lookup
+        sql = ('SELECT p.ID '
+               'FROM tbl_players p '
+               'INNER JOIN tbl_gameminutes m ON p.ID = m.PlayerID '
+               'WHERE p.LastName = %s '
+               '  AND m.GameID = %s '
+               '  AND m.TeamID = %s ')
+        rs = self.db.query(sql, (
+            data['playername'],
+            data['GameID'],
+            data['TeamID']
+        ))
+        if (rs.with_rows):
+            records = rs.fetchall()
+        players = []
+        for player in records:
+            players.append(player[0])
+        return players
+
     def merge(self, fromID, intoID):
         # This merges one player record into another.
         # It includes all related tables.

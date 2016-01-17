@@ -2,7 +2,13 @@
 from __future__ import absolute_import
 import pytest
 from trapp.log import Log
-from trapp.importer import Importer, ImporterGames, ImporterPlayers, ImporterLineups
+from trapp.importer import (
+    Importer,
+    ImporterGames,
+    ImporterGoals,
+    ImporterPlayers,
+    ImporterLineups
+)
 
 
 def test_importer_init(excel):
@@ -47,6 +53,47 @@ def test_importer_checkFields(excel):
     # log = Log('test.log')
     # importer = Importer(excel, log)
     # assert importer.doImport() is True
+
+
+def test_importer_parseAssists(excel):
+    log = Log('test_parseAssists.log')
+    importer = ImporterGoals(excel, log)
+    game = 1
+    team = 1
+    # Test single assist
+    record = []
+    minute = 78
+    assists = 'Player'
+    assert importer.parseAssists(record, minute, assists, game, team) == [{'GameID': 1, 'TeamID': 1, 'playername': 'Player', 'MinuteID': 78, 'Event': 2, 'Notes': ''}]
+    # Test two assists
+    record = []
+    assists = 'Player,Potter'
+    assert importer.parseAssists(record, minute, assists, game, team) == [{'GameID': 1, 'TeamID': 1, 'playername': 'Player', 'MinuteID': 78, 'Event': 2, 'Notes': ''}, {'GameID': 1, 'TeamID': 1, 'playername': 'Potter', 'MinuteID': 78, 'Event': 3, 'Notes': ''}]
+    # Test too many assists
+    record = []
+    assert importer.skipped == 0
+    assists = 'Player,Potter,Rains'
+    assert importer.parseAssists(record, minute, assists, game, team) == []
+    assert importer.skipped == 1
+
+
+def test_importer_parseOneGoal(excel):
+    log = Log('test.log')
+    importer = ImporterGoals(excel, log)
+    game = 1
+    team = 1
+    goals = ""
+    # assert importer.parseGoals(goals) == [{}]
+    goals = "Player (unassisted) 78"
+    assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': '', 'GameID': 1, 'TeamID': 1}]
+    goals = "Player (penalty) 78"
+    assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': 'penalty kick', 'GameID': 1, 'TeamID': 1}]
+    goals = "Player (Potter) 78"
+    assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': '', 'GameID': 1, 'TeamID': 1}, {'playername': 'Potter', 'MinuteID': 78, 'Event': 2, 'Notes': '', 'GameID': 1, 'TeamID': 1}]
+    goals = "Player (Potter, Rains) 78"
+    assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': '', 'GameID': 1, 'TeamID': 1}, {'playername': 'Potter', 'MinuteID': 78, 'Event': 2, 'Notes': '', 'GameID': 1, 'TeamID': 1}, {'playername': 'Rains', 'MinuteID': 78, 'Event': 3, 'Notes': '', 'GameID': 1, 'TeamID': 1}]
+    # goals = "Player (unassisted)"
+    # assert importer.parseOneGoal(goals) == []
 
 
 def test_importer_parseMinuteDoesNothing(excel):
@@ -154,6 +201,15 @@ def test_importer_setLog(excel):
     importer = Importer(excel, log)
     importer.setLog(log2)
     assert importer.log.name == 'test2.log'
+
+
+def test_importer_splitGoals(excel):
+    log = Log('test.log')
+    importer = ImporterGoals(excel, log)
+    goals = "Player (Potter, Rains) 78"
+    assert importer.splitGoals(goals) == ['Player (Potter, Rains) 78']
+    goals = "Player (unassisted) 78; Player (unassisted) 89"
+    assert importer.splitGoals(goals) == ['Player (unassisted) 78', 'Player (unassisted) 89']
 
 
 def test_importerGames(excel_games):

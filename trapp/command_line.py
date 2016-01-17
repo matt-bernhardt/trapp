@@ -4,10 +4,10 @@ import argparse
 from trapp.database import Database
 from trapp.log import Log
 from trapp.importer import (
-    Importer,
-    ImporterPlayers,
     ImporterGames,
-    ImporterLineups
+    ImporterGoals,
+    ImporterLineups,
+    ImporterPlayers
 )
 
 
@@ -53,6 +53,32 @@ def importGames(infile):
     log.end()
 
     return True
+
+
+def importGoals(infile):
+    # Feedback, setup
+    print('Importing goals from ' + str(infile))
+    log = Log('trapp-import-goals.log')
+    importer = ImporterGoals(infile, log)
+
+    # Check for required fields
+    requiredColumns = ([
+        'Code',
+        'Date',
+        'H/A',
+        'Opponent',
+        'Score',
+        'Goals',
+    ])
+    importer.checkFields(requiredColumns)
+    log.message('Required fields checked')
+
+    # Do the import
+    importer.doImport()
+    log.message('Import done')
+
+    # Shutdown
+    log.end()
 
 
 def importLineups(infile):
@@ -142,8 +168,9 @@ def main():
         'verb',
         choices=['check-db',
                  'import-games',
-                 'import-players',
+                 'import-goals',
                  'import-lineups',
+                 'import-players',
                  'compile',
                  'render',
                  'qa'],
@@ -162,6 +189,9 @@ def main():
 
     elif (args.verb == 'import-games'):
         importGames(args.infile)
+
+    elif (args.verb == 'import-goals'):
+        importGoals(args.infile)
 
     elif (args.verb == 'import-players'):
         importPlayers(args.infile)
