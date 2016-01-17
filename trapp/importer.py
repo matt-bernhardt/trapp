@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from trapp.spreadsheet import Spreadsheet
 from trapp.game import Game
 from trapp.gameminute import GameMinute
+from trapp.gameevent import GameEvent
 from trapp.player import Player
 from trapp.team import Team
 
@@ -259,30 +260,31 @@ class ImporterGoals(Importer):
     def importRecord(self, record):
         self.log.message('\nImporting record:\n  ' + str(record))
 
-        # Init
-        self.events = []
-
         for item in record['NewEvents']:
             self.log.message(str(item))
-        # event records need to be assembled
 
-        # GameID and TeamID are set for all events in this string
-        # GameID
-        # TeamID
+            # Skip over items
+            if item is False:
+                self.log.message('Skipping FALSE item')
+                continue
 
-        # At this point, we need to parse the event string for multiple event
-        # sub-records
+            e = GameEvent()
+            e.connectDB()
 
-        # MinuteID
-        # Event
+            eventID = e.lookupID(item, self.log)
 
-        # PlayerID
-        # Lookup player
+            if (len(eventID) > 1):
+                # We have more than one record of this player/team/game/minute.
+                # This is a problem.
+                self.errored += 1
+            elif (len(eventID) == 1):
+                # We already have a record of this event.
+                # We add that eventID to ensure an update.
+                item['ID'] = eventID[0]
 
-        # Notes (penalty?)
-        # If this is a penalty (denoted by assist line), then store a note
+            e.saveDict(item, self.log)
+            self.imported += 1
 
-        # iterate over events, saving (upsert) into tbl_gameevents
         return True
 
     def lookupPlayerID(self, event):
