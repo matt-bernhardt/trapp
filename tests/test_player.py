@@ -76,6 +76,28 @@ def test_player_lookupID():
     # Need a test of successful lookups
 
 
+def test_player_lookupIDbyGame():
+    # Setup
+    log = Log('test.log')
+    p = Player()
+    p.connectDB()
+
+    # Format error
+    with pytest.raises(RuntimeError) as excinfo:
+        needle = 'Wil'
+        p.lookupIDbyGoal(needle, log)
+    assert 'lookupIDbyGoal requires a dictionary' in str(excinfo.value)
+
+    # Missing fields error
+    with pytest.raises(RuntimeError) as excinfo:
+        needle = {
+            'FirstName': 'Wil',
+            'LastName': 'Trapp'
+        }
+        p.lookupIDbyGoal(needle, log)
+    assert 'Submitted data is missing the following fields' in str(excinfo.value)
+
+
 def test_player_lookupIDbyName():
     # Setup
     log = Log('test.log')
