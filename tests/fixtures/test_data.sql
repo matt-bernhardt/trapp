@@ -45,6 +45,11 @@ insert  into `tbl_players`(`ID`,`LastName`,`FirstName`,`Position`,`RosterNumber`
 insert  into `tbl_players`(`ID`,`LastName`,`FirstName`,`Position`,`RosterNumber`,`Picture`,`Class`,`Eligible`,`College`,`Current_Club`,`ContractStatus`,`LastClub`,`YouthClub`,`Height_Feet`,`Height_Inches`,`Birthplace`,`HomeTown`,`Citizenship`,`Bio`,`Visible`,`Award_Pts`,`Intl_Pts`,`Weight`,`DOB`,`Expansion2014`) values (18,'Substitution','Second','Midfielder',NULL,'coming_soon.gif',0,'0','','',NULL,NULL,NULL,NULL,NULL,NULL,'Oneonta, NY',NULL,NULL,0,NULL,NULL,NULL,'1980-01-01',0);
 insert  into `tbl_players`(`ID`,`LastName`,`FirstName`,`Position`,`RosterNumber`,`Picture`,`Class`,`Eligible`,`College`,`Current_Club`,`ContractStatus`,`LastClub`,`YouthClub`,`Height_Feet`,`Height_Inches`,`Birthplace`,`HomeTown`,`Citizenship`,`Bio`,`Visible`,`Award_Pts`,`Intl_Pts`,`Weight`,`DOB`,`Expansion2014`) values (19,'Substitution','Third','Midfielder',NULL,'coming_soon.gif',0,'0','','',NULL,NULL,NULL,NULL,NULL,NULL,'Oneonta, NY',NULL,NULL,0,NULL,NULL,NULL,'1980-01-01',0);
 
+/*Data for the table `tbl_teams` */
+
+insert  into `tbl_teams`(`ID`,`teamname`) values (1,'Columbus Crew');
+insert  into `tbl_teams`(`ID`,`teamname`) values (2,'D.C. United');
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
