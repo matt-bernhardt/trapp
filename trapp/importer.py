@@ -249,7 +249,7 @@ class ImporterGoals(Importer):
             for item in record['Events']:
                 item = self.parseOneGoal(item, game, teamID)
                 for subitem in item:
-                    record['NewEvents'].append(subitem)
+                    record['NewEvents'].append(self.lookupPlayerID(subitem))
 
             # Log the corrected record for later inspection
             self.log.message('  Outcome:\n  ' + str(record))
@@ -284,6 +284,24 @@ class ImporterGoals(Importer):
 
         # iterate over events, saving (upsert) into tbl_gameevents
         return True
+
+    def lookupPlayerID(self, event):
+        self.log.message('Looking up PlayerID for event:\n' + str(event))
+
+        p = Player()
+        p.connectDB()
+
+        PlayerID = p.lookupIDbyGoal(event, self.log)
+
+        if (len(PlayerID) != 1):
+            self.log.message('Found wrong number of players with name '
+                             + '_' + str(event['playername']) + '_: '
+                             + str(PlayerID))
+            self.skipped += 1
+            return False
+
+        event['PlayerID'] = PlayerID[0]
+        return event
 
     def parseAssists(self, recordList, minute, assists, gameID, teamID):
         # This adds records to a list according to the assists in a string
