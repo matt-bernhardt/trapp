@@ -15,6 +15,10 @@ MySQL - 5.5.28-log : Database - trapp
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 USE `trapp`;
 
+/*Data for the table `tbl_gameevents` */
+
+insert  into `tbl_gameevents`(`ID`,`GameID`,`TeamID`,`PlayerID`,`MinuteID`,`Event`,`Notes`) values (1,1,2,3,4,1,'');
+
 /*Data for the table `tbl_gameminutes` */
 
 insert  into `tbl_gameminutes`(`ID`,`GameID`,`TeamID`,`PlayerID`,`TimeOn`,`TimeOff`,`Ejected`) values (1,1,2,3,0,90,0);
