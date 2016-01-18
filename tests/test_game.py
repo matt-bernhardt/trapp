@@ -30,12 +30,19 @@ def test_game_disconnect():
 
 def test_game_loadByID():
     g = Game()
+    g.connectDB()
 
     # This should raise a format error
     with pytest.raises(RuntimeError) as excinfo:
         needle = 'Foo'
         g.loadByID(needle)
     assert 'loadByID requires an integer' in str(excinfo.value)
+
+    needle = 1
+    g.loadByID(needle)
+    assert isinstance(g.data, dict)
+    assert g.data['HTeamID'] == 1
+    assert g.data['ATeamID'] == 2
 
 
 def test_game_saveDict():

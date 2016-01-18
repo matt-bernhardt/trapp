@@ -16,6 +16,23 @@ class Game():
         self.db.disconnect()
         del self.db
 
+    def checkData(self, data, required):
+        # This checks a submitted data dictionary for required fields.
+        # 1) data must be a dictionary
+        if not (isinstance(data, dict)):
+            raise RuntimeError('lookupID requires a dictionary')
+
+        # 2) data must have certain fields
+        missing = []
+        for term in required:
+            if term not in data:
+                missing.append(term)
+        if (len(missing) > 0):
+            raise RuntimeError(
+                'Submitted data is missing the following fields: ' +
+                str(missing)
+            )
+
     def loadByID(self, gameID):
         # Verify that gameID is an integer
         if not (isinstance(gameID, int)):
@@ -114,20 +131,10 @@ class Game():
         # - MatchTime (MM/DD/YYYY at least, time not needed)
         # - HTeamID (ID needed, not team name - these are too ambiguous)
         # - ATeamID (ID needed, not team name - these are too ambiguous)
-        if not (isinstance(data, dict)):
-            raise RuntimeError('lookupID requires a dictionary')
 
-        # Check data for required fields
-        missing = []
+        # Check for required parameters
         required = ['MatchTime', 'HTeamID', 'ATeamID']
-        for term in required:
-            if term not in data:
-                missing.append(term)
-        if (len(missing) > 0):
-            raise RuntimeError(
-                'Submitted data is missing the following fields: ' +
-                str(missing)
-            )
+        self.checkData(data, required)
 
         # See if any game matches these three terms
         sql = ('SELECT ID '

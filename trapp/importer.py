@@ -232,9 +232,11 @@ class ImporterGoals(Importer):
             self.log.message('  Found games: ' + str(game) + '\n')
 
             if (len(game) != 1):
-                self.log.message('Found wrong number of games: ' + str(len(game)))
+                self.log.message('Found wrong number of games: ' +
+                                 str(len(game)))
                 self.skipped += 1
-                # If we didn't find one gameID, then we abort processing this game
+                # If we didn't find one gameID, then we abort processing this
+                # game
                 return False
 
             # Need to convert gameID from a list of 1 number to an integer
@@ -245,8 +247,6 @@ class ImporterGoals(Importer):
             record['NewEvents'] = []
             # record['Events'] is now a list of strings. We now need to parse
             # each individual string into a dictionary.
-            # TODO: Could we re-use record['Events'] instead of building a
-            #       new record['NewEvents']?
             for item in record['Events']:
                 item = self.parseOneGoal(item, game, teamID)
                 for subitem in item:
@@ -296,9 +296,9 @@ class ImporterGoals(Importer):
         PlayerID = p.lookupIDbyGoal(event, self.log)
 
         if (len(PlayerID) != 1):
-            self.log.message('Found wrong number of players with name '
-                             + '_' + str(event['playername']) + '_: '
-                             + str(PlayerID))
+            self.log.message('Found wrong number of players with name ' +
+                             '_' + str(event['playername']) + '_: ' +
+                             str(PlayerID))
             self.skipped += 1
             return False
 
@@ -309,17 +309,12 @@ class ImporterGoals(Importer):
         # This adds records to a list according to the assists in a string
         # describing a goal.
 
-        # TODO: check argument formats / data types
-        # TODO: deal with teamID
-
-        # Is there a comma in the assist string?
-
         # Split into a list, test its length
         test = assists.split(',')
         if (len(test) > 2):
             self.skipped += 1
-            self.log.message('Found too many assists: '
-                             + str(test) + ' has ' + str(len(test)))
+            self.log.message('Found too many assists: ' +
+                             str(test) + ' has ' + str(len(test)))
             return recordList
 
         # Parse each element in the list
@@ -359,17 +354,15 @@ class ImporterGoals(Importer):
         # If a penalty, then:
         # Lastname (penalty) Minute
 
-        # TODO: check for own goals
-        # TODO: check data format of arguments
-
         records = []
-        begin = inputString.find('(')
-        end = inputString.rfind(')')
 
         # If there's no parenthesis, then increment skipped and head back
         if not (inputString.find('(')):
             self.skipped += 1
             return records
+
+        begin = inputString.find('(')
+        end = inputString.rfind(')')
 
         # Isolate player name and substitute
         playerName = inputString[:begin - 1].strip()
@@ -394,7 +387,9 @@ class ImporterGoals(Importer):
         })
 
         if (assistName != 'penalty' and assistName != 'unassisted'):
-            records = self.parseAssists(records, minute, assistName, gameID, teamID)
+            records = self.parseAssists(
+                records, minute, assistName, gameID, teamID
+            )
 
         return records
 

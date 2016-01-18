@@ -17,13 +17,14 @@ class Team():
         self.db.disconnect()
         del self.db
 
-    def lookupID(self, data, log):
+    def checkData(self, data, required):
+        # This checks a submitted data dictionary for required fields.
+        # 1) data must be a dictionary
         if not (isinstance(data, dict)):
             raise RuntimeError('lookupID requires a dictionary')
 
-        # check for required fields
+        # 2) data must have certain fields
         missing = []
-        required = ['teamname']
         for term in required:
             if term not in data:
                 missing.append(term)
@@ -32,6 +33,11 @@ class Team():
                 'Submitted data is missing the following fields: ' +
                 str(missing)
             )
+
+    def lookupID(self, data, log):
+        # Check for required parameters
+        required = ['teamname']
+        self.checkData(data, required)
 
         # see if any team matches this name
         sql = ('SELECT ID '
