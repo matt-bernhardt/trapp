@@ -355,13 +355,14 @@ class ImporterGoals(Importer):
         # Lastname (penalty) Minute
 
         records = []
-        begin = inputString.find('(')
-        end = inputString.rfind(')')
 
         # If there's no parenthesis, then increment skipped and head back
         if not (inputString.find('(')):
             self.skipped += 1
             return records
+
+        begin = inputString.find('(')
+        end = inputString.rfind(')')
 
         # Isolate player name and substitute
         playerName = inputString[:begin - 1].strip()
