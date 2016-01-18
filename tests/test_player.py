@@ -34,6 +34,7 @@ def test_player_disconnect():
 
 def test_player_load():
     p = Player()
+    p.connectDB()
 
     # Format error
     with pytest.raises(RuntimeError) as excinfo:
@@ -42,15 +43,12 @@ def test_player_load():
     assert 'loadByID requires an integer' in str(excinfo.value)
 
     # Actual lookup
-    # p.connectDB()
-    # needle = 2
-    # p.loadByID(needle)
-    # assert p.data['PlayerID'] == 2
-    # assert p.data['FirstName'] == 'Bryheem'
-    # assert p.data['LastName'] == 'Hancock'
-    # assert isinstance(p.data['DOB'], datetime.date)
-    # assert p.data['DOB'] == datetime.date(1980, 3, 1)
-    # p.disconnectDB()
+    needle = 1
+    p.loadByID(needle)
+    assert isinstance(p.data, dict)
+    assert p.data['FirstName'] == 'Harvey'
+    assert p.data['LastName'] == 'the Rabbit'
+    assert isinstance(p.data['DOB'], datetime.date)
 
 
 def test_player_lookupID():
