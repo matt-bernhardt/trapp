@@ -232,9 +232,11 @@ class ImporterGoals(Importer):
             self.log.message('  Found games: ' + str(game) + '\n')
 
             if (len(game) != 1):
-                self.log.message('Found wrong number of games: ' + str(len(game)))
+                self.log.message('Found wrong number of games: ' +
+                                 str(len(game)))
                 self.skipped += 1
-                # If we didn't find one gameID, then we abort processing this game
+                # If we didn't find one gameID, then we abort processing this
+                # game
                 return False
 
             # Need to convert gameID from a list of 1 number to an integer
@@ -296,9 +298,9 @@ class ImporterGoals(Importer):
         PlayerID = p.lookupIDbyGoal(event, self.log)
 
         if (len(PlayerID) != 1):
-            self.log.message('Found wrong number of players with name '
-                             + '_' + str(event['playername']) + '_: '
-                             + str(PlayerID))
+            self.log.message('Found wrong number of players with name ' +
+                             '_' + str(event['playername']) + '_: ' +
+                             str(PlayerID))
             self.skipped += 1
             return False
 
@@ -318,8 +320,8 @@ class ImporterGoals(Importer):
         test = assists.split(',')
         if (len(test) > 2):
             self.skipped += 1
-            self.log.message('Found too many assists: '
-                             + str(test) + ' has ' + str(len(test)))
+            self.log.message('Found too many assists: ' +
+                             str(test) + ' has ' + str(len(test)))
             return recordList
 
         # Parse each element in the list
@@ -394,7 +396,9 @@ class ImporterGoals(Importer):
         })
 
         if (assistName != 'penalty' and assistName != 'unassisted'):
-            records = self.parseAssists(records, minute, assistName, gameID, teamID)
+            records = self.parseAssists(
+                records, minute, assistName, gameID, teamID
+            )
 
         return records
 
