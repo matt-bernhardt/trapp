@@ -86,7 +86,7 @@ def test_player_lookupIDbyGame():
     with pytest.raises(RuntimeError) as excinfo:
         needle = 'Wil'
         p.lookupIDbyGoal(needle, log)
-    assert 'lookupIDbyGoal requires a dictionary' in str(excinfo.value)
+    assert 'lookupID requires a dictionary' in str(excinfo.value)
 
     # Missing fields error
     with pytest.raises(RuntimeError) as excinfo:
@@ -108,7 +108,7 @@ def test_player_lookupIDbyName():
     with pytest.raises(RuntimeError) as excinfo:
         needle = 'Wil'
         p.lookupIDbyName(needle, log)
-    assert 'lookupIDbyName requires a dictionary' in str(excinfo.value)
+    assert 'lookupID requires a dictionary' in str(excinfo.value)
 
     # Missing fields error
     with pytest.raises(RuntimeError) as excinfo:

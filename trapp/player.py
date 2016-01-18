@@ -19,6 +19,23 @@ class Player():
         self.db.disconnect()
         del self.db
 
+    def checkData(self, data, required):
+        # This checks a submitted data dictionary for required fields.
+        # 1) data must be a dictionary
+        if not (isinstance(data, dict)):
+            raise RuntimeError('lookupID requires a dictionary')
+
+        # 2) data must have certain fields
+        missing = []
+        for term in required:
+            if term not in data:
+                missing.append(term)
+        if (len(missing) > 0):
+            raise RuntimeError(
+                'Submitted data is missing the following fields: ' +
+                str(missing)
+            )
+
     def loadByID(self, playerID):
         if not (isinstance(playerID, int)):
             raise RuntimeError('loadByID requires an integer')
@@ -68,20 +85,8 @@ class Player():
         #   'Goalkeeper', 'Defender', 'Midfielder', 'Forward')
         # - DOB (date object)
         # - Hometown ('City, ST' for US/Canada, 'City, Country' otherwise)
-        if not (isinstance(data, dict)):
-            raise RuntimeError('lookupID requires a dictionary')
-
-        # check for required fields
-        missing = []
         required = ['FirstName', 'LastName', 'Position', 'DOB', 'Hometown']
-        for term in required:
-            if term not in data:
-                missing.append(term)
-        if (len(missing) > 0):
-            raise RuntimeError(
-                'Submitted data is missing the following fields: ' +
-                str(missing)
-            )
+        self.checkData(data, required)
 
         # See if any game matches these three terms
         sql = ('SELECT ID '
@@ -114,19 +119,8 @@ class Player():
     def lookupIDbyName(self, data, log):
         # This takes in a player's name and looks up player ID based on that
         # alone
-        if not (isinstance(data, dict)):
-            raise RuntimeError('lookupIDbyName requires a dictionary')
-
-        missing = []
-        required = ['PlayerName', ]
-        for term in required:
-            if term not in data:
-                missing.append(term)
-        if (len(missing) > 0):
-            raise RuntimeError(
-                'Submitted data is missing the following fields: ' +
-                str(missing)
-            )
+        required = ['PlayerName']
+        self.checkData(data, required)
 
         # See if any game matches these three terms
         sql = ('SELECT ID '
@@ -148,21 +142,8 @@ class Player():
         # GameID, and TeamID, minute and returns the ID of the player on the
         # field at that moment.
 
-        # Requires dictionary
-        if not (isinstance(data, dict)):
-            raise RuntimeError('lookupIDbyGoal requires a dictionary')
-
-        # Requires playername, TeamID, GameID
-        missing = []
         required = ['playername', 'TeamID', 'GameID']
-        for term in required:
-            if term not in data:
-                missing.append(term)
-        if (len(missing) > 0):
-            raise RuntimeError(
-                'Submitted data is missing the following fields: ' +
-                str(missing)
-            )
+        self.checkData(data, required)
 
         # Perform lookup
         sql = ('SELECT p.ID '
