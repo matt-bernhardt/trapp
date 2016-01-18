@@ -247,8 +247,6 @@ class ImporterGoals(Importer):
             record['NewEvents'] = []
             # record['Events'] is now a list of strings. We now need to parse
             # each individual string into a dictionary.
-            # TODO: Could we re-use record['Events'] instead of building a
-            #       new record['NewEvents']?
             for item in record['Events']:
                 item = self.parseOneGoal(item, game, teamID)
                 for subitem in item:
@@ -311,11 +309,6 @@ class ImporterGoals(Importer):
         # This adds records to a list according to the assists in a string
         # describing a goal.
 
-        # TODO: check argument formats / data types
-        # TODO: deal with teamID
-
-        # Is there a comma in the assist string?
-
         # Split into a list, test its length
         test = assists.split(',')
         if (len(test) > 2):
@@ -360,9 +353,6 @@ class ImporterGoals(Importer):
         # Lastname (unassisted) Minute
         # If a penalty, then:
         # Lastname (penalty) Minute
-
-        # TODO: check for own goals
-        # TODO: check data format of arguments
 
         records = []
         begin = inputString.find('(')
