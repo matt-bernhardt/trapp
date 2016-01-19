@@ -45,6 +45,16 @@ def test_game_loadByID():
     assert g.data['ATeamID'] == 2
 
 
+def test_game_lookupDuration():
+    g = Game()
+    g.connectDB()
+    log = Log('test_lookupDuration.log')
+
+    # Standard-duration game is 90 minutes
+    needle = 1
+    assert g.lookupDuration(needle, log) == 90
+
+
 def test_game_saveDict():
     # Setup
     log = Log('test.log')

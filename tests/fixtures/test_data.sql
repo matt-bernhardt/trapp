@@ -18,6 +18,7 @@ USE `trapp`;
 /*Data for the table `tbl_games` */
 
 insert  into `tbl_games`(`ID`,`MatchTime`,`MatchTypeID`,`HTeamID`,`HScore`,`ATeamID`,`AScore`,`VenueID`,`Duration`,`Attendance`,`Notes`) values (1,'1980-01-01 19:30:00',21,1,3,2,0,4,90,0,'Sample');
+insert  into `tbl_games`(`ID`,`MatchTime`,`MatchTypeID`,`HTeamID`,`HScore`,`ATeamID`,`AScore`,`VenueID`,`Duration`,`Attendance`,`Notes`) values (2,'1980-01-08 19:30:00',21,2,0,1,0,5,90,0,'Sample');
 
 /*Data for the table `tbl_gameevents` */
 

@@ -485,15 +485,18 @@ class ImporterLineups(Importer):
         # Need to convert gameID from a list of 1 number to an integer
         game = game[0]
 
+        # Lookup game duration
+        duration = g.lookupDuration(game, self.log)
+
         # Parse lineup string
-        self.parseLineup(record['Lineup'], game, teamID)
+        self.parseLineup(record['Lineup'], game, teamID, duration)
 
         # At this point we have self.players - but need to store them
         [self.importPlayer(player) for player in self.players]
 
         return True
 
-    def parseLineup(self, lineup, game, teamID):
+    def parseLineup(self, lineup, game, teamID, duration):
         # Parses a long string of starters and substitutes, populating
         # self.players with records for each player who appeared in the
         # game.
@@ -511,7 +514,7 @@ class ImporterLineups(Importer):
         # records for every player, which is done in parsePlayer
         self.players = []
         for starter in self.starters:
-            batch = self.parsePlayer(starter, game, teamID)
+            batch = self.parsePlayer(starter, game, teamID, duration)
             for item in batch:
                 self.players.append(item)
         self.log.message(str(self.players))
@@ -539,9 +542,11 @@ class ImporterLineups(Importer):
             return str(string[:string.rfind(' ')])
         return string
 
-    def parsePlayer(self, starter, gameID, teamID):
+    def parsePlayer(self, starter, gameID, teamID, duration):
         result = []
-        timeoff = 90
+
+        # Set default timeoff to game duration
+        timeoff = duration
 
         # Split the player string into a list
         result = self.parsePlayerSplit(starter)

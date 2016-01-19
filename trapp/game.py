@@ -72,6 +72,25 @@ class Game():
             self.data['MeanTemperature'] = records[0][9]
         return True
 
+    def lookupDuration(self, gameID, log):
+        # This looks up a recorded game duration, for use in an importer
+        # or possibly a rendering step
+        log.message('Looking up duration of game ' + str(gameID))
+        duration = 0
+        sql = ('SELECT Duration '
+               'FROM tbl_games '
+               'WHERE ID = %s')
+        rs = self.db.query(sql, (
+            gameID,
+        ))
+        if (rs.with_rows):
+            records = rs.fetchall()
+        for item in records:
+            duration = item[0]
+        log.message('Game ' + str(gameID) + ' had a duration of ' +
+                    str(duration) + ' minutes')
+        return duration
+
     def saveDict(self, newData, log):
         # Verify that data is a dictionary
         if not (isinstance(newData, dict)):
