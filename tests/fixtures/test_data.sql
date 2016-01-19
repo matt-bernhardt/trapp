@@ -17,8 +17,8 @@ USE `trapp`;
 
 /*Data for the table `tbl_games` */
 
-insert  into `tbl_games`(`ID`,`MatchTime`,`MatchTypeID`,`HTeamID`,`HScore`,`ATeamID`,`AScore`,`VenueID`,`Duration`,`Attendance`,`Notes`) values (1,'1980-01-01 19:30:00',21,1,3,2,0,4,90,0,'Sample');
-insert  into `tbl_games`(`ID`,`MatchTime`,`MatchTypeID`,`HTeamID`,`HScore`,`ATeamID`,`AScore`,`VenueID`,`Duration`,`Attendance`,`Notes`) values (2,'1980-01-08 19:30:00',21,2,0,1,0,5,90,0,'Sample');
+insert  into `tbl_games`(`ID`,`MatchTime`,`MatchTypeID`,`HTeamID`,`HScore`,`ATeamID`,`AScore`,`VenueID`,`Duration`,`Attendance`,`Notes`) values (1,'1980-01-01 19:30:00',21,1,3,2,0,1,90,0,'Sample');
+insert  into `tbl_games`(`ID`,`MatchTime`,`MatchTypeID`,`HTeamID`,`HScore`,`ATeamID`,`AScore`,`VenueID`,`Duration`,`Attendance`,`Notes`) values (2,'1980-01-08 19:30:00',21,2,0,1,0,2,90,0,'Sample');
 
 /*Data for the table `tbl_gameevents` */
 
@@ -54,6 +54,11 @@ insert  into `tbl_players`(`ID`,`LastName`,`FirstName`,`Position`,`RosterNumber`
 
 insert  into `tbl_teams`(`ID`,`teamname`) values (1,'Columbus Crew');
 insert  into `tbl_teams`(`ID`,`teamname`) values (2,'D.C. United');
+
+/*Data for the table `tbl_vnues` */
+
+insert  into `tbl_venues`(`ID`,`VenueName`,`VenueCity`,`VenueState`,`VenueCountry`,`VenueZip`,`VenueURL`,`AltWXURL`,`TenantID`,`VenueCampus`,`FieldSurface`,`FansGuideURL`) values (1,'MAPFRE Stadium','Columbus','OH','USA','43211',NULL,NULL,NULL,NULL,NULL,NULL);
+insert  into `tbl_venues`(`ID`,`VenueName`,`VenueCity`,`VenueState`,`VenueCountry`,`VenueZip`,`VenueURL`,`AltWXURL`,`TenantID`,`VenueCampus`,`FieldSurface`,`FansGuideURL`) values (2,'RFK Stadium','Washington','DC','USA','20003',NULL,NULL,NULL,NULL,NULL,NULL);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
