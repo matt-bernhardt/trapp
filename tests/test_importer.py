@@ -122,10 +122,11 @@ def test_importer_parseMinuteFixesStoppageTime(excel):
 def test_importer_parseLineup(excel, lineup):
     game = 1
     team = 1
+    duration = 90
     log = Log('test.log')
     importer = ImporterLineups(excel, log)
     assert hasattr(importer, 'starters') is False
-    importer.parseLineup(lineup, game, team)
+    importer.parseLineup(lineup, game, team, duration)
     assert hasattr(importer, 'starters') is True
     assert len(importer.starters) == 11
 
@@ -133,10 +134,11 @@ def test_importer_parseLineup(excel, lineup):
 def test_importer_parseLineupFailsWhenShort(excel, lineup_short):
     game = 1
     team = 1
+    duration = 90
     log = Log('test.log')
     importer = ImporterLineups(excel, log)
     assert importer.errored == 0
-    importer.parseLineup(lineup_short, game, team)
+    importer.parseLineup(lineup_short, game, team, duration)
     assert importer.errored == 1
 
 
@@ -144,33 +146,29 @@ def test_importer_parsePlayer(excel, lineup):
     # Need to test parsePlayer's ability to deal with strings of player(s)
     game = 1
     team = 1
+    duration = 90
     log = Log('test.log')
     importer = ImporterLineups(excel, log)
     player = 'Sample Player'
-    result = importer.parsePlayer(player, game, team)
+    result = importer.parsePlayer(player, game, team, duration)
     assert len(result) == 1
     assert result == [{'PlayerID': 15, 'PlayerName': 'Sample Player', 'TimeOn': 0, 'TimeOff': 90, 'Ejected': False, 'GameID': 1, 'TeamID': 1}]
     player = "Sample Player (Substitution 50')"
-    result = importer.parsePlayer(player, game, team)
+    result = importer.parsePlayer(player, game, team, duration)
     assert len(result) == 2
     player = 'Sample Player (First Substitution 50 (Second Substitution 76))'
-    result = importer.parsePlayer(player, game, team)
+    result = importer.parsePlayer(player, game, team, duration)
     assert len(result) == 3
     player = 'Sample Player (First Substitution 50 (Second Substitution 76 (Third Substitution 92+)))'
-    result = importer.parsePlayer(player, game, team)
+    result = importer.parsePlayer(player, game, team, duration)
     assert len(result) == 4
     player = 'Sample Player (First Substitution 50 (Second Substitution 76 (Third Substitution 84 (sent off 88))))'
-    result = importer.parsePlayer(player, game, team)
+    result = importer.parsePlayer(player, game, team, duration)
     assert len(result) == 4
     assert result[3]['PlayerName'] == 'Third Substitution'
     assert result[3]['Ejected'] is True
     assert result[3]['TimeOn'] == 84
     assert result[3]['TimeOff'] == 88
-
-    # starter = 'Sample Player'
-    # gameID = 1
-    # teamID = 1
-    # importer.parsePlayer(starter, gameID, teamID)
 
 
 def test_importer_parsePlayerRemoveTime(excel, lineup):
