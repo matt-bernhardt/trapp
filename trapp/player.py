@@ -1,40 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from trapp.database import Database
+from trapp.record import Record
 
 
-class Player():
+class Player(Record):
 
-    def __init__(self):
-        self.data = {}
-        self.data["FirstName"] = ''
-        self.data["LastName"] = ''
-        self.data["ID"] = 0
-
-    def connectDB(self):
-        self.db = Database()
-        self.db.connect()
-
-    def disconnectDB(self):
-        self.db.disconnect()
-        del self.db
-
-    def checkData(self, data, required):
-        # This checks a submitted data dictionary for required fields.
-        # 1) data must be a dictionary
-        if not (isinstance(data, dict)):
-            raise RuntimeError('lookupID requires a dictionary')
-
-        # 2) data must have certain fields
-        missing = []
-        for term in required:
-            if term not in data:
-                missing.append(term)
-        if (len(missing) > 0):
-            raise RuntimeError(
-                'Submitted data is missing the following fields: ' +
-                str(missing)
-            )
+    # def __init__(self):
+    #     self.data = {}
+    #     self.data["FirstName"] = ''
+    #     self.data["LastName"] = ''
+    #     self.data["ID"] = 0
 
     def loadByID(self, playerID):
         if not (isinstance(playerID, int)):

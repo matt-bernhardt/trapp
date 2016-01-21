@@ -13,8 +13,6 @@ def test_player_init():
     assert isinstance(p.data, dict)
     # Default values
     assert p.data['ID'] == 0
-    assert p.data['FirstName'] == ''
-    assert p.data['LastName'] == ''
 
 
 def test_player_connect():
