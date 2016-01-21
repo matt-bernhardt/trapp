@@ -1,37 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from trapp.database import Database
+from trapp.record import Record
 
 
-class Game():
-
-    def __init__(self):
-        self.data = {}
-
-    def connectDB(self):
-        self.db = Database()
-        self.db.connect()
-
-    def disconnectDB(self):
-        self.db.disconnect()
-        del self.db
-
-    def checkData(self, data, required):
-        # This checks a submitted data dictionary for required fields.
-        # 1) data must be a dictionary
-        if not (isinstance(data, dict)):
-            raise RuntimeError('lookupID requires a dictionary')
-
-        # 2) data must have certain fields
-        missing = []
-        for term in required:
-            if term not in data:
-                missing.append(term)
-        if (len(missing) > 0):
-            raise RuntimeError(
-                'Submitted data is missing the following fields: ' +
-                str(missing)
-            )
+class Game(Record):
 
     def loadByID(self, gameID):
         # Verify that gameID is an integer
@@ -91,6 +63,42 @@ class Game():
                     str(duration) + ' minutes')
         return duration
 
+    def lookupID(self, data, log):
+        # This takes a dictionary and validates it against existing records
+        # Do we already have record of these teams playing on this date?
+        # data must be a dictionary with the following keys:
+        # - MatchTime (MM/DD/YYYY at least, time not needed)
+        # - HTeamID (ID needed, not team name - these are too ambiguous)
+        # - ATeamID (ID needed, not team name - these are too ambiguous)
+
+        # Check for required parameters
+        required = ['MatchTime', 'HTeamID', 'ATeamID']
+        self.checkData(data, required)
+
+        # See if any game matches these three terms
+        sql = ('SELECT ID '
+               'FROM tbl_games '
+               'WHERE YEAR(MatchTime) = %s '
+               '  AND MONTH(MatchTime) = %s '
+               '  AND DAY(MatchTime) = %s '
+               '  AND HTeamID = %s '
+               '  AND ATeamID = %s')
+        rs = self.db.query(sql, (
+            data['MatchTime'][0],
+            data['MatchTime'][1],
+            data['MatchTime'][2],
+            data['HTeamID'],
+            data['ATeamID'],
+        ))
+        if (rs.with_rows):
+            records = rs.fetchall()
+        games = []
+        for game in records:
+            games.append(game[0])
+
+        # How many games matched this data?
+        return games
+
     def saveDict(self, newData, log):
         # Verify that data is a dictionary
         if not (isinstance(newData, dict)):
@@ -142,39 +150,3 @@ class Game():
             ))
 
         return True
-
-    def lookupID(self, data, log):
-        # This takes a dictionary and validates it against existing records
-        # Do we already have record of these teams playing on this date?
-        # data must be a dictionary with the following keys:
-        # - MatchTime (MM/DD/YYYY at least, time not needed)
-        # - HTeamID (ID needed, not team name - these are too ambiguous)
-        # - ATeamID (ID needed, not team name - these are too ambiguous)
-
-        # Check for required parameters
-        required = ['MatchTime', 'HTeamID', 'ATeamID']
-        self.checkData(data, required)
-
-        # See if any game matches these three terms
-        sql = ('SELECT ID '
-               'FROM tbl_games '
-               'WHERE YEAR(MatchTime) = %s '
-               '  AND MONTH(MatchTime) = %s '
-               '  AND DAY(MatchTime) = %s '
-               '  AND HTeamID = %s '
-               '  AND ATeamID = %s')
-        rs = self.db.query(sql, (
-            data['MatchTime'][0],
-            data['MatchTime'][1],
-            data['MatchTime'][2],
-            data['HTeamID'],
-            data['ATeamID'],
-        ))
-        if (rs.with_rows):
-            records = rs.fetchall()
-        games = []
-        for game in records:
-            games.append(game[0])
-
-        # How many games matched this data?
-        return games
