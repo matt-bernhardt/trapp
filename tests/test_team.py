@@ -3,7 +3,6 @@ from __future__ import absolute_import
 import pytest
 from trapp.team import Team
 from trapp.log import Log
-import trapp.connection as connection
 
 
 def test_team_init():
@@ -36,11 +35,6 @@ def test_game_lookupID(data_teams):
     t = Team()
     t.connectDB()
 
-    # Populate table for later querying
-    # TODO do this via setup/teardown?
-    sql = 'INSERT INTO tbl_teams (teamname) VALUES ("Sample Team")'
-    t.db.query(sql, ())
-
     # This should raise a format error
     with pytest.raises(RuntimeError) as excinfo:
         needle = 'My favorite team'
@@ -57,6 +51,6 @@ def test_game_lookupID(data_teams):
 
     # This should bring back one record
     needle = {
-        'teamname': 'Sample Team'
+        'teamname': 'Columbus Crew'
     }
     assert len(t.lookupID(needle, log)) >= 1
