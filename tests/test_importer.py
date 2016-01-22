@@ -92,8 +92,8 @@ def test_importer_parseOneGoal(excel):
     assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': '', 'GameID': 1, 'TeamID': 1}, {'playername': 'Potter', 'MinuteID': 78, 'Event': 2, 'Notes': '', 'GameID': 1, 'TeamID': 1}]
     goals = "Player (Potter, Rains) 78"
     assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': '', 'GameID': 1, 'TeamID': 1}, {'playername': 'Potter', 'MinuteID': 78, 'Event': 2, 'Notes': '', 'GameID': 1, 'TeamID': 1}, {'playername': 'Rains', 'MinuteID': 78, 'Event': 3, 'Notes': '', 'GameID': 1, 'TeamID': 1}]
-    # goals = "Player (unassisted)"
-    # assert importer.parseOneGoal(goals) == []
+    goals = "Player (own goal) 78"
+    assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 6, 'Notes': 'own goal', 'GameID': 1, 'TeamID': 1}]
 
 
 def test_importer_parseMinuteDoesNothing(excel):
