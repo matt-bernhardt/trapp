@@ -6,9 +6,9 @@ from trapp.log import Log
 from trapp.importer import (
     ImporterGames,
     ImporterGoals,
-    ImporterLineups,
-    ImporterPlayers
+    ImporterLineups
 )
+from trapp.import_player import ImporterPlayers
 
 
 def checkDB():

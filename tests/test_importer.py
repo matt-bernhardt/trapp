@@ -6,9 +6,9 @@ from trapp.importer import (
     Importer,
     ImporterGames,
     ImporterGoals,
-    ImporterPlayers,
     ImporterLineups
 )
+from trapp.import_player import ImporterPlayers
 
 
 def test_importer_init(excel):
