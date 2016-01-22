@@ -2,12 +2,10 @@
 from __future__ import absolute_import
 import pytest
 from trapp.log import Log
-from trapp.importer import (
-    Importer,
-    ImporterGoals,
-    ImporterLineups
-)
+from trapp.importer import Importer
 from trapp.import_game import ImporterGames
+from trapp.import_goal import ImporterGoals
+from trapp.import_lineup import ImporterLineups
 from trapp.import_player import ImporterPlayers
 
 
