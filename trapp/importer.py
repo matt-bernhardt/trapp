@@ -370,9 +370,14 @@ class ImporterGoals(Importer):
         # Isolate substitute name
         assistName = inputString[begin + 1:end].strip()
 
+        event = 1
         notes = ''
         if assistName == 'penalty':
             notes = 'penalty kick'
+
+        if assistName == 'own goal':
+            notes = 'own goal'
+            event = 6
 
         # Isolate minute
         minute = self.parseEventTime(inputString)
@@ -381,12 +386,16 @@ class ImporterGoals(Importer):
             'GameID': gameID,
             'TeamID': teamID,
             'MinuteID': minute,
-            'Event': 1,
+            'Event': event,
             'playername': playerName,
             'Notes': notes
         })
 
-        if (assistName != 'penalty' and assistName != 'unassisted'):
+        if (
+            assistName != 'penalty' and
+            assistName != 'unassisted' and
+            assistName != 'own goal'
+        ):
             records = self.parseAssists(
                 records, minute, assistName, gameID, teamID
             )
