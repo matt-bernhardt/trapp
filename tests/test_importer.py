@@ -2,13 +2,11 @@
 from __future__ import absolute_import
 import pytest
 from trapp.log import Log
-from trapp.importer import (
-    Importer,
-    ImporterGames,
-    ImporterGoals,
-    ImporterPlayers,
-    ImporterLineups
-)
+from trapp.importer import Importer
+from trapp.import_game import ImporterGames
+from trapp.import_goal import ImporterGoals
+from trapp.import_lineup import ImporterLineups
+from trapp.import_player import ImporterPlayers
 
 
 def test_importer_init(excel):

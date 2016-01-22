@@ -3,12 +3,10 @@ from __future__ import absolute_import
 import argparse
 from trapp.database import Database
 from trapp.log import Log
-from trapp.importer import (
-    ImporterGames,
-    ImporterGoals,
-    ImporterLineups,
-    ImporterPlayers
-)
+from trapp.import_game import ImporterGames
+from trapp.import_goal import ImporterGoals
+from trapp.import_lineup import ImporterLineups
+from trapp.import_player import ImporterPlayers
 
 
 def checkDB():
