@@ -5,12 +5,6 @@ from trapp.record import Record
 
 class Player(Record):
 
-    # def __init__(self):
-    #     self.data = {}
-    #     self.data["FirstName"] = ''
-    #     self.data["LastName"] = ''
-    #     self.data["ID"] = 0
-
     def loadByID(self, playerID):
         if not (isinstance(playerID, int)):
             raise RuntimeError('loadByID requires an integer')
