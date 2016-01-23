@@ -23,9 +23,15 @@ class ImporterPlayers(Importer):
             # Nothing found, so we import
             p.saveDict(record, self.log)
             self.imported += 1
+        elif (len(found) == 1):
+            # Found one record, so we update
+            record['PlayerID'] = found[0]
+            p.saveDict(record, self.log)
+            self.imported += 1
         else:
             # Something(s) found, so we skip
-            self.log.message('Found ' + str(found) + ' matching players')
+            self.log.message('Found ' + str(len(found)) +
+                             ' matching players: ' + str(found))
             self.skipped += 1
 
         return True

@@ -146,7 +146,21 @@ class Player(Record):
         if ('PlayerID' in newData.keys()):
             # Update
             log.message('  ...Updating')
-            sql = ('')
+            sql = ('UPDATE tbl_players SET '
+                   'FirstName = %s, '
+                   'LastName = %s, '
+                   'Position = %s, '
+                   'DOB = %s, '
+                   'Hometown = %s '
+                   'WHERE ID = %s')
+            rs = self.db.query(sql, (
+                newData['FirstName'],
+                newData['LastName'],
+                newData['Position'],
+                self.db.convertDate(newData['DOB']),
+                newData['Hometown'],
+                newData['PlayerID'],
+            ))
         else:
             # Insert
             log.message('  ...Inserting')
