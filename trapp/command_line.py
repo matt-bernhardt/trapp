@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import argparse
 from trapp.database import Database
 from trapp.log import Log
+from trapp.compile_game import CompilerGames
 from trapp.import_game import ImporterGames
 from trapp.import_goal import ImporterGoals
 from trapp.import_lineup import ImporterLineups
@@ -26,6 +27,44 @@ def checkDB():
     print(str(db.cnx))
     print(str(db.cursor))
     print('Warnings: ' + str(db.warnings()))
+
+
+def compileGames():
+    # This is the compiler for game-level summary data
+    # This is the first compilation step.
+    print('Compiling games data')
+    log = Log('trapp-compile-games.log')
+    log.message('Compiling games data')
+    c = CompilerGames(log)
+    c.doCompile()
+    log.end()
+
+
+def compileImpacts():
+    # This is the compiler for plus/minus or impact data
+    # This is the second compilation step.
+    print('Compiling impacts data')
+    log = Log('trapp-compile-impacts.log')
+    log.message('Compiling impacts data')
+    log.end()
+
+
+def compileTeammates():
+    # This is the compiler for teammate networks
+    # This is the fourth compilation step.
+    print('Compiling teammates data')
+    log = Log('trapp-compile-teammates.log')
+    log.message('Compiling teammates data')
+    log.end()
+
+
+def compileYears():
+    # This is the compiler for year-level summary data
+    # This is the third compilation step.
+    print('Compiling years data')
+    log = Log('trapp-compile-years.log')
+    log.message('Compiling years data')
+    log.end()
 
 
 def importGames(infile):
@@ -135,6 +174,61 @@ def importPlayers(infile):
     return True
 
 
+def verbCheck(args):
+    # Manages all the check-* verbs
+    if (args.verb == 'check-db'):
+        checkDB()
+
+    return True
+
+
+def verbCompile(args):
+    # Manages all the compile-* verbs
+    if (args.verb == 'compile'):
+        compileGames()
+        compileImpacts()
+        compileYears()
+        compileTeammates()
+
+    elif (args.verb == 'compile-games'):
+        compileGames()
+
+    elif (args.verb == 'compile-impacts'):
+        compileImpacts()
+
+    elif (args.verb == 'compile-teammates'):
+        compileTeammates()
+
+    elif (args.verb == 'compile-years'):
+        compileYears()
+
+    return True
+
+
+def verbImport(args):
+    # Manages all the import-* verbs
+    if (args.verb == 'import-games'):
+        importGames(args.infile)
+
+    elif (args.verb == 'import-goals'):
+        importGoals(args.infile)
+
+    elif (args.verb == 'import-players'):
+        importPlayers(args.infile)
+
+    elif (args.verb == 'import-lineups'):
+        importLineups(args.infile)
+
+    return True
+
+
+def verbRender(args):
+    if (args.verb == 'render'):
+        print('Render placeholder')
+
+    return True
+
+
 def main():
     # I'm imagining a few different verbs:
     # import: harvest data out of supplied files
@@ -165,6 +259,10 @@ def main():
     parser.add_argument(
         'verb',
         choices=['check-db',
+                 'compile-games',
+                 'compile-impacts',
+                 'compile-teammates',
+                 'compile-years',
                  'import-games',
                  'import-goals',
                  'import-lineups',
@@ -182,26 +280,20 @@ def main():
     # Need to add an optional filename argument
     args = parser.parse_args()
 
-    if (args.verb == 'check-db'):
-        checkDB()
+    if (args.verb[:5] == 'check'):
+        # Run check
+        verbCheck(args)
 
-    elif (args.verb == 'import-games'):
-        importGames(args.infile)
+    elif (args.verb[:7] == 'compile'):
+        # Run compile
+        verbCompile(args)
 
-    elif (args.verb == 'import-goals'):
-        importGoals(args.infile)
+    elif (args.verb[:6] == 'import'):
+        # Run import
+        verbImport(args)
 
-    elif (args.verb == 'import-players'):
-        importPlayers(args.infile)
-
-    elif (args.verb == 'import-lineups'):
-        importLineups(args.infile)
-
-    elif (args.verb == 'compile'):
-        print('Compiling...')
-
-    elif (args.verb == 'render'):
-        print('Rendering...')
+    elif (args.verb[:6] == 'render'):
+        verbRender(args)
 
     else:
         # qa

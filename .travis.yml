@@ -13,6 +13,7 @@ before_script:
   - mysql -e 'create database trapp;'
   - sh -c "mysql < tests/fixtures/tbl_gameevents.sql"
   - sh -c "mysql < tests/fixtures/tbl_gameminutes.sql"
+  - sh -c "mysql < tests/fixtures/tbl_gamestats.sql"
   - sh -c "mysql < tests/fixtures/tbl_games.sql"
   - sh -c "mysql < tests/fixtures/tbl_players.sql"
   - sh -c "mysql < tests/fixtures/tbl_teams.sql"

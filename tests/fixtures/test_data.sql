@@ -28,6 +28,10 @@ insert  into `tbl_gameevents`(`ID`,`GameID`,`TeamID`,`PlayerID`,`MinuteID`,`Even
 
 insert  into `tbl_gameminutes`(`ID`,`GameID`,`TeamID`,`PlayerID`,`TimeOn`,`TimeOff`,`Ejected`) values (1,1,2,3,0,90,0);
 
+/*Data for the table `tbl_gamestats` */
+
+insert  into `tbl_gamestats`(`ID`,`GameID`,`TeamID`,`PlayerID`,`Goals`,`Ast`,`Shots`,`SOG`,`FC`,`FS`,`Off`,`CK`,`Blk`,`YC`,`RC`,`ShotsFaced`,`Saves`,`GA`,`CP`,`Plus`,`Minus`) values (1,1,2,3,0,0,0,0,0,0,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0);
+
 /*Data for the table `tbl_players` */
 
 insert  into `tbl_players`(`ID`,`LastName`,`FirstName`,`Position`,`RosterNumber`,`Picture`,`Class`,`Eligible`,`College`,`Current_Club`,`ContractStatus`,`LastClub`,`YouthClub`,`Height_Feet`,`Height_Inches`,`Birthplace`,`HomeTown`,`Citizenship`,`Bio`,`Visible`,`Award_Pts`,`Intl_Pts`,`Weight`,`DOB`,`Expansion2014`) values (1,'the Rabbit','Harvey','Goalkeeper',NULL,'coming_soon.gif',0,'0','','',NULL,NULL,NULL,NULL,NULL,NULL,'Bedford Falls, NY',NULL,NULL,0,NULL,NULL,NULL,'1980-01-01',0);
