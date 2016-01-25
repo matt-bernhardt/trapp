@@ -174,6 +174,61 @@ def importPlayers(infile):
     return True
 
 
+def verbCheck(args):
+    # Manages all the check-* verbs
+    if (args.verb == 'check-db'):
+        checkDB()
+
+    return True
+
+
+def verbCompile(args):
+    # Manages all the compile-* verbs
+    if (args.verb == 'compile'):
+        compileGames()
+        compileImpacts()
+        compileYears()
+        compileTeammates()
+
+    elif (args.verb == 'compile-games'):
+        compileGames()
+
+    elif (args.verb == 'compile-impacts'):
+        compileImpacts()
+
+    elif (args.verb == 'compile-teammates'):
+        compileTeammates()
+
+    elif (args.verb == 'compile-years'):
+        compileYears()
+
+    return True
+
+
+def verbImport(args):
+    # Manages all the import-* verbs
+    if (args.verb == 'import-games'):
+        importGames(args.infile)
+
+    elif (args.verb == 'import-goals'):
+        importGoals(args.infile)
+
+    elif (args.verb == 'import-players'):
+        importPlayers(args.infile)
+
+    elif (args.verb == 'import-lineups'):
+        importLineups(args.infile)
+
+    return True
+
+
+def verbRender(args):
+    if (args.verb == 'render'):
+        print('Render placeholder')
+
+    return True
+
+
 def main():
     # I'm imagining a few different verbs:
     # import: harvest data out of supplied files
@@ -225,41 +280,20 @@ def main():
     # Need to add an optional filename argument
     args = parser.parse_args()
 
-    if (args.verb == 'check-db'):
-        checkDB()
+    if (args.verb[:5] == 'check'):
+        # Run check
+        verbCheck(args)
 
-    elif (args.verb == 'compile'):
-        compileGames()
-        compileImpacts()
-        compileYears()
-        compileTeammates()
+    elif (args.verb[:7] == 'compile'):
+        # Run compile
+        verbCompile(args)
 
-    elif (args.verb == 'compile-games'):
-        compileGames()
+    elif (args.verb[:6] == 'import'):
+        # Run import
+        verbImport(args)
 
-    elif (args.verb == 'compile-impacts'):
-        compileImpacts()
-
-    elif (args.verb == 'compile-teammates'):
-        compileTeammates()
-
-    elif (args.verb == 'compile-years'):
-        compileYears()
-
-    elif (args.verb == 'import-games'):
-        importGames(args.infile)
-
-    elif (args.verb == 'import-goals'):
-        importGoals(args.infile)
-
-    elif (args.verb == 'import-players'):
-        importPlayers(args.infile)
-
-    elif (args.verb == 'import-lineups'):
-        importLineups(args.infile)
-
-    elif (args.verb == 'render'):
-        print('Rendering...')
+    elif (args.verb[:6] == 'render'):
+        verbRender(args)
 
     else:
         # qa

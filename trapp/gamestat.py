@@ -86,9 +86,9 @@ class GameStat(Record):
         else:
             log.message('No Record ID provided - we insert')
             sql = ('INSERT INTO tbl_gamestats '
-                   '(GameID, TeamID, PlayerID, Goals, Ast, Shots, SOG, FC, FS, '
-                   'Off, CK, Blk, YC, RC, ShotsFaced, Saves, GA, CP, Plus, '
-                   'Minus) '
+                   '(GameID, TeamID, PlayerID, Goals, Ast, Shots, SOG, FC, '
+                   'FS, Off, CK, Blk, YC, RC, ShotsFaced, Saves, GA, CP, '
+                   'Plus, Minus) '
                    'VALUES '
                    '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '
                    '%s, %s, %s, %s, %s, %s)')
