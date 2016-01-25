@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import argparse
 from trapp.database import Database
 from trapp.log import Log
+from trapp.compile_game import CompilerGames
 from trapp.import_game import ImporterGames
 from trapp.import_goal import ImporterGoals
 from trapp.import_lineup import ImporterLineups
@@ -34,6 +35,8 @@ def compileGames():
     print('Compiling games data')
     log = Log('trapp-compile-games.log')
     log.message('Compiling games data')
+    c = CompilerGames(log)
+    c.doCompile()
     log.end()
 
 
