@@ -53,6 +53,13 @@ def test_importer_checkFields(excel):
     # assert importer.doImport() is True
 
 
+def test_importer_lookupTeamID(excel):
+    log = Log('test.log')
+    importer = Importer(excel, log)
+    needle = 'Columbus Crew'
+    assert importer.lookupTeamID(needle) == 1
+
+
 def test_importer_parseAssists(excel):
     log = Log('test_parseAssists.log')
     importer = ImporterGoals(excel, log)
