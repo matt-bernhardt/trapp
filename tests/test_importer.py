@@ -47,6 +47,13 @@ def test_importer_checkFields(excel):
     assert 'missing the following columns' in str(excinfo.value)
 
 
+def test_importer_generic_importRecord(excel):
+    log = Log('test.log')
+    importer = Importer(excel, log)
+    dummyRecord = 'Dummy Record'
+    assert importer.importRecord(dummyRecord) is True
+
+
 # def test_importer_doImport(excel):
     # log = Log('test.log')
     # importer = Importer(excel, log)
@@ -58,6 +65,14 @@ def test_importer_lookupTeamID(excel):
     importer = Importer(excel, log)
     needle = 'Columbus Crew'
     assert importer.lookupTeamID(needle) == 1
+    with pytest.raises(RuntimeError) as excinfo:
+        needle = 'Columbus Magic'
+        importer.lookupTeamID(needle)
+    assert 'Team not found: ' in str(excinfo.value)
+    with pytest.raises(RuntimeError) as excinfo:
+        needle = 'Duplicate Sample Team'
+        importer.lookupTeamID(needle)
+    assert 'Ambiguous team name: ' in str(excinfo.value)
 
 
 def test_importer_parseAssists(excel):

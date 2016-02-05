@@ -86,18 +86,8 @@ class Importer():
         return True
 
     def importRecord(self, record):
-        # This is overwritten in child objects
-        print('Importing record ' + str(record))
-        g = Game()
-        g.connectDB()
-        # Look up whether the record already exists
-        found = g.lookupID(record, self.log)
-        if (len(found) == 0):
-            # Nothing found, so we import
-            g.saveDict(record, self.log)
-        else:
-            # Some other number of games was found
-            print('Found ' + str(found) + ' games already exist')
+        # This is overwritten in child objects depending on the corrective
+        # steps needed with the data.
         return True
 
     def lookupTeamID(self, teamname):
