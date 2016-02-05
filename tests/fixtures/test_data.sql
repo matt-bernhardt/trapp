@@ -58,6 +58,8 @@ insert  into `tbl_players`(`ID`,`LastName`,`FirstName`,`Position`,`RosterNumber`
 
 insert  into `tbl_teams`(`ID`,`teamname`) values (1,'Columbus Crew');
 insert  into `tbl_teams`(`ID`,`teamname`) values (2,'D.C. United');
+insert  into `tbl_teams`(`ID`,`teamname`) values (3,'Duplicate Sample Team');
+insert  into `tbl_teams`(`ID`,`teamname`) values (4,'Duplicate Sample Team');
 
 /*Data for the table `tbl_vnues` */
 
