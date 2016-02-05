@@ -60,6 +60,19 @@ def test_importer_generic_importRecord(excel):
     # assert importer.doImport() is True
 
 
+def test_importer_lookupPlayerID(excel):
+    log = Log('test.log')
+    importer = ImporterGoals(excel, log)
+    # We don't worry about invalid data formats, as those are caught by player object
+    event = {'playername': 'Man', 'TeamID': 2, 'GameID': 1}
+    event = importer.lookupPlayerID(event)
+    assert event['PlayerID'] == 3
+    assert importer.skipped == 0
+    event = {'playername': 'Invalid Player', 'TeamID': 2, 'GameID': 1}
+    assert importer.lookupPlayerID(event) is False
+    assert importer.skipped == 1
+
+
 def test_importer_lookupTeamID(excel):
     log = Log('test.log')
     importer = Importer(excel, log)
