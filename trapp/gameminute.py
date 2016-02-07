@@ -30,6 +30,21 @@ class GameMinute(Record):
 
         return appearances
 
+    def lookupIDlistByYear(self):
+        # Probably need to check whether year is actually an integer
+        sql = ('SELECT gm.ID '
+               'FROM tbl_gameminutes gm '
+               'INNER JOIN tbl_games g ON gm.GameID = g.ID '
+               'ORDER BY g.MatchTime, g.ID ASC')
+        rs = self.db.query(sql, ())
+        if (rs.with_rows):
+            records = rs.fetchall()
+        appearances = []
+        for item in records:
+            appearances.append(item[0])
+
+        return appearances
+
     def saveDict(self, data, log):
         # Verify that data is a dictionary
         if not (isinstance(data, dict)):
