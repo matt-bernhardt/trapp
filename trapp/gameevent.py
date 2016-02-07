@@ -74,3 +74,33 @@ class GameEvent(Record):
             log.message(str(rs))
 
         return True
+
+    def summarizeEvents(self, data, log):
+        # Build a summary of events for a player in a game (for a team)
+
+        # Check submitted data for format and fields
+        required = ['GameID', 'TeamID', 'PlayerID']
+        self.checkData(data, required)
+
+        sql = ('SELECT SUM(IF(Event=1,1,0)) AS Goals, '
+               '  SUM(IF(Event IN (2,3),1,0)) AS Ast '
+               'FROM tbl_gameevents '
+               'WHERE GameID = %s '
+               '  AND TeamID = %s '
+               '  AND PlayerID = %s '
+               'GROUP BY GameID, TeamID, PlayerID')
+        rs = self.db.query(sql, (
+            data['GameID'],
+            data['TeamID'],
+            data['PlayerID']
+        ))
+        if (rs.with_rows):
+            records = rs.fetchall()
+        events = []
+        for item in records:
+            record = {}
+            record['Goals'] = int(item[0])
+            record['Ast'] = int(item[1])
+            events.append(record)
+
+        return events

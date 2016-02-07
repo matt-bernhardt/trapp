@@ -32,7 +32,8 @@ class GameMinute(Record):
 
     def lookupIDlistByYear(self):
         # Probably need to check whether year is actually an integer
-        sql = ('SELECT gm.ID '
+        sql = ('SELECT gm.ID, gm.GameID, gm.TeamID, gm.PlayerID, '
+               'gm.TimeOn, gm.TimeOff, gm.Ejected '
                'FROM tbl_gameminutes gm '
                'INNER JOIN tbl_games g ON gm.GameID = g.ID '
                'ORDER BY g.MatchTime, g.ID ASC')
@@ -41,7 +42,15 @@ class GameMinute(Record):
             records = rs.fetchall()
         appearances = []
         for item in records:
-            appearances.append(item[0])
+            record = {}
+            # record['ID'] = item[0]
+            record['GameID'] = item[1]
+            record['TeamID'] = item[2]
+            record['PlayerID'] = item[3]
+            record['TimeOn'] = item[4]
+            record['TimeOff'] = item[5]
+            record['Ejected'] = item[6]
+            appearances.append(record)
 
         return appearances
 

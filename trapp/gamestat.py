@@ -44,21 +44,7 @@ class GameStat(Record):
                    'PlayerID = %s, '
                    'Goals = %s, '
                    'Ast = %s, '
-                   'Shots = %s, '
-                   'SOG = %s, '
-                   'FC = %s, '
-                   'FS = %s, '
-                   'Off = %s, '
-                   'CK = %s, '
-                   'Blk = %s, '
-                   'YC = %s, '
-                   'RC = %s, '
-                   'ShotsFaced = %s, '
-                   'Saves = %s, '
-                   'GA = %s, '
-                   'CP = %s, '
-                   'Plus = %s, '
-                   'Minus = %s '
+                   'RC = %s '
                    'WHERE ID = %s')
             rs = self.db.query(sql, (
                 data['GameID'],
@@ -66,32 +52,15 @@ class GameStat(Record):
                 data['PlayerID'],
                 data['Goals'],
                 data['Ast'],
-                data['Shots'],
-                data['SOG'],
-                data['FC'],
-                data['FS'],
-                data['Off'],
-                data['CK'],
-                data['Blk'],
-                data['YC'],
                 data['RC'],
-                data['ShotsFaced'],
-                data['Saves'],
-                data['GA'],
-                data['CP'],
-                data['Plus'],
-                data['Minus'],
                 data['ID']
             ))
         else:
             log.message('No Record ID provided - we insert')
             sql = ('INSERT INTO tbl_gamestats '
-                   '(GameID, TeamID, PlayerID, Goals, Ast, Shots, SOG, FC, '
-                   'FS, Off, CK, Blk, YC, RC, ShotsFaced, Saves, GA, CP, '
-                   'Plus, Minus) '
+                   '(GameID, TeamID, PlayerID, Goals, Ast, RC) '
                    'VALUES '
-                   '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '
-                   '%s, %s, %s, %s, %s, %s)')
+                   '(%s, %s, %s, %s, %s, %s)')
             log.message(str(sql))
             log.message(str(data))
             rs = self.db.query(sql, (
@@ -100,21 +69,7 @@ class GameStat(Record):
                 data['PlayerID'],
                 data['Goals'],
                 data['Ast'],
-                data['Shots'],
-                data['SOG'],
-                data['FC'],
-                data['FS'],
-                data['Off'],
-                data['CK'],
-                data['Blk'],
-                data['YC'],
-                data['RC'],
-                data['ShotsFaced'],
-                data['Saves'],
-                data['GA'],
-                data['CP'],
-                data['Plus'],
-                data['Minus']
+                data['RC']
             ))
             log.message(str(rs))
 
