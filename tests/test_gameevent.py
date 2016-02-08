@@ -62,10 +62,10 @@ def test_gameevent_lookupID():
     assert len(result) == 1
 
     needle = {
-        'GameID': 0,
-        'TeamID': 0,
-        'PlayerID': 0,
-        'MinuteID': 0,
+        'GameID': -1,
+        'TeamID': -1,
+        'PlayerID': -1,
+        'MinuteID': -1,
     }
     result = ge.lookupID(needle, log)
     assert len(result) == 0
@@ -82,14 +82,14 @@ def test_gameevent_saveDict():
         ge.saveDict(data, log)
     assert 'saveDict requires a dictionary' in str(excinfo.value)
 
-    # Inserts
+    # Insert dummy data
     data = {
         'GameID': 1,
         'TeamID': 1,
         'PlayerID': 1,
         'MinuteID': 1,
         'Event': 1,
-        'Notes': ''
+        'Notes': 'DeleteMe'
     }
     assert ge.saveDict(data, log) is True
     assert ge.db.warnings() is None
@@ -97,12 +97,16 @@ def test_gameevent_saveDict():
     # Updates
     data = {
         'ID': 2,
-        'GameID': 2,
-        'TeamID': 2,
-        'PlayerID': 2,
+        'GameID': 0,
+        'TeamID': 0,
+        'PlayerID': 0,
         'MinuteID': 0,
-        'Event': 89,
-        'Notes': 'Edited'
+        'Event': 0,
+        'Notes': 'EditMe'
     }
     assert ge.saveDict(data, log) is True
     assert ge.db.warnings() is None
+
+    # Delete dummy data
+    sql = "DELETE FROM tbl_gameevents WHERE Notes = 'DeleteMe'"
+    ge.db.query(sql, ())

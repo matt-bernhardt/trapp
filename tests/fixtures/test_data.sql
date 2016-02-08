@@ -23,10 +23,12 @@ insert  into `tbl_games`(`ID`,`MatchTime`,`MatchTypeID`,`HTeamID`,`HScore`,`ATea
 /*Data for the table `tbl_gameevents` */
 
 insert  into `tbl_gameevents`(`ID`,`GameID`,`TeamID`,`PlayerID`,`MinuteID`,`Event`,`Notes`) values (1,1,2,3,4,1,'');
+insert  into `tbl_gameevents`(`ID`,`GameID`,`TeamID`,`PlayerID`,`MinuteID`,`Event`,`Notes`) values (2,0,0,0,0,0,'EditMe');
 
 /*Data for the table `tbl_gameminutes` */
 
 insert  into `tbl_gameminutes`(`ID`,`GameID`,`TeamID`,`PlayerID`,`TimeOn`,`TimeOff`,`Ejected`) values (1,1,2,3,0,90,0);
+insert  into `tbl_gameminutes`(`ID`,`GameID`,`TeamID`,`PlayerID`,`TimeOn`,`TimeOff`,`Ejected`) values (2,0,0,0,0,0,0);
 
 /*Data for the table `tbl_gamestats` */
 
