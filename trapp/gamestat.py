@@ -61,8 +61,6 @@ class GameStat(Record):
                    '(GameID, TeamID, PlayerID, Goals, Ast, RC) '
                    'VALUES '
                    '(%s, %s, %s, %s, %s, %s)')
-            log.message(str(sql))
-            log.message(str(data))
             rs = self.db.query(sql, (
                 data['GameID'],
                 data['TeamID'],
@@ -71,6 +69,5 @@ class GameStat(Record):
                 data['Ast'],
                 data['RC']
             ))
-            log.message(str(rs))
 
         return True

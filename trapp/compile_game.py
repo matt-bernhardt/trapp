@@ -32,10 +32,13 @@ class CompilerGames(Compiler):
 
         # 1) Assemble list of player appearances
         self.appearances = self.getAppearanceList()
+        print("Processing " + str(len(self.appearances)) + " records")
+        self.log.message(str(len(self.appearances)) + " records")
 
         # 2) For each appearance, calculate summary statistics
         for item in self.appearances:
             item = self.assembleStatLine(item)
+            self.log.message(str(item))
 
             # 3) Upsert those statistics as GameStat objects
             gs = GameStat()
@@ -48,12 +51,13 @@ class CompilerGames(Compiler):
             statID = gs.lookupID(needle, self.log)
             if len(statID) > 0:
                 item['ID'] = statID[0]
-            self.log.message(str(item))
 
             # 4) Goalkeeper stats
             # 5) Calculate plus/minus
 
             gs.saveDict(item, self.log)
+
+            self.log.message('')
 
         return True
 

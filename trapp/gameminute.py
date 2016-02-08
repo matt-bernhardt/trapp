@@ -44,9 +44,9 @@ class GameMinute(Record):
         for item in records:
             record = {}
             # record['ID'] = item[0]
-            record['GameID'] = item[1]
-            record['TeamID'] = item[2]
-            record['PlayerID'] = item[3]
+            record['GameID'] = int(item[1])
+            record['TeamID'] = int(item[2])
+            record['PlayerID'] = int(item[3])
             record['TimeOn'] = item[4]
             record['TimeOff'] = item[5]
             record['Ejected'] = item[6]
