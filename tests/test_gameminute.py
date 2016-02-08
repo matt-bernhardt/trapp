@@ -61,9 +61,9 @@ def test_gameminute_lookupID():
     assert len(result) == 1
 
     needle = {
-        'GameID': 0,
-        'TeamID': 0,
-        'PlayerID': 0
+        'GameID': -1,
+        'TeamID': -1,
+        'PlayerID': -1
     }
     result = gm.lookupID(needle, log)
     assert len(result) == 0
@@ -80,14 +80,14 @@ def test_gameminute_saveDict():
         gm.saveDict(data, log)
     assert 'saveDict requires a dictionary' in str(excinfo.value)
 
-    # Inserts
+    # Insert dummy data
     data = {
         'GameID': 1,
         'TeamID': 1,
         'PlayerID': 1,
         'TimeOn': 0,
         'TimeOff': 90,
-        'Ejected': 0
+        'Ejected': 314
     }
     assert gm.saveDict(data, log) is True
     assert gm.db.warnings() is None
@@ -95,12 +95,16 @@ def test_gameminute_saveDict():
     # Updates
     data = {
         'ID': 2,
-        'GameID': 2,
-        'TeamID': 2,
-        'PlayerID': 2,
+        'GameID': 0,
+        'TeamID': 0,
+        'PlayerID': 0,
         'TimeOn': 0,
-        'TimeOff': 89,
-        'Ejected': 1
+        'TimeOff': 0,
+        'Ejected': 0
     }
     assert gm.saveDict(data, log) is True
     assert gm.db.warnings() is None
+
+    # Delete dummy data
+    sql = 'DELETE FROM tbl_gameminutes WHERE Ejected = 314'
+    gm.db.query(sql, ())
