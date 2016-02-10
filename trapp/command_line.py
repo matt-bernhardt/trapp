@@ -184,13 +184,7 @@ def verbCheck(args):
 
 def verbCompile(args):
     # Manages all the compile-* verbs
-    if (args.verb == 'compile'):
-        compileGames()
-        compileImpacts()
-        compileYears()
-        compileTeammates()
-
-    elif (args.verb == 'compile-games'):
+    if (args.verb == 'compile-games'):
         compileGames()
 
     elif (args.verb == 'compile-impacts'):
@@ -267,7 +261,6 @@ def main():
                  'import-goals',
                  'import-lineups',
                  'import-players',
-                 'compile',
                  'render',
                  'qa'],
     )
