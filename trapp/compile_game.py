@@ -8,6 +8,38 @@ from trapp.gamestat import GameStat
 
 class CompilerGames(Compiler):
 
+    def assemblePlusMinus(self, record):
+        # Looks up plus/minus data for this appearance
+        self.log.message('Assembling Plus/Minus')
+
+        # Init
+        plus = 0
+        minus = 0
+
+        # Get eligible goals for this player in this game
+        ge = GameEvent()
+        ge.connectDB()
+        goals = ge.summarizePlusMinus(record, self.log)
+        self.log.message(str(goals))
+
+        # Iterate over goals
+        for goal in goals:
+            if (goal['TeamID'] == record['TeamID'] and goal['Event'] == 1):
+                plus += 1
+            elif (goal['TeamID'] == record['TeamID'] and goal['Event'] == 6):
+                minus += 1
+            elif (goal['TeamID'] != record['TeamID'] and goal['Event'] == 1):
+                minus += 1
+            elif (goal['TeamID'] != record['TeamID'] and goal['Event'] == 6):
+                plus += 1
+
+        record['Plus'] = plus
+        record['Minus'] = minus
+
+        self.log.message(str(record))
+
+        return record
+
     def assembleStatLine(self, record):
         # Takes a line in self.appearances and calculates data
 
@@ -33,14 +65,12 @@ class CompilerGames(Compiler):
         # 1) Assemble list of player appearances
         self.appearances = self.getAppearanceList()
         print("Processing " + str(len(self.appearances)) + " records")
-        self.log.message(str(len(self.appearances)) + " records")
+        self.log.message(str(len(self.appearances)) + " records\n")
 
-        # 2) For each appearance, calculate summary statistics
+        # 2) For each appearance:
         for item in self.appearances:
-            item = self.assembleStatLine(item)
-            self.log.message(str(item))
 
-            # 3) Upsert those statistics as GameStat objects
+            # 3) Look up ID for this statline
             gs = GameStat()
             gs.connectDB()
             needle = {
@@ -52,9 +82,15 @@ class CompilerGames(Compiler):
             if len(statID) > 0:
                 item['ID'] = statID[0]
 
-            # 4) Goalkeeper stats
-            # 5) Calculate plus/minus
+            # 4) Calculate summary statistics
+            item = self.assembleStatLine(item)
+            self.log.message(str(item))
 
+            # 5) Goalkeeper stats
+            # 6) Calculate plus/minus
+            item = self.assemblePlusMinus(item)
+
+            # 7) Upsert those statistics as GameStat objects
             gs.saveDict(item, self.log)
 
             self.log.message('')

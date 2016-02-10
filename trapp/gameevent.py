@@ -104,3 +104,36 @@ class GameEvent(Record):
             events.append(record)
 
         return events
+
+    def summarizePlusMinus(self, data, log):
+        # Build a summary of goals that occurred during a player's time on the
+        # field
+
+        # Check submitted data for format and fields
+        required = ['GameID', 'TimeOn', 'TimeOff']
+        self.checkData(data, required)
+
+        sql = ('SELECT ID, MinuteID, TeamID, Event '
+               'FROM tbl_gameevents '
+               'WHERE GameID = %s '
+               '  AND MinuteID >= %s '
+               '  AND MinuteID < %s'
+               '  AND (Event = 1 OR Event = 6) '
+               'ORDER BY MinuteID ASC')
+        rs = self.db.query(sql, (
+            data['GameID'],
+            data['TimeOn'],
+            data['TimeOff']
+        ))
+        if (rs.with_rows):
+            records = rs.fetchall()
+        events = []
+        for item in records:
+            record = {}
+            record['ID'] = int(item[0])
+            record['MinuteID'] = int(item[1])
+            record['TeamID'] = int(item[2])
+            record['Event'] = int(item[3])
+            events.append(record)
+
+        return events
