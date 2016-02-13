@@ -8,6 +8,19 @@ from trapp.gamestat import GameStat
 
 class CompilerGames(Compiler):
 
+    def assemblePlusMinus(self, record):
+        # Looks up plus/minus data for this appearance
+
+        # Get eligible goals for this player in this game
+        ge = GameEvent()
+        ge.connectDB()
+        impact = ge.summarizeRelevantGoals(record, self.log)
+
+        # Transfer impact information to record
+        record = dict(record, **impact[0])
+
+        return record
+
     def assembleStatLine(self, record):
         # Takes a line in self.appearances and calculates data
 
@@ -33,14 +46,12 @@ class CompilerGames(Compiler):
         # 1) Assemble list of player appearances
         self.appearances = self.getAppearanceList()
         print("Processing " + str(len(self.appearances)) + " records")
-        self.log.message(str(len(self.appearances)) + " records")
+        self.log.message(str(len(self.appearances)) + " records\n")
 
-        # 2) For each appearance, calculate summary statistics
+        # 2) For each appearance:
         for item in self.appearances:
-            item = self.assembleStatLine(item)
-            self.log.message(str(item))
 
-            # 3) Upsert those statistics as GameStat objects
+            # 3) Look up ID for this statline
             gs = GameStat()
             gs.connectDB()
             needle = {
@@ -52,9 +63,18 @@ class CompilerGames(Compiler):
             if len(statID) > 0:
                 item['ID'] = statID[0]
 
-            # 4) Goalkeeper stats
-            # 5) Calculate plus/minus
+            # 4) Calculate summary statistics
+            item = self.assembleStatLine(item)
 
+            # 5) Goalkeeper stats
+
+            # 6) Calculate plus/minus
+            item = self.assemblePlusMinus(item)
+
+            # Save record in the log
+            self.log.message(str(item))
+
+            # 7) Upsert those statistics as GameStat objects
             gs.saveDict(item, self.log)
 
             self.log.message('')
