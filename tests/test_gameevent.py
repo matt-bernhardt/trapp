@@ -110,3 +110,27 @@ def test_gameevent_saveDict():
     # Delete dummy data
     sql = "DELETE FROM tbl_gameevents WHERE Notes = 'DeleteMe'"
     ge.db.query(sql, ())
+
+
+def test_gameevent_summarizeRelevantGoals():
+    log = Log('test.log')
+    ge = GameEvent()
+    ge.connectDB()
+
+    # Make sure we can get back zeroes
+    data = {
+        'TeamID': 0,
+        'GameID': 0,
+        'TimeOn': 89,
+        'TimeOff': 90
+    }
+    assert ge.summarizeRelevantGoals(data, log) == [{'Plus': 0, 'Minus': 0}]
+
+    # Look up a known test record
+    data = {
+        'TeamID': 2,
+        'GameID': 1,
+        'TimeOn': 0,
+        'TimeOff': 90
+    }
+    assert ge.summarizeRelevantGoals(data, log) == [{'Plus': 1, 'Minus': 0}]

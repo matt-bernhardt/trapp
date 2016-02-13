@@ -110,7 +110,7 @@ class GameEvent(Record):
         # field
 
         # Check submitted data for format and fields
-        required = ['GameID', 'TimeOn', 'TimeOff']
+        required = ['TeamID', 'GameID', 'TimeOn', 'TimeOff']
         self.checkData(data, required)
 
         sql = ('SELECT '
