@@ -10,23 +10,30 @@ from trapp.import_lineup import ImporterLineups
 from trapp.import_player import ImporterPlayers
 
 
-def checkDB():
+def checkDB(args):
     print('Checking database connection\n')
-    # Read and output the connection details
+
+    # Load the connection details
     db = Database()
     connection = db.loadConnection()
-    print('Current credentials:')
-    print('dbuser:   ' + str(connection['dbuser']))
-    print('dbpwd:    ' + str(connection['dbpwd']))
-    print('dbhost:   ' + str(connection['dbhost']))
-    print('dbschema: ' + str(connection['dbschema']))
-    print('')
+
+    # print out credentials in verbose mode
+    if (args.verbose):
+        print('Credentials:')
+        print('dbuser:   ' + str(connection['dbuser']))
+        print('dbpwd:    ' + str(connection['dbpwd']))
+        print('dbhost:   ' + str(connection['dbhost']))
+        print('dbschema: ' + str(connection['dbschema']))
+        print('')
+
     # Try to establish the connection
-    print('Testing connection:')
     db.connect()
+
+    # print result
     print(str(db.cnx))
-    print(str(db.cursor))
-    print('Warnings: ' + str(db.warnings()))
+    if (args.verbose):
+        print(str(db.cursor))
+        print('Warnings: ' + str(db.warnings()))
 
 
 def compileGames():
@@ -177,7 +184,7 @@ def importPlayers(infile):
 def verbCheck(args):
     # Manages all the check-* verbs
     if (args.verb == 'check-db'):
-        checkDB()
+        checkDB(args)
 
     return True
 
@@ -269,6 +276,11 @@ def main():
         nargs='?',
         help='filename submitted along with verb',
         default='trapp/imports/import.xlsx'
+    )
+    parser.add_argument(
+        '-v', '--verbose',
+        help='toggle more verbose output, in log and to terminal',
+        action="store_true"
     )
     # Need to add an optional filename argument
     args = parser.parse_args()
