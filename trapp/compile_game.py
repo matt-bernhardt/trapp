@@ -10,33 +10,14 @@ class CompilerGames(Compiler):
 
     def assemblePlusMinus(self, record):
         # Looks up plus/minus data for this appearance
-        self.log.message('Assembling Plus/Minus')
-
-        # Init
-        plus = 0
-        minus = 0
 
         # Get eligible goals for this player in this game
         ge = GameEvent()
         ge.connectDB()
-        goals = ge.summarizePlusMinus(record, self.log)
-        self.log.message(str(goals))
+        impact = ge.summarizeRelevantGoals(record, self.log)
 
-        # Iterate over goals
-        for goal in goals:
-            if (goal['TeamID'] == record['TeamID'] and goal['Event'] == 1):
-                plus += 1
-            elif (goal['TeamID'] == record['TeamID'] and goal['Event'] == 6):
-                minus += 1
-            elif (goal['TeamID'] != record['TeamID'] and goal['Event'] == 1):
-                minus += 1
-            elif (goal['TeamID'] != record['TeamID'] and goal['Event'] == 6):
-                plus += 1
-
-        record['Plus'] = plus
-        record['Minus'] = minus
-
-        self.log.message(str(record))
+        # Transfer impact information to record
+        record = dict(record, **impact[0])
 
         return record
 
@@ -84,11 +65,14 @@ class CompilerGames(Compiler):
 
             # 4) Calculate summary statistics
             item = self.assembleStatLine(item)
-            self.log.message(str(item))
 
             # 5) Goalkeeper stats
+
             # 6) Calculate plus/minus
             item = self.assemblePlusMinus(item)
+
+            # Save record in the log
+            self.log.message(str(item))
 
             # 7) Upsert those statistics as GameStat objects
             gs.saveDict(item, self.log)
