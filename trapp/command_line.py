@@ -47,15 +47,6 @@ def compileGames():
     log.end()
 
 
-def compileImpacts():
-    # This is the compiler for plus/minus or impact data
-    # This is the second compilation step.
-    print('Compiling impacts data')
-    log = Log('trapp-compile-impacts.log')
-    log.message('Compiling impacts data')
-    log.end()
-
-
 def compileTeammates():
     # This is the compiler for teammate networks
     # This is the fourth compilation step.
@@ -194,9 +185,6 @@ def verbCompile(args):
     if (args.verb == 'compile-games'):
         compileGames()
 
-    elif (args.verb == 'compile-impacts'):
-        compileImpacts()
-
     elif (args.verb == 'compile-teammates'):
         compileTeammates()
 
@@ -261,7 +249,6 @@ def main():
         'verb',
         choices=['check-db',
                  'compile-games',
-                 'compile-impacts',
                  'compile-teammates',
                  'compile-years',
                  'import-games',
