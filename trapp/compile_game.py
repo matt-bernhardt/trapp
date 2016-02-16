@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+import time
 from trapp.compiler import Compiler
 from trapp.gameevent import GameEvent
 from trapp.gameminute import GameMinute
@@ -78,6 +79,9 @@ class CompilerGames(Compiler):
             gs.saveDict(item, self.log)
 
             self.log.message('')
+
+            # Trying a delay to prevent buffer space problems
+            time.sleep(0.01)
 
         return True
 
