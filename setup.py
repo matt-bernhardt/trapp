@@ -22,7 +22,7 @@ setup(
     packages=find_packages(exclude=['tests']),
     install_requires=[
         'xlrd',
-        'mysql-connector-python',
+        'mysql-connector-python-rf',
     ],
     dependency_links=[
         'http://dev.mysql.com/downloads/connector/python/',
