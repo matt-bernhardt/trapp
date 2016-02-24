@@ -21,6 +21,16 @@ class CompilerTeammates(Compiler):
             self.log.message(str(item))
 
             # Get the list of players to have appeared in this season
+            print('Loading players in this season')
+
+            self.players = s.loadPlayerList(item)
+
+            for player1 in self.players:
+                for player2 in self.players:
+                    if player1 > player2:
+                        print(str(player2) + ' ' + str(player1))
+
+                print('\n')
 
             # Iterate over the list of players, building player pairs
 
@@ -29,5 +39,6 @@ class CompilerTeammates(Compiler):
             # Build data for each pair
 
             # Store data for each pair
+            print('\n')
 
         return True
