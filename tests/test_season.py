@@ -34,3 +34,20 @@ def test_season_loadAll():
     s.connectDB()
     s.data = s.loadAll()
     assert len(s.data) == 2
+
+
+def test_season_loadPlayerList():
+    s = Season()
+    s.connectDB()
+    needle = {
+        'TeamID': 1,
+        'Season': 1894
+    }
+    s.data = s.loadPlayerList(needle)
+    assert len(s.data) == 0
+    needle = {
+        'TeamID': 2,
+        'Season': 1980
+    }
+    s.data = s.loadPlayerList(needle)
+    assert len(s.data) == 1

@@ -33,6 +33,9 @@ class Season(Record):
     def loadPlayerList(self, data):
         # This loads all players to have appeared for a given team in a year
 
+        required = ['TeamID', 'Season']
+        self.checkData(data, required)
+
         sql = ('SELECT DISTINCT PlayerID '
                'FROM tbl_gameminutes m '
                'INNER JOIN tbl_games g ON m.GameID = g.ID '

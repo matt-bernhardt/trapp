@@ -15,6 +15,24 @@ MySQL - 5.5.28-log : Database - trapp
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 USE `trapp`;
 
+/*Data for the table `lnk_players_combos` */
+
+insert  into `lnk_players_combos`(`ID`,`ComboID`,`PlayerID`,`Exclude`) values (1,1,1,0);
+insert  into `lnk_players_combos`(`ID`,`ComboID`,`PlayerID`,`Exclude`) values (2,1,2,0);
+insert  into `lnk_players_combos`(`ID`,`ComboID`,`PlayerID`,`Exclude`) values (3,2,1,0);
+insert  into `lnk_players_combos`(`ID`,`ComboID`,`PlayerID`,`Exclude`) values (4,2,2,1);
+insert  into `lnk_players_combos`(`ID`,`ComboID`,`PlayerID`,`Exclude`) values (5,3,1,1);
+insert  into `lnk_players_combos`(`ID`,`ComboID`,`PlayerID`,`Exclude`) values (6,3,2,0);
+insert  into `lnk_players_combos`(`ID`,`ComboID`,`PlayerID`,`Exclude`) values (7,4,1,1);
+insert  into `lnk_players_combos`(`ID`,`ComboID`,`PlayerID`,`Exclude`) values (8,4,2,1);
+
+/*Data for the table `tbl_combos` */
+
+insert  into `tbl_combos`(`ID`,`Description`) values (1,'1_0,2_0');
+insert  into `tbl_combos`(`ID`,`Description`) values (2,'1_0,2_1');
+insert  into `tbl_combos`(`ID`,`Description`) values (3,'1_1,2_0');
+insert  into `tbl_combos`(`ID`,`Description`) values (4,'1_1,2_1');
+
 /*Data for the table `tbl_games` */
 
 insert  into `tbl_games`(`ID`,`MatchTime`,`MatchTypeID`,`HTeamID`,`HScore`,`ATeamID`,`AScore`,`VenueID`,`Duration`,`Attendance`,`Notes`) values (1,'1980-01-01 19:30:00',21,1,3,2,0,1,90,0,'Sample');
