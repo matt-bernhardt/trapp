@@ -30,6 +30,15 @@ class Database():
         # This converts a python date object into a MySQL-format date string
         return time.strftime('%Y-%m-%d %H:%M:%S', date)
 
+    def lastInsertID(self):
+        rs = self.query('SELECT LAST_INSERT_ID();', ())
+        if (rs.with_rows):
+            records = rs.fetchall()
+        lastID = []
+        for value in records:
+            lastID.append(value[0])
+        return lastID[0]
+
     def loadConnection(self):
         conn = {}
         conn['dbuser'] = os.getenv('TRAPP_DBUSER', connection.u)
