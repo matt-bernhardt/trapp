@@ -49,3 +49,21 @@ def test_database_convertDate():
     d = Database()
     testDate = (1996, 4, 13, 19, 30, 0, 0, 0, 0)
     assert d.convertDate(testDate) == '1996-04-13 19:30:00'
+
+def test_database_lastInsertID():
+    d = Database()
+    d.connect()
+    # LAST_INSERT_ID() is zero if you haven't done anything yet
+    assert d.lastInsertID() == 0
+    sql = ('INSERT INTO tbl_players '
+           '(FirstName, LastName) '
+           'VALUES '
+           '(%s, %s)')
+    params = ('Delete', 'Me', )
+    d.query(sql, params)
+    # Now that we've inserted something, LAST_INSERT_ID() should be positive
+    assert d.lastInsertID() > 0
+    # Clean up our mess
+    sql = ('DELETE FROM tbl_players '
+           'WHERE FirstName = %s AND LastName = %s')
+    rs = d.query(sql, params)
