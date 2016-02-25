@@ -41,3 +41,38 @@ class Combo(Record):
             data.append(combo)
 
         return data
+
+    def registerCombo(self, player1, player2):
+        # This creates the necessary database records for a player combo
+
+        if not (isinstance(player1, int) and isinstance(player2, int)):
+            raise RuntimeError('lookupID requires two integers')
+
+        # Both
+        exclude1 = 0
+        exclude2 = 0
+        self.saveCombo(player1, exclude1, player2, exclude2)
+
+        # Neither
+        exclude1 = 1
+        exclude2 = 1
+        self.saveCombo(player1, exclude1, player2, exclude2)
+
+        # One
+        exclude1 = 0
+        exclude2 = 1
+        self.saveCombo(player1, exclude1, player2, exclude2)
+
+        # The Other
+        exclude1 = 1
+        exclude2 = 0
+        self.saveCombo(player1, exclude1, player2, exclude2)
+
+    def saveCombo(self, player1, exclude1, player2, exclude2):
+        sql = ('INSERT INTO tbl_combos '
+               '(Description) '
+               'VALUES '
+               '(%s)')
+        rs = self.db.query(sql, (
+            player1 + '_' + exclude1 + ',' + player2 + '_' + exclude2
+        ))
