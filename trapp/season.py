@@ -15,7 +15,8 @@ class Season(Record):
                'LEFT OUTER JOIN tbl_games h ON t.ID = h.HTeamID '
                'LEFT OUTER JOIN tbl_games a on t.ID = a.ATeamID '
                'WHERE YEAR(h.MatchTime) = YEAR(a.MatchTime) '
-               'GROUP BY t.ID, YEAR(h.MatchTime), YEAR(a.MatchTime)')
+               'GROUP BY t.ID, YEAR(h.MatchTime), YEAR(a.MatchTime) '
+               'ORDER BY TeamID, Season')
         rs = self.db.query(sql, ())
         if (rs.with_rows):
             records = rs.fetchall()
