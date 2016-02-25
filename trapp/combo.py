@@ -69,10 +69,37 @@ class Combo(Record):
         self.saveCombo(player1, exclude1, player2, exclude2)
 
     def saveCombo(self, player1, exclude1, player2, exclude2):
+        # Combo record
         sql = ('INSERT INTO tbl_combos '
                '(Description) '
                'VALUES '
                '(%s)')
+        description = (
+            str(player1) + '_' + str(exclude1) + ',' +
+            str(player2) + '_' + str(exclude2)
+        )
         rs = self.db.query(sql, (
-            player1 + '_' + exclude1 + ',' + player2 + '_' + exclude2
+            description,
+        ))
+        # Lookup Combo record
+        comboID = self.db.lastInsertID()
+        # Link player1 to combo record
+        sql = ('INSERT INTO lnk_players_combos '
+               '(ComboID, PlayerID, Exclude) '
+               'VALUES '
+               '(%s, %s, %s)')
+        rs = self.db.query(sql, (
+            comboID,
+            player1,
+            exclude1
+        ))
+        # Link player2 to combo record
+        sql = ('INSERT INTO lnk_players_combos '
+               '(ComboID, PlayerID, Exclude) '
+               'VALUES '
+               '(%s, %s, %s)')
+        rs = self.db.query(sql, (
+            comboID,
+            player2,
+            exclude2
         ))

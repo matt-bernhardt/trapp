@@ -98,9 +98,14 @@ class CompilerTeammates(Compiler):
             elif(len(group['combos']) == 0):
                 # None exist - so we create them
                 self.log.message('Create all')
+                c.registerCombo(
+                    group['player1'],
+                    group['player2']
+                )
             else:
                 # Some other number exists. WTF?
                 self.log.message('Some present')
+                raise RuntimeError('Incorrect number of combinations found')
 
             self.log.message('')
 
