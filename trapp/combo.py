@@ -13,11 +13,13 @@ class Combo(Record):
     # 4) Player B without Player A
     # Eventually these may be expanded to arbitrary sized groupings.
 
-    def lookupID(self, player1, player2):
+    def lookupCombos(self, player1, player2):
         if not (isinstance(player1, int) and isinstance(player2, int)):
             raise RuntimeError('lookupID requires two integers')
 
-        sql = ('SELECT c.ID '
+        sql = ('SELECT c.ID, '
+               '  l1.PlayerID AS Player1, l1.Exclude AS Exclude1, '
+               '  l2.PlayerID AS Player2, l2.Exclude AS Exclude2 '
                'FROM lnk_players_combos l1 '
                'INNER JOIN tbl_combos c ON l1.ComboID = c.ID '
                'INNER JOIN lnk_players_combos l2 ON c.ID = l2.ComboID '
@@ -29,6 +31,13 @@ class Combo(Record):
         data = []
 
         for term in records:
-            data.append(term[0])
+            combo = {
+                'ComboID': term[0],
+                'Player1': term[1],
+                'Exclude1': term[2],
+                'Player2': term[3],
+                'Exclude2': term[4]
+            }
+            data.append(combo)
 
         return data

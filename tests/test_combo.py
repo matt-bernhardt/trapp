@@ -29,18 +29,18 @@ def test_combo_disconnect():
     assert hasattr(c, 'db') is False
 
 
-def test_combo_lookupID_needsDict():
+def test_combo_lookupCombos_needsDict():
     c = Combo()
     c.connectDB()
     with pytest.raises(RuntimeError) as excinfo:
         needle1 = 1
         needle2 = 'Foo'
-        c.data = c.lookupID(needle1, needle2)
+        c.data = c.lookupCombos(needle1, needle2)
     assert 'lookupID requires two integers' in str(excinfo.value)
 
 
-def test_combo_lookupID():
+def test_combo_lookupCombos():
     c = Combo()
     c.connectDB()
-    c.data = c.lookupID(1, 2)
+    c.data = c.lookupCombos(1, 2)
     assert len(c.data) == 4
