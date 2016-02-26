@@ -35,6 +35,16 @@ def checkDB(args):
     if (args.verbose):
         print(str(db.cursor))
         print('Warnings: ' + str(db.warnings()))
+        print('')
+
+    # list database tables
+    if (args.verbose):
+        print('Tables:')
+        tables = db.query('SHOW TABLES;', ())
+        if tables.with_rows:
+            records = tables.fetchall()
+            for table in records:
+                print(table)
 
 
 def compileGames():
