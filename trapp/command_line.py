@@ -40,11 +40,11 @@ def checkDB(args):
     # list database tables
     if (args.verbose):
         print('Tables:')
-        tables = db.query('SHOW TABLES;', ())
-        if tables.with_rows:
-            records = tables.fetchall()
-            for table in records:
-                print(table)
+        sql = 'SHOW TABLES'
+        params = ()
+        records = db.query(sql, params).fetchall()
+        for table in records:
+            print(table)
 
 
 def compileGames():
