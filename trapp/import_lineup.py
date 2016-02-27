@@ -184,6 +184,8 @@ class ImporterLineups(Importer):
                 self.skipped += 1
                 self.log.message('_' + str(player) + '_ returned ' +
                                  str(len(playerID)) + ' matches')
+                if (player not in self.missing):
+                    self.missing.append(player)
 
         # Transfer timeon values to previous player's timeoff
         result = self.adjustTimeOff(augmented, timeoff)

@@ -12,6 +12,8 @@ class Importer():
         self.imported = 0
         self.skipped = 0
         self.errored = 0
+        # List for storing missing records
+        self.missing = []
         # This probably needs to check the submitted file type and read in the
         # appropriate shim.
         # For now, though, only Excel spreadsheets are supported.
@@ -138,4 +140,9 @@ class Importer():
         print(str(self.imported) + ' imported')
         print(str(self.skipped) + ' skipped')
         print(str(self.errored) + ' errored')
+        if (len(self.missing) > 0):
+            self.log.message('\nMissing records:')
+            self.missing.sort()
+            for item in self.missing:
+                self.log.message(str(item))
         return True
