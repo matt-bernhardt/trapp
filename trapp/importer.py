@@ -12,6 +12,8 @@ class Importer():
         self.imported = 0
         self.skipped = 0
         self.errored = 0
+        # List for storing missing records
+        self.missing = []
         # This probably needs to check the submitted file type and read in the
         # appropriate shim.
         # For now, though, only Excel spreadsheets are supported.
@@ -125,6 +127,17 @@ class Importer():
         minute = int(minute)
         return minute
 
+    def processMissingRecord(self, record, count):
+        # This increments the skip counter and appends the offending record
+        # to self.missing
+        self.skipped += 1
+        self.log.message('skipped: _' + str(record) + '_ returned ' +
+                         str(count) + ' matches')
+        if (record not in self.missing):
+            self.missing.append(record)
+
+        return True
+
     def setLog(self, log):
         self.log = log
         self.log.message('Log transferred')
@@ -138,4 +151,10 @@ class Importer():
         print(str(self.imported) + ' imported')
         print(str(self.skipped) + ' skipped')
         print(str(self.errored) + ' errored')
+        if (len(self.missing) > 0):
+            self.log.message('\n')
+            self.log.message(str(len(self.missing)) + ' missing records:')
+            self.missing.sort()
+            for item in self.missing:
+                self.log.message(str(item))
         return True

@@ -226,6 +226,32 @@ def test_importer_parsePlayerSplit(excel):
     assert importer.parsePlayerSplit(string) == ['Sample Player', 'First Substitution 50', 'Second Substitution 76', 'Third Substitution 84', 'sent off 88']
 
 
+def test_importer_processMissingRecords(excel):
+    log = Log('test.log')
+    importer = Importer(excel, log)
+    assert len(importer.missing) == 0
+    assert importer.skipped == 0
+    importer.processMissingRecord('Missing Record', 0)
+    assert len(importer.missing) == 1
+    assert importer.skipped == 1
+    importer.processMissingRecord('Another Missing Record', 0)
+    assert len(importer.missing) == 2
+    assert importer.skipped == 2
+    importer.processMissingRecord('Missing Record', 0)
+    assert len(importer.missing) == 2
+    assert importer.skipped == 3
+
+
+def test_importer_reportStatus(excel):
+    log = Log('test.log')
+    importer = Importer(excel, log)
+    # Still working out how best to test this method - all it does is write
+    # content out to log files, no calculation
+    assert importer.reportStatus() is True
+    importer.missing = ['Missing Record']
+    assert importer.reportStatus() is True
+
+
 def test_importer_setLog(excel):
     log = Log('test.log')
     log2 = Log('test2.log')
