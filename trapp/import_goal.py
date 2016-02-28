@@ -116,10 +116,7 @@ class ImporterGoals(Importer):
         PlayerID = p.lookupIDbyGoal(event, self.log)
 
         if (len(PlayerID) != 1):
-            self.log.message('Found wrong number of players with name ' +
-                             '_' + str(event['playername']) + '_: ' +
-                             str(PlayerID))
-            self.skipped += 1
+            self.processMissingRecord(event['playername'], len(PlayerID))
             return False
 
         event['PlayerID'] = PlayerID[0]

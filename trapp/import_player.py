@@ -30,8 +30,6 @@ class ImporterPlayers(Importer):
             self.imported += 1
         else:
             # Something(s) found, so we skip
-            self.log.message('Found ' + str(len(found)) +
-                             ' matching players: ' + str(found))
-            self.skipped += 1
+            self.processMissingRecords(found, len(found))
 
         return True

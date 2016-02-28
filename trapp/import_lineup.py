@@ -51,6 +51,7 @@ class ImporterLineups(Importer):
 
     def importRecord(self, record):
         self.log.message('Importing lineup ' + str(record))
+
         # Need to identify gameID
         g = Game()
         g.connectDB()
@@ -181,11 +182,7 @@ class ImporterLineups(Importer):
                     'TeamID': teamID
                 })
             else:
-                self.skipped += 1
-                self.log.message('_' + str(player) + '_ returned ' +
-                                 str(len(playerID)) + ' matches')
-                if (player not in self.missing):
-                    self.missing.append(player)
+                self.processMissingRecord(player, len(playerID))
 
         # Transfer timeon values to previous player's timeoff
         result = self.adjustTimeOff(augmented, timeoff)

@@ -29,8 +29,6 @@ class ImporterGames(Importer):
             self.imported += 1
         else:
             # Something(s) found, so we skip
-            self.log.message('Found ' + str(len(found)) + ' matching games: ' +
-                             str(found))
-            self.skipped += 1
+            self.processMissingRecord(found, len(found))
 
         return True
