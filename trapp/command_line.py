@@ -4,6 +4,7 @@ import argparse
 from trapp.database import Database
 from trapp.log import Log
 from trapp.compile_game import CompilerGames
+from trapp.compile_teammate import CompilerTeammates
 from trapp.import_game import ImporterGames
 from trapp.import_goal import ImporterGoals
 from trapp.import_lineup import ImporterLineups
@@ -53,6 +54,8 @@ def compileTeammates():
     print('Compiling teammates data')
     log = Log('trapp-compile-teammates.log')
     log.message('Compiling teammates data')
+    c = CompilerTeammates(log)
+    c.doCompile()
     log.end()
 
 
