@@ -77,6 +77,15 @@ class ImporterGoals(Importer):
 
         return True
 
+    def disambiguatePlayers(self, record, result):
+        # Ask user to provide player ID
+        print('\nPlayerID lookup of _' + str(record['playername']) + '_' +
+              ' failed with ' + str(len(result)) + ' records\n')
+        print(str(record))
+        newID = int(raw_input('Player ID - provide null or 0 to skip: '))
+
+        return newID
+
     def importRecord(self, record):
         self.log.message('\nImporting record:\n  ' + str(record))
 
@@ -116,6 +125,13 @@ class ImporterGoals(Importer):
         PlayerID = p.lookupIDbyGoal(event, self.log)
 
         if (len(PlayerID) != 1):
+            # First step is to ask the user to disambiguate
+            newID = self.disambiguatePlayers(event, PlayerID)
+            PlayerID = []
+            PlayerID.append(newID)
+
+        if (PlayerID[0] == 0):
+            # If PlayerID is still zero, mark it as missing
             self.processMissingRecord(event['playername'], len(PlayerID))
             return False
 
