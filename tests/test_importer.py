@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import pytest
+import mock
 from trapp.log import Log
 from trapp.importer import Importer
 from trapp.import_game import ImporterGames
@@ -47,6 +48,16 @@ def test_importer_checkFields(excel):
     assert 'missing the following columns' in str(excinfo.value)
 
 
+def test_importer_disambiguatePlayers(excel):
+    log = Log('test.log')
+    importer = ImporterGoals(excel, log)
+    with mock.patch('__builtin__.raw_input', return_value=1234):
+        record = {
+            'playername': 'Bogus Player'
+        }
+        assert importer.disambiguatePlayers(record, [0]) == 1234
+
+
 def test_importer_generic_importRecord(excel):
     log = Log('test.log')
     importer = Importer(excel, log)
@@ -60,7 +71,7 @@ def test_importer_generic_importRecord(excel):
     # assert importer.doImport() is True
 
 
-def test_importer_lookupPlayerID(excel):
+def test_importer_lookupPlayerID_valid(excel):
     log = Log('test.log')
     importer = ImporterGoals(excel, log)
     # We don't worry about invalid data formats, as those are caught by player object
@@ -68,9 +79,16 @@ def test_importer_lookupPlayerID(excel):
     event = importer.lookupPlayerID(event)
     assert event['PlayerID'] == 3
     assert importer.skipped == 0
-    event = {'playername': 'Invalid Player', 'TeamID': 2, 'GameID': 1}
-    assert importer.lookupPlayerID(event) is False
-    assert importer.skipped == 1
+
+
+def test_importer_lookupPlayerID_valid(excel):
+    log = Log('test.log')
+    importer = ImporterGoals(excel, log)
+    # Invalid records get run through disambiguation
+    with mock.patch('__builtin__.raw_input', return_value=0):
+        event = {'playername': 'Invalid Player', 'TeamID': 2, 'GameID': 1}
+        assert importer.lookupPlayerID(event) is False
+        assert importer.skipped == 1
 
 
 def test_importer_lookupTeamID(excel):
