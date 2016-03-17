@@ -54,7 +54,7 @@ class Player(Record):
         #   'Goalkeeper', 'Defender', 'Midfielder', 'Forward')
         # - DOB (date object)
         # - Hometown ('City, ST' for US/Canada, 'City, Country' otherwise)
-        required = ['FirstName', 'LastName', 'Position', 'DOB', 'Hometown']
+        required = ['FirstName', 'LastName', 'Position', 'Hometown']
         self.checkData(data, required)
 
         # See if any game matches these three terms
@@ -63,17 +63,11 @@ class Player(Record):
                'WHERE FirstName = %s '
                '  AND LastName = %s '
                '  AND Position = %s '
-               '  AND YEAR(DOB) = %s '
-               '  AND MONTH(DOB) = %s '
-               '  AND DAY(DOB) = %s '
                '  AND Hometown = %s')
         rs = self.db.query(sql, (
             data['FirstName'],
             data['LastName'],
             data['Position'],
-            data['DOB'][0],
-            data['DOB'][1],
-            data['DOB'][2],
             data['Hometown'],
         ))
         if (rs.with_rows):
@@ -150,14 +144,12 @@ class Player(Record):
                    'FirstName = %s, '
                    'LastName = %s, '
                    'Position = %s, '
-                   'DOB = %s, '
                    'Hometown = %s '
                    'WHERE ID = %s')
             rs = self.db.query(sql, (
                 newData['FirstName'],
                 newData['LastName'],
                 newData['Position'],
-                self.db.convertDate(newData['DOB']),
                 newData['Hometown'],
                 newData['PlayerID'],
             ))
@@ -165,14 +157,13 @@ class Player(Record):
             # Insert
             log.message('  ...Inserting')
             sql = ('INSERT INTO tbl_players '
-                   '(FirstName, LastName, Position, DOB, Hometown) '
+                   '(FirstName, LastName, Position, Hometown) '
                    'VALUES '
-                   '(%s, %s, %s, %s, %s)')
+                   '(%s, %s, %s, %s)')
             rs = self.db.query(sql, (
                 newData['FirstName'],
                 newData['LastName'],
                 newData['Position'],
-                self.db.convertDate(newData['DOB']),
                 newData['Hometown'],
             ))
 
