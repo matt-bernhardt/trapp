@@ -54,7 +54,7 @@ class Player(Record):
         #   'Goalkeeper', 'Defender', 'Midfielder', 'Forward')
         # - DOB (date object)
         # - Hometown ('City, ST' for US/Canada, 'City, Country' otherwise)
-        required = ['FirstName', 'LastName', 'Position', 'Hometown']
+        required = ['FirstName', 'LastName', 'Position', 'DOB', 'Hometown']
         self.checkData(data, required)
 
         # See if any game matches these three terms
@@ -63,11 +63,17 @@ class Player(Record):
                'WHERE FirstName = %s '
                '  AND LastName = %s '
                '  AND Position = %s '
+               '  AND YEAR(DOB) = %s '
+               '  AND MONTH(DOB) = %s '
+               '  AND DAY(DOB) = %s '
                '  AND Hometown = %s')
         rs = self.db.query(sql, (
             data['FirstName'],
             data['LastName'],
             data['Position'],
+            data['DOB'][0],
+            data['DOB'][1],
+            data['DOB'][2],
             data['Hometown'],
         ))
         if (rs.with_rows):

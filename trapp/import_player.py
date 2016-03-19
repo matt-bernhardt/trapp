@@ -8,7 +8,8 @@ class ImporterPlayers(Importer):
 
     def correctValues(self):
         for record in self.records:
-            record['DOB'] = ''
+            if (record['DOB'] != ''):
+                record['DOB'] = self.source.recoverDate(record['DOB'])
 
         return True
 
