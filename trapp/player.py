@@ -165,18 +165,14 @@ class Player(Record):
             # Update
             log.message('  ...Updating')
 
-            # Loops through sorted dictionary
-            # Builds the relevant SQL fields and values.
-            for item in sorted(newData):
-                if (newData[item] != '' and item in fieldList):
-                    fieldNames.append(item + ' = %s')
-                    fieldData.append(newData[item])
+            clauses = self.buildUpdateClauses(newData, fieldList)
 
             # Convert list to comma-separated string
-            fieldNames = ",".join(map(str, fieldNames))
+            fieldNames = ",".join(map(str, clauses["FieldNames"]))
 
             # Append PlayerID to field data
-            fieldData.append(newData['PlayerID'])
+            clauses["FieldData"].append(newData['PlayerID'])
+            fieldData = clauses["FieldData"]
 
             sql = 'UPDATE tbl_players SET ' + fieldNames + ' WHERE ID = %s'
 
@@ -184,16 +180,11 @@ class Player(Record):
             # Insert
             log.message('  ...Inserting')
 
-            # Loops through sorted dictionary
-            # Builds the relevant SQL fields and values.
-            for item in sorted(newData):
-                if (newData[item] != '' and item in fieldList):
-                    fieldNames.append(item)
-                    fieldHolders.append('%s')
-                    fieldData.append(newData[item])
+            clauses = self.buildInsertClauses(newData, fieldList)
 
-            fieldNames = ",".join(map(str, fieldNames))
-            fieldHolders = ",".join(map(str, fieldHolders))
+            fieldNames = ",".join(map(str, clauses["FieldNames"]))
+            fieldHolders = ",".join(map(str, clauses["FieldHolders"]))
+            fieldData = clauses["FieldData"]
 
             sql = ('INSERT INTO tbl_players (' + fieldNames + ') '
                    'VALUES '

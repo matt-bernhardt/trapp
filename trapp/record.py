@@ -17,6 +17,54 @@ class Record():
         self.db.disconnect()
         del self.db
 
+    def buildInsertClauses(self, data, fieldList):
+        # Loops through sorted dictionary, data
+        # Builds the relevant SQL fields and values.
+
+        # Everything comes back in a clauses dictionary
+        clauses = {}
+        clauses["FieldNames"] = []
+        clauses["FieldHolders"] = []
+        clauses["FieldData"] = []
+
+        for item in sorted(data):
+            if (data[item] != '' and item in fieldList):
+                clauses["FieldNames"].append(item)
+                clauses["FieldHolders"].append('%s')
+                if (item == 'DOB'):
+                    clauses["FieldData"].append(
+                        self.db.convertDate(data[item])
+                    )
+                else:
+                    clauses["FieldData"].append(
+                        data[item]
+                    )
+
+        return clauses
+
+    def buildUpdateClauses(self, data, fieldList):
+        # Loops through sorted dictionary, data
+        # Builds the relevant SQL fields and values.
+
+        # Everything comes back in a clauses dictionary
+        clauses = {}
+        clauses["FieldNames"] = []
+        clauses["FieldData"] = []
+
+        for item in sorted(data):
+            if (data[item] != '' and item in fieldList):
+                clauses["FieldNames"].append(item + ' = %s')
+                if (item == 'DOB'):
+                    clauses["FieldData"].append(
+                        self.db.convertDate(data[item])
+                    )
+                else:
+                    clauses["FieldData"].append(
+                        data[item]
+                    )
+
+        return clauses
+
     def checkData(self, data, required):
         # This checks a submitted data dictionary for required fields.
         # 1) data must be a dictionary
