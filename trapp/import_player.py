@@ -33,7 +33,7 @@ class ImporterPlayers(Importer):
             # Found one record, so we update
             record['PlayerID'] = found[0]
             p.saveDict(record, self.log)
-            self.imported += 1
+            self.updated += 1
         else:
             # Something(s) found, so we skip
             self.processMissingRecords(found, len(found))
