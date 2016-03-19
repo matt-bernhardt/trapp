@@ -13,12 +13,17 @@ class ImporterPlayers(Importer):
         return True
 
     def importRecord(self, record):
+        record['PlayerName'] = (
+            record['FirstName'] + " " + record['LastName']
+        ).strip()
+
         self.log.message('Importing player ' + str(record))
+
         p = Player()
         p.connectDB()
 
         # Does the record exist?
-        found = p.lookupID(record, self.log)
+        found = p.lookupIDbyName(record, self.log)
         if (len(found) == 0):
             # Nothing found, so we import
             p.saveDict(record, self.log)
@@ -31,5 +36,7 @@ class ImporterPlayers(Importer):
         else:
             # Something(s) found, so we skip
             self.processMissingRecords(found, len(found))
+
+        self.log.message('')
 
         return True

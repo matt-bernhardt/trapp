@@ -137,34 +137,64 @@ class Player(Record):
             raise RuntimeError('saveDict requires a dictionary')
         log.message('Saving player record to database')
 
+        # Prepping sqlData and fieldData
+        fieldNames = []
+        fieldHolders = []
+        fieldData = []
+        fieldList = [
+            'FirstName',
+            'LastName',
+            'Position',
+            'RosterNumber',
+            'Current_Club',
+            'Height_Feet',
+            'Height_Inches',
+            'Hometown',
+            'Citizenship',
+            'Weight',
+            'DOB'
+        ]
+
         if ('PlayerID' in newData.keys()):
             # Update
             log.message('  ...Updating')
-            sql = ('UPDATE tbl_players SET '
-                   'FirstName = %s, '
-                   'LastName = %s, '
-                   'Position = %s, '
-                   'Hometown = %s '
-                   'WHERE ID = %s')
-            rs = self.db.query(sql, (
-                newData['FirstName'],
-                newData['LastName'],
-                newData['Position'],
-                newData['Hometown'],
-                newData['PlayerID'],
-            ))
+
+            # Loops through sorted dictionary
+            # Builds the relevant SQL fields and values.
+            for item in sorted(newData):
+                if (newData[item] != '' and item in fieldList):
+                    fieldNames.append(item + ' = %s')
+                    fieldData.append(newData[item])
+
+            # Convert list to comma-separated string
+            fieldNames = ",".join(map(str, fieldNames))
+
+            # Append PlayerID to field data
+            fieldData.append(newData['PlayerID'])
+
+            sql = 'UPDATE tbl_players SET ' + fieldNames + ' WHERE ID = %s'
+
         else:
             # Insert
             log.message('  ...Inserting')
-            sql = ('INSERT INTO tbl_players '
-                   '(FirstName, LastName, Position, Hometown) '
+
+            # Loops through sorted dictionary
+            # Builds the relevant SQL fields and values.
+            for item in sorted(newData):
+                if (newData[item] != '' and item in fieldList):
+                    fieldNames.append(item)
+                    fieldHolders.append('%s')
+                    fieldData.append(newData[item])
+
+            fieldNames = ",".join(map(str, fieldNames))
+            fieldHolders = ",".join(map(str, fieldHolders))
+
+            sql = ('INSERT INTO tbl_players (' + fieldNames + ') '
                    'VALUES '
-                   '(%s, %s, %s, %s)')
-            rs = self.db.query(sql, (
-                newData['FirstName'],
-                newData['LastName'],
-                newData['Position'],
-                newData['Hometown'],
-            ))
+                   '(' + fieldHolders + ')')
+
+        log.message(sql)
+        log.message(str(fieldData))
+        rs = self.db.query(sql, (fieldData))
 
         return True
