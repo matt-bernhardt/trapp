@@ -10,6 +10,7 @@ class Importer():
     def __init__(self, importFile, logFile):
         # Counters for reporting outcomes
         self.imported = 0
+        self.updated = 0
         self.skipped = 0
         self.errored = 0
         # List for storing missing records
@@ -146,9 +147,11 @@ class Importer():
     def reportStatus(self):
         self.log.message('\nImport results:')
         self.log.message(str(self.imported) + ' imported')
+        self.log.message(str(self.updated) + ' updated')
         self.log.message(str(self.skipped) + ' skipped')
         self.log.message(str(self.errored) + ' errored')
         print(str(self.imported) + ' imported')
+        print(str(self.updated) + ' updated')
         print(str(self.skipped) + ' skipped')
         print(str(self.errored) + ' errored')
         if (len(self.missing) > 0):

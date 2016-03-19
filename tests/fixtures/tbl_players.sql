@@ -20,7 +20,7 @@ DROP TABLE IF EXISTS `tbl_players`;
 CREATE TABLE `tbl_players` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `LastName` varchar(255) DEFAULT NULL,
-  `FirstName` varchar(255) DEFAULT NULL,
+  `FirstName` varchar(255) DEFAULT '',
   `Position` varchar(255) DEFAULT '',
   `RosterNumber` int(3) unsigned DEFAULT NULL,
   `Picture` varchar(50) DEFAULT 'coming_soon.gif',
