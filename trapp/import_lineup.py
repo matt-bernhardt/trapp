@@ -27,6 +27,7 @@ class ImporterLineups(Importer):
 
     def correctValues(self):
         for record in self.records:
+            # Fix date format
             record['Date'] = self.source.recoverDate(record['Date'])
 
             # Look up Team and Opponent ID
@@ -66,6 +67,8 @@ class ImporterLineups(Importer):
     def importRecord(self, record):
         self.log.message('\nImporting lineup ' + str(record))
 
+        # If the game hasn't been played yet, move to the next
+        # Doesn't get recorded as a "skip" to keep reporting clean
         today = datetime.now()
         gamedate = datetime(
             record['Date'][0],
@@ -73,11 +76,10 @@ class ImporterLineups(Importer):
             record['Date'][2]
         )
         if (gamedate > today):
-            self.log.message('Game in the future - skip')
-            self.skipped += 1
+            self.log.message('Game has not been played yet')
             return True
 
-        # Need to identify gameID
+        # Start working with game record
         g = Game()
         g.connectDB()
 
