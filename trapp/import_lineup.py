@@ -28,6 +28,19 @@ class ImporterLineups(Importer):
     def correctValues(self):
         for record in self.records:
             record['Date'] = self.source.recoverDate(record['Date'])
+
+            # Look up Team and Opponent ID
+            record['teamID'] = self.lookupTeamID(record['Team'])
+            record['opponentID'] = self.lookupTeamID(record['Opponent'])
+
+            # Sort home/away teams
+            if (record['H/A'] == 'H'):
+                record['homeID'] = record['teamID']
+                record['awayID'] = record['opponentID']
+            elif (record['H/A'] == 'A'):
+                record['homeID'] = record['opponentID']
+                record['awayID'] = record['teamID']
+
         return True
 
     def importPlayer(self, player):
@@ -68,23 +81,11 @@ class ImporterLineups(Importer):
         g = Game()
         g.connectDB()
 
-        # Team and Opponent ID
-        teamID = self.lookupTeamID(record['Team'])
-        opponentID = self.lookupTeamID(record['Opponent'])
-
-        # Sort home/away teams
-        if (record['H/A'] == 'H'):
-            homeID = teamID
-            awayID = opponentID
-        elif (record['H/A'] == 'A'):
-            homeID = opponentID
-            awayID = teamID
-
         # Lookup this gameID
         needle = {
             'MatchTime': record['Date'],
-            'HTeamID': homeID,
-            'ATeamID': awayID,
+            'HTeamID': record['homeID'],
+            'ATeamID': record['awayID'],
         }
         game = g.lookupID(needle, self.log)
 
@@ -103,7 +104,7 @@ class ImporterLineups(Importer):
         duration = g.lookupDuration(game, self.log)
 
         # Parse lineup string
-        self.parseLineup(record['Lineup'], game, teamID, duration)
+        self.parseLineup(record['Lineup'], game, record['teamID'], duration)
 
         # At this point we have self.players - but need to store them
         [self.importPlayer(player) for player in self.players]
