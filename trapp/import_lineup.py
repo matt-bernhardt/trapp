@@ -4,6 +4,7 @@ from trapp.importer import Importer
 from trapp.game import Game
 from trapp.gameminute import GameMinute
 from trapp.player import Player
+from datetime import datetime
 
 
 class ImporterLineups(Importer):
@@ -43,14 +44,25 @@ class ImporterLineups(Importer):
             # We add that appearanceID, to ensure an update operation.
             player['ID'] = appearanceID[0]
             gm.saveDict(player, self.log)
-            self.imported += 1
+            self.updated += 1
         else:
             gm.saveDict(player, self.log)
             self.imported += 1
         return True
 
     def importRecord(self, record):
-        self.log.message('Importing lineup ' + str(record))
+        self.log.message('\nImporting lineup ' + str(record))
+
+        today = datetime.now()
+        gamedate = datetime(
+            record['Date'][0],
+            record['Date'][1],
+            record['Date'][2]
+        )
+        if (gamedate > today):
+            self.log.message('Game in the future - skip')
+            self.skipped += 1
+            return True
 
         # Need to identify gameID
         g = Game()
@@ -119,7 +131,8 @@ class ImporterLineups(Importer):
             batch = self.parsePlayer(starter, game, teamID, duration)
             for item in batch:
                 self.players.append(item)
-        self.log.message(str(self.players))
+        # Going to try removing this from the log, to see if it gets cleaner
+        # self.log.message(str(self.players))
 
         # This method returns nothing, as its work is recorded in
         # self.starters and self.players.
