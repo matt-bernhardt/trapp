@@ -76,7 +76,7 @@ class ImporterGoals(Importer):
             # record['Events'] is now a list of strings. We now need to parse
             # each individual string into a dictionary.
             for item in record['Events']:
-                item = self.parseOneGoal(item, game, teamID)
+                item = self.parseOneGoal(item, game, teamID, opponentID)
                 for subitem in item:
                     record['NewEvents'].append(self.lookupPlayerID(subitem))
 
@@ -129,10 +129,16 @@ class ImporterGoals(Importer):
     def lookupPlayerID(self, event):
         self.log.message('Looking up PlayerID for event:\n' + str(event))
 
+        # Swap team and opponent IDs for own goals
+        event = self.swapTeamIDs(event)
+
         p = Player()
         p.connectDB()
 
         PlayerID = p.lookupIDbyGoal(event, self.log)
+
+        # Swap team and opponent IDs back for own goals
+        event = self.swapTeamIDs(event)
 
         if (len(PlayerID) != 1):
             # First step is to ask the user to disambiguate
@@ -185,7 +191,7 @@ class ImporterGoals(Importer):
 
         return time
 
-    def parseOneGoal(self, inputString, gameID, teamID):
+    def parseOneGoal(self, inputString, gameID, teamID, opponentID):
         # This takes in a string describing a single goal.
         # It returns a list of dictionaries, one for the goal and then up to
         # two for the assists.
@@ -228,6 +234,7 @@ class ImporterGoals(Importer):
         records.append({
             'GameID': gameID,
             'TeamID': teamID,
+            'OpponentID': opponentID,
             'MinuteID': minute,
             'Event': event,
             'playername': playerName,
@@ -255,3 +262,15 @@ class ImporterGoals(Importer):
             events.append(goal.strip())
         self.log.message('  ' + str(events) + '\n')
         return events
+
+    def swapTeamIDs(self, record):
+        # This takes a dictionary of an event record and swaps the team and
+        # opponent IDs. This is called as part of looking up a PlayerID for
+        # an own goal
+
+        if (record['Event'] == 6):
+            temp = record['TeamID']
+            record['TeamID'] = record['OpponentID']
+            record['OpponentID'] = temp
+
+        return record
