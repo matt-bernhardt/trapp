@@ -110,9 +110,11 @@ class ImporterGoals(Importer):
                 # We already have a record of this event.
                 # We add that eventID to ensure an update.
                 item['ID'] = eventID[0]
-
-            e.saveDict(item, self.log)
-            self.imported += 1
+                e.saveDict(item, self.log)
+                self.updated += 1
+            else:
+                e.saveDict(item, self.log)
+                self.imported += 1
 
         return True
 
