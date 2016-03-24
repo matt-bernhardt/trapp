@@ -4,6 +4,7 @@ from trapp.importer import Importer
 from trapp.game import Game
 from trapp.gameminute import GameMinute
 from trapp.player import Player
+from datetime import datetime
 
 
 class ImporterLineups(Importer):
@@ -26,7 +27,21 @@ class ImporterLineups(Importer):
 
     def correctValues(self):
         for record in self.records:
+            # Fix date format
             record['Date'] = self.source.recoverDate(record['Date'])
+
+            # Look up Team and Opponent ID
+            record['teamID'] = self.lookupTeamID(record['Team'])
+            record['opponentID'] = self.lookupTeamID(record['Opponent'])
+
+            # Sort home/away teams
+            if (record['H/A'] == 'H'):
+                record['homeID'] = record['teamID']
+                record['awayID'] = record['opponentID']
+            elif (record['H/A'] == 'A'):
+                record['homeID'] = record['opponentID']
+                record['awayID'] = record['teamID']
+
         return True
 
     def importPlayer(self, player):
@@ -43,36 +58,36 @@ class ImporterLineups(Importer):
             # We add that appearanceID, to ensure an update operation.
             player['ID'] = appearanceID[0]
             gm.saveDict(player, self.log)
-            self.imported += 1
+            self.updated += 1
         else:
             gm.saveDict(player, self.log)
             self.imported += 1
         return True
 
     def importRecord(self, record):
-        self.log.message('Importing lineup ' + str(record))
+        self.log.message('\nImporting lineup ' + str(record))
 
-        # Need to identify gameID
+        # If the game hasn't been played yet, move to the next
+        # Doesn't get recorded as a "skip" to keep reporting clean
+        today = datetime.now()
+        gamedate = datetime(
+            record['Date'][0],
+            record['Date'][1],
+            record['Date'][2]
+        )
+        if (gamedate > today):
+            self.log.message('Game has not been played yet')
+            return True
+
+        # Start working with game record
         g = Game()
         g.connectDB()
-
-        # Team and Opponent ID
-        teamID = self.lookupTeamID(record['Team'])
-        opponentID = self.lookupTeamID(record['Opponent'])
-
-        # Sort home/away teams
-        if (record['H/A'] == 'H'):
-            homeID = teamID
-            awayID = opponentID
-        elif (record['H/A'] == 'A'):
-            homeID = opponentID
-            awayID = teamID
 
         # Lookup this gameID
         needle = {
             'MatchTime': record['Date'],
-            'HTeamID': homeID,
-            'ATeamID': awayID,
+            'HTeamID': record['homeID'],
+            'ATeamID': record['awayID'],
         }
         game = g.lookupID(needle, self.log)
 
@@ -91,7 +106,7 @@ class ImporterLineups(Importer):
         duration = g.lookupDuration(game, self.log)
 
         # Parse lineup string
-        self.parseLineup(record['Lineup'], game, teamID, duration)
+        self.parseLineup(record['Lineup'], game, record['teamID'], duration)
 
         # At this point we have self.players - but need to store them
         [self.importPlayer(player) for player in self.players]
@@ -119,7 +134,8 @@ class ImporterLineups(Importer):
             batch = self.parsePlayer(starter, game, teamID, duration)
             for item in batch:
                 self.players.append(item)
-        self.log.message(str(self.players))
+        # Going to try removing this from the log, to see if it gets cleaner
+        # self.log.message(str(self.players))
 
         # This method returns nothing, as its work is recorded in
         # self.starters and self.players.
