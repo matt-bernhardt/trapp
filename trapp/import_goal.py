@@ -23,6 +23,15 @@ class ImporterGoals(Importer):
             self.log.message('\nParsing game record:')
             # self.log.message('  ' + str(record) + '\n')
 
+            # NewEvents holds the rebuilt event records - we create it this
+            # early because the next step skips this record when no goals
+            # are scored - and it still needs to be present.
+            record['NewEvents'] = []
+
+            # Games with no goals get skipped
+            if (record['Goals'] == ''):
+                continue
+
             # 1. TeamID lookup
             teamID = self.lookupTeamID(record['Team'])
 
@@ -64,7 +73,6 @@ class ImporterGoals(Importer):
 
             # 5. The goalscorers string needs to be expanded
             record['Events'] = self.splitGoals(record['Goals'])
-            record['NewEvents'] = []
             # record['Events'] is now a list of strings. We now need to parse
             # each individual string into a dictionary.
             for item in record['Events']:
