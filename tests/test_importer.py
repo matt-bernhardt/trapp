@@ -75,7 +75,17 @@ def test_importer_lookupPlayerID_valid(excel):
     log = Log('test.log')
     importer = ImporterGoals(excel, log)
     # We don't worry about invalid data formats, as those are caught by player object
-    event = {'playername': 'Man', 'TeamID': 2, 'GameID': 1}
+    event = {'playername': 'Man', 'TeamID': 2, 'GameID': 1, 'Event': 1}
+    event = importer.lookupPlayerID(event)
+    assert event['PlayerID'] == 3
+    assert importer.skipped == 0
+
+
+def test_importer_lookupPlayerID_owngoal(excel):
+    log = Log('test.log')
+    importer = ImporterGoals(excel, log)
+    # We don't worry about invalid data formats, as those are caught by player object
+    event = {'playername': 'Man', 'TeamID': 1, 'GameID': 1, 'Event': 6, 'OpponentID': 2}
     event = importer.lookupPlayerID(event)
     assert event['PlayerID'] == 3
     assert importer.skipped == 0
@@ -86,7 +96,7 @@ def test_importer_lookupPlayerID_valid(excel):
     importer = ImporterGoals(excel, log)
     # Invalid records get run through disambiguation
     with mock.patch('__builtin__.raw_input', return_value=0):
-        event = {'playername': 'Invalid Player', 'TeamID': 2, 'GameID': 1}
+        event = {'playername': 'Invalid Player', 'TeamID': 2, 'GameID': 1, 'Event': 1}
         assert importer.lookupPlayerID(event) is False
         assert importer.skipped == 1
 
@@ -133,18 +143,19 @@ def test_importer_parseOneGoal(excel):
     importer = ImporterGoals(excel, log)
     game = 1
     team = 1
+    opponent = 2
     goals = ""
     # assert importer.parseGoals(goals) == [{}]
     goals = "Player (unassisted) 78"
-    assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': '', 'GameID': 1, 'TeamID': 1}]
+    assert importer.parseOneGoal(goals, game, team, opponent) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': '', 'GameID': 1, 'TeamID': 1, 'OpponentID': 2}]
     goals = "Player (penalty) 78"
-    assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': 'penalty kick', 'GameID': 1, 'TeamID': 1}]
+    assert importer.parseOneGoal(goals, game, team, opponent) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': 'penalty kick', 'GameID': 1, 'TeamID': 1, 'OpponentID': 2}]
     goals = "Player (Potter) 78"
-    assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': '', 'GameID': 1, 'TeamID': 1}, {'playername': 'Potter', 'MinuteID': 78, 'Event': 2, 'Notes': '', 'GameID': 1, 'TeamID': 1}]
+    assert importer.parseOneGoal(goals, game, team, opponent) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': '', 'GameID': 1, 'TeamID': 1, 'OpponentID': 2}, {'playername': 'Potter', 'MinuteID': 78, 'Event': 2, 'Notes': '', 'GameID': 1, 'TeamID': 1}]
     goals = "Player (Potter, Rains) 78"
-    assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': '', 'GameID': 1, 'TeamID': 1}, {'playername': 'Potter', 'MinuteID': 78, 'Event': 2, 'Notes': '', 'GameID': 1, 'TeamID': 1}, {'playername': 'Rains', 'MinuteID': 78, 'Event': 3, 'Notes': '', 'GameID': 1, 'TeamID': 1}]
+    assert importer.parseOneGoal(goals, game, team, opponent) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 1, 'Notes': '', 'GameID': 1, 'TeamID': 1, 'OpponentID': 2}, {'playername': 'Potter', 'MinuteID': 78, 'Event': 2, 'Notes': '', 'GameID': 1, 'TeamID': 1}, {'playername': 'Rains', 'MinuteID': 78, 'Event': 3, 'Notes': '', 'GameID': 1, 'TeamID': 1}]
     goals = "Player (own goal) 78"
-    assert importer.parseOneGoal(goals, game, team) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 6, 'Notes': 'own goal', 'GameID': 1, 'TeamID': 1}]
+    assert importer.parseOneGoal(goals, game, team, opponent) == [{'playername': 'Player', 'MinuteID': 78, 'Event': 6, 'Notes': 'own goal', 'GameID': 1, 'TeamID': 1, 'OpponentID': 2}]
 
 
 def test_importer_parseMinuteDoesNothing(excel):
