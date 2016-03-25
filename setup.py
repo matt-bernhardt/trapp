@@ -13,7 +13,7 @@ with io.open('LICENSE') as f:
 
 setup(
     name='trapp',
-    version='0.3.0-alpha1',
+    version='0.5.0-beta1',
     description='Link, analyze, and extend soccer data',
     url='https://github.com/matt-bernhardt/trapp',
     license=license,
@@ -31,7 +31,7 @@ setup(
         'console_scripts': ['trapp=trapp.command_line:main'],
     },
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intendend Audience :: Other Audience',
         'Environment :: Console',
         'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
