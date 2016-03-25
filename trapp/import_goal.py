@@ -23,6 +23,15 @@ class ImporterGoals(Importer):
             self.log.message('\nParsing game record:')
             # self.log.message('  ' + str(record) + '\n')
 
+            # NewEvents holds the rebuilt event records - we create it this
+            # early because the next step skips this record when no goals
+            # are scored - and it still needs to be present.
+            record['NewEvents'] = []
+
+            # Games with no goals get skipped
+            if (record['Goals'] == ''):
+                continue
+
             # 1. TeamID lookup
             teamID = self.lookupTeamID(record['Team'])
 
@@ -64,11 +73,10 @@ class ImporterGoals(Importer):
 
             # 5. The goalscorers string needs to be expanded
             record['Events'] = self.splitGoals(record['Goals'])
-            record['NewEvents'] = []
             # record['Events'] is now a list of strings. We now need to parse
             # each individual string into a dictionary.
             for item in record['Events']:
-                item = self.parseOneGoal(item, game, teamID)
+                item = self.parseOneGoal(item, game, teamID, opponentID)
                 for subitem in item:
                     record['NewEvents'].append(self.lookupPlayerID(subitem))
 
@@ -110,19 +118,27 @@ class ImporterGoals(Importer):
                 # We already have a record of this event.
                 # We add that eventID to ensure an update.
                 item['ID'] = eventID[0]
-
-            e.saveDict(item, self.log)
-            self.imported += 1
+                e.saveDict(item, self.log)
+                self.updated += 1
+            else:
+                e.saveDict(item, self.log)
+                self.imported += 1
 
         return True
 
     def lookupPlayerID(self, event):
         self.log.message('Looking up PlayerID for event:\n' + str(event))
 
+        # Swap team and opponent IDs for own goals
+        event = self.swapTeamIDs(event)
+
         p = Player()
         p.connectDB()
 
         PlayerID = p.lookupIDbyGoal(event, self.log)
+
+        # Swap team and opponent IDs back for own goals
+        event = self.swapTeamIDs(event)
 
         if (len(PlayerID) != 1):
             # First step is to ask the user to disambiguate
@@ -175,7 +191,7 @@ class ImporterGoals(Importer):
 
         return time
 
-    def parseOneGoal(self, inputString, gameID, teamID):
+    def parseOneGoal(self, inputString, gameID, teamID, opponentID):
         # This takes in a string describing a single goal.
         # It returns a list of dictionaries, one for the goal and then up to
         # two for the assists.
@@ -218,6 +234,7 @@ class ImporterGoals(Importer):
         records.append({
             'GameID': gameID,
             'TeamID': teamID,
+            'OpponentID': opponentID,
             'MinuteID': minute,
             'Event': event,
             'playername': playerName,
@@ -245,3 +262,15 @@ class ImporterGoals(Importer):
             events.append(goal.strip())
         self.log.message('  ' + str(events) + '\n')
         return events
+
+    def swapTeamIDs(self, record):
+        # This takes a dictionary of an event record and swaps the team and
+        # opponent IDs. This is called as part of looking up a PlayerID for
+        # an own goal
+
+        if (record['Event'] == 6):
+            temp = record['TeamID']
+            record['TeamID'] = record['OpponentID']
+            record['OpponentID'] = temp
+
+        return record
