@@ -54,6 +54,7 @@ insert  into `tbl_gameevents`(`ID`,`GameID`,`TeamID`,`PlayerID`,`MinuteID`,`Even
 
 insert  into `tbl_gameminutes`(`ID`,`GameID`,`TeamID`,`PlayerID`,`TimeOn`,`TimeOff`,`Ejected`) values (1,1,2,3,0,90,0);
 insert  into `tbl_gameminutes`(`ID`,`GameID`,`TeamID`,`PlayerID`,`TimeOn`,`TimeOff`,`Ejected`) values (2,0,0,0,0,0,0);
+insert  into `tbl_gameminutes`(`ID`,`GameID`,`TeamID`,`PlayerID`,`TimeOn`,`TimeOff`,`Ejected`) values (3,1,2,4,0,78,1);
 
 /*Data for the table `tbl_gamestats` */
 

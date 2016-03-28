@@ -68,4 +68,4 @@ def test_season_loadPlayerList():
         'Season': 1980
     }
     s.data = s.loadPlayerList(needle)
-    assert len(s.data) == 1
+    assert len(s.data) == 2
