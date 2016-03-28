@@ -44,7 +44,9 @@ class GameStat(Record):
                    'PlayerID = %s, '
                    'Goals = %s, '
                    'Ast = %s, '
-                   'RC = %s '
+                   'RC = %s, '
+                   'Plus = %s, '
+                   'Minus = %s '
                    'WHERE ID = %s')
             rs = self.db.query(sql, (
                 data['GameID'],
@@ -53,21 +55,25 @@ class GameStat(Record):
                 data['Goals'],
                 data['Ast'],
                 data['RC'],
+                data['Plus'],
+                data['Minus'],
                 data['ID']
             ))
         else:
             log.message('No Record ID provided - we insert')
             sql = ('INSERT INTO tbl_gamestats '
-                   '(GameID, TeamID, PlayerID, Goals, Ast, RC) '
+                   '(GameID, TeamID, PlayerID, Goals, Ast, RC, Plus, Minus) '
                    'VALUES '
-                   '(%s, %s, %s, %s, %s, %s)')
+                   '(%s, %s, %s, %s, %s, %s, %s, %s)')
             rs = self.db.query(sql, (
                 data['GameID'],
                 data['TeamID'],
                 data['PlayerID'],
                 data['Goals'],
                 data['Ast'],
-                data['RC']
+                data['RC'],
+                data['Plus'],
+                data['Minus']
             ))
 
         return True
