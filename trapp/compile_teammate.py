@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import time
 from trapp.combo import Combo
 from trapp.compiler import Compiler
+from trapp.gameminute import GameMinute
 from trapp.season import Season
 
 
@@ -21,6 +22,40 @@ class CompilerTeammates(Compiler):
                     })
 
         return combos
+
+    def calculateTeammates(self, combo, season, games):
+        # This calculates teammate statistics for a given combo in a given
+        # season
+
+        self.log.message('\nCalculating data for:')
+        self.log.message(str(combo))
+        self.log.message(str(season))
+        self.log.message(str(games))
+
+        # Init
+        one = 0
+        two = 0
+        both = 0
+        neither = 0
+
+        # Iterate through game list, building stats
+        for game in games:
+            gm = GameMinute()
+            gm.connectDB()
+            needle = {}
+            needle['GameID'] = game[0]
+            needle['TeamID'] = season['TeamID']
+            needle['PlayerID'] = combo['player1']
+            p1 = gm.loadRecord(needle, self.log)
+            needle['PlayerID'] = combo['player2']
+            p2 = gm.loadRecord(needle, self.log)
+
+            self.log.message(str(p1))
+            self.log.message(str(p2))
+
+            self.log.message('')
+
+        return True
 
     def doCompile(self):
 
@@ -57,9 +92,11 @@ class CompilerTeammates(Compiler):
             # Make sure each pair is recorded initially
             self.lookupCombos()
 
-            # print(str(self.combos))
-
             # Build data for each pair
+            games = s.loadGameList(item)
+            [self.calculateTeammates(combo, item, games)
+             for combo
+             in self.combos]
 
             # Store data for each pair
 
