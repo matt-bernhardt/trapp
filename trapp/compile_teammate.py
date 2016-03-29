@@ -40,8 +40,19 @@ class CompilerTeammates(Compiler):
 
         # Iterate through game list, building stats
         for game in games:
+
+            self.log.message('Comparing game records')
+
             gm = GameMinute()
             gm.connectDB()
+
+            # local initialization
+            thisOne = 0
+            thisTwo = 0
+            thisBoth = 0
+            thisNeither = 0
+
+            # Retrieve appearance data for this game for these players
             needle = {}
             needle['GameID'] = game[0]
             needle['TeamID'] = season['TeamID']
@@ -50,10 +61,59 @@ class CompilerTeammates(Compiler):
             needle['PlayerID'] = combo['player2']
             p2 = gm.loadRecord(needle, self.log)
 
+            self.log.message('Appearances:')
             self.log.message(str(p1))
             self.log.message(str(p2))
 
+            # records come back as a list of one tuple, so this removes the list
+            if (len(p1) == 1):
+                p1 = p1[0]
+            else:
+                p1 = (0,0,0)
+            if (len(p2) == 1):
+                p2 = p2[0]
+            else:
+                p2 = (0,0,0)
+
+            # Break down minutes played into one of four categories:
+            # one - only p1 on field
+            # two - only p2 on field
+            # both - both p1 and p2 on field
+            # neither - neither p1 nor p2 on field
+
+            self.log.message('Comparing ' + str(p1[0]) + ' with ' + str(p2[0]))
+            if (p1[0] == p2[0]):
+                # on together
+                self.log.message('On together')
+                thisNeither = p1[0]
+            elif (p1[0] < p2[0]):
+                # p1 on first
+                self.log.message('p1 on first')
+                thisNeither = p1[0]
+            elif (p1[0] > p2[0]):
+                # p2 on first
+                self.log.message('p2 on first')
+                thisNeither = p2[0]
+            else:
+                # error
+                raise RuntimeError('Error comparing timeOn values')
+
+            self.log.message(
+                str(thisOne) + ' _ ' +
+                str(thisTwo) + ' _ ' +
+                str(thisBoth) + ' _ ' +
+                str(thisNeither)
+            )
+
+            # add this game's counts to totals
+            one += thisOne
+            two += thisTwo
+            both += thisBoth
+            neither += thisNeither
+
             self.log.message('')
+
+        self.log.message(str(one) + ' _ ' + str(two) + ' _ ' + str(both) + ' _ ' + str(neither))
 
         return True
 
