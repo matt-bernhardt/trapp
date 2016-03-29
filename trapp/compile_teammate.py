@@ -65,15 +65,16 @@ class CompilerTeammates(Compiler):
             self.log.message(str(p1))
             self.log.message(str(p2))
 
-            # records come back as a list of one tuple, so this removes the list
+            # records come back as a list of one tuple, so this removes the
+            # list. If the returned value is empty, then use zeroes.
             if (len(p1) == 1):
                 p1 = p1[0]
             else:
-                p1 = (0,0,0)
+                p1 = (0, 0, 0)
             if (len(p2) == 1):
                 p2 = p2[0]
             else:
-                p2 = (0,0,0)
+                p2 = (0, 0, 0)
 
             # Break down minutes played into one of four categories:
             # one - only p1 on field
@@ -113,7 +114,12 @@ class CompilerTeammates(Compiler):
 
             self.log.message('')
 
-        self.log.message(str(one) + ' _ ' + str(two) + ' _ ' + str(both) + ' _ ' + str(neither))
+        self.log.message(
+            str(one) + ' _ ' + 
+            str(two) + ' _ ' + 
+            str(both) + ' _ ' + 
+            str(neither)
+        )
 
         return True
 
