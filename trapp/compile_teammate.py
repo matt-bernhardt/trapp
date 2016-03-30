@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import time
 from trapp.combo import Combo
 from trapp.compiler import Compiler
+from trapp.game import Game
 from trapp.gameminute import GameMinute
 from trapp.season import Season
 
@@ -22,6 +23,53 @@ class CompilerTeammates(Compiler):
                     })
 
         return combos
+
+    def calculateGame(self, p1, p2, duration):
+        # This takes a dictionary of entrance and exit times, and parses
+        # playing time into one of four buckets: one, two, both, neither
+
+        self.log.message('Comparing ' + str(p1) + ' with ' + str(p2))
+
+        record = {}
+        record['one'] = 0
+        record['two'] = 0
+        record['both'] = 0
+        record['neither'] = 0
+
+        # First we determine if the players overlapped
+        if (p1['off'] > p2['on'] and p2['off'] > p1['on']):
+            self.log.message('Overlap Yes')
+
+            # Who entered first?
+            if (p1['on'] < p2['on']):
+                record['one'] = p2['on'] - p1['on']
+            elif (p1['on'] > p2['on']):
+                record['two'] = p1['on'] - p2['on']
+            # Who left first?
+            if (p1['off'] < p2['off']):
+                record['two'] += p2['off'] - p1['off']
+            elif (p1['off'] > p2['off']):
+                record['one'] += p1['off'] - p2['off']
+
+            record['both'] = min(p1['off'],p2['off']) - max(p1['on'],p2['on'])
+            record['neither'] = min(p1['on'],p2['on']) + (duration - max(p1['off'],p2['off']))
+
+        else:
+            self.log.message('Overlap No')
+            record['one'] = p1['off'] - p1['on']
+            record['two'] = p2['off'] - p2['on']
+            record['both'] = 0
+            record['neither'] = duration - (record['one'] + record['two'])
+
+        # Debug
+        self.log.message(str(record))
+        if (duration == record['one'] + record['two'] + record['both'] + record['neither']):
+            self.log.message('Consistent')
+        else:
+            self.log.message('Consistency check failed!')
+            self.log.message(str(record['one'] + record['two'] + record['both'] + record['neither']))
+
+        return record
 
     def calculateTeammates(self, combo, season, games):
         # This calculates teammate statistics for a given combo in a given
@@ -43,16 +91,15 @@ class CompilerTeammates(Compiler):
 
             self.log.message('Comparing game records')
 
-            gm = GameMinute()
-            gm.connectDB()
-
-            # local initialization
-            thisOne = 0
-            thisTwo = 0
-            thisBoth = 0
-            thisNeither = 0
+            # Lookup game duration
+            g = Game()
+            g.connectDB()
+            duration = g.lookupDuration(game[0], self.log)
+            g.disconnectDB()
 
             # Retrieve appearance data for this game for these players
+            gm = GameMinute()
+            gm.connectDB()
             needle = {}
             needle['GameID'] = game[0]
             needle['TeamID'] = season['TeamID']
@@ -60,6 +107,7 @@ class CompilerTeammates(Compiler):
             p1 = gm.loadRecord(needle, self.log)
             needle['PlayerID'] = combo['player2']
             p2 = gm.loadRecord(needle, self.log)
+            gm.disconnectDB()
 
             self.log.message('Appearances:')
             self.log.message(str(p1))
@@ -71,53 +119,37 @@ class CompilerTeammates(Compiler):
                 p1 = p1[0]
             else:
                 p1 = (0, 0, 0)
+            player1 = {}
+            player1['on'] = p1[0]
+            player1['off'] = p1[1]
+
             if (len(p2) == 1):
                 p2 = p2[0]
             else:
                 p2 = (0, 0, 0)
+            player2 = {}
+            player2['on'] = p2[0]
+            player2['off'] = p2[1]
 
             # Break down minutes played into one of four categories:
             # one - only p1 on field
             # two - only p2 on field
             # both - both p1 and p2 on field
             # neither - neither p1 nor p2 on field
-
-            self.log.message('Comparing ' + str(p1[0]) + ' with ' + str(p2[0]))
-            if (p1[0] == p2[0]):
-                # on together
-                self.log.message('On together')
-                thisNeither = p1[0]
-            elif (p1[0] < p2[0]):
-                # p1 on first
-                self.log.message('p1 on first')
-                thisNeither = p1[0]
-            elif (p1[0] > p2[0]):
-                # p2 on first
-                self.log.message('p2 on first')
-                thisNeither = p2[0]
-            else:
-                # error
-                raise RuntimeError('Error comparing timeOn values')
-
-            self.log.message(
-                str(thisOne) + ' _ ' +
-                str(thisTwo) + ' _ ' +
-                str(thisBoth) + ' _ ' +
-                str(thisNeither)
-            )
+            pairing = self.calculateGame(player1, player2, duration)
 
             # add this game's counts to totals
-            one += thisOne
-            two += thisTwo
-            both += thisBoth
-            neither += thisNeither
+            one += pairing['one']
+            two += pairing['two']
+            both += pairing['both']
+            neither += pairing['neither']
 
             self.log.message('')
 
         self.log.message(
-            str(one) + ' _ ' + 
-            str(two) + ' _ ' + 
-            str(both) + ' _ ' + 
+            str(one) + ' _ ' +
+            str(two) + ' _ ' +
+            str(both) + ' _ ' +
             str(neither)
         )
 
