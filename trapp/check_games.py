@@ -9,7 +9,8 @@ class CheckerGames(Checker):
         self.log.message('Reviewing competition ' + str(competition))
 
         # Get years this competition was held
-        sql = ("SELECT DISTINCT(YEAR(MatchTime)) AS MatchYear, COUNT(ID) AS Games "
+        sql = ("SELECT DISTINCT(YEAR(MatchTime)) AS MatchYear, "
+               "  COUNT(ID) AS Games "
                "FROM tbl_games "
                "WHERE MatchTypeID = %s AND YEAR(MatchTime) >= %s "
                "GROUP BY YEAR(MatchTime) "
@@ -20,7 +21,9 @@ class CheckerGames(Checker):
             records = rs.fetchall()
 
         for index, item in enumerate(records):
-            self.output.message(str(competition) + ',' + str(item[0]) + ',' + str(item[1]))
+            self.output.message(str(competition) + ',' +
+                                str(item[0]) + ',' +
+                                str(item[1]))
 
     def checkGames(self):
         # What year are we starting our checks
