@@ -45,8 +45,13 @@ def checkGames(args):
     log = Log('trapp-check-games.log')
     log.message('Started')
 
-    c = CheckerGames(log)
+    # Output file
+    output = Log('trapp-check-games.csv')
+
+    c = CheckerGames(log, output)
     c.checkGames()
+
+    output.end()
 
     log.end()
 
