@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import argparse
 from trapp.database import Database
 from trapp.log import Log
+from trapp.check_games import CheckerGames
 from trapp.compile_game import CompilerGames
 from trapp.compile_teammate import CompilerTeammates
 from trapp.import_game import ImporterGames
@@ -35,6 +36,24 @@ def checkDB(args):
     if (args.verbose):
         print(str(db.cursor))
         print('Warnings: ' + str(db.warnings()))
+
+
+def checkGames(args):
+    print('Checking game counts\n')
+
+    # Start log
+    log = Log('trapp-check-games.log')
+    log.message('Started')
+
+    # Output file
+    output = Log('trapp-check-games.csv')
+
+    c = CheckerGames(log, output)
+    c.checkGames()
+
+    output.end()
+
+    log.end()
 
 
 def compileGames():
@@ -179,6 +198,8 @@ def verbCheck(args):
     # Manages all the check-* verbs
     if (args.verb == 'check-db'):
         checkDB(args)
+    elif (args.verb == 'check-games'):
+        checkGames(args)
 
     return True
 
@@ -251,6 +272,7 @@ def main():
     parser.add_argument(
         'verb',
         choices=['check-db',
+                 'check-games',
                  'compile-games',
                  'compile-teammates',
                  'compile-years',

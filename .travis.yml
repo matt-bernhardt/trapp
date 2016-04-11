@@ -11,6 +11,7 @@ services:
   - mysql
 before_script:
   - mysql -e 'create database trapp;'
+  - sh -c "mysql < tests/fixtures/lkp_matchtypes.sql"
   - sh -c "mysql < tests/fixtures/lnk_players_combos.sql"
   - sh -c "mysql < tests/fixtures/tbl_combos.sql"
   - sh -c "mysql < tests/fixtures/tbl_combos_stats.sql"

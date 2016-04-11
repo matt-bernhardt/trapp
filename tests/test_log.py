@@ -20,7 +20,10 @@ def test_log_write():
     l = Log('test.log')
     msg = 'Hello'
     l.message(msg)
-    # assert l.read() == msg
+    # Re-open file in read mode
+    l.file = open('test.log', 'r')
+    # Test for message with a newline appended
+    assert l.file.readline() == msg + '\n'
 
 
 def test_log_end():
