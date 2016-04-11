@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from trapp.checker import Checker
+from trapp.competition import Competition
 
 
 class CheckerGames(Checker):
@@ -29,15 +30,11 @@ class CheckerGames(Checker):
         # What year are we starting our checks
         startYear = 2012
 
-        # competitions key:
-        # 21 - MLS League
-        # 4, 5 - MLS Playoffs, MLS Cup
-        # 14, 22 - US Open Cup, qualifiers
-        # 23, 24, 25 - CONCACAF
-        # 26 - Canadian Championship
-        # 28, 29, 30 - NASL league, playoffs, final
-        competitionlist = [21, 4, 5, 14, 22, 23, 24, 25, 26, 28, 29, 30]
+        # Get Competitions list
+        c = Competition()
+        c.connectDB()
+        competitions = c.loadAll()
 
-        [self.reviewCompetition(competition, startYear)
-         for competition
-         in competitionlist]
+        [self.reviewCompetition(record['CompetitionID'], startYear)
+         for record
+         in competitions]
