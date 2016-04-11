@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 import pytest
 from trapp.record import Record
+import datetime
 
 
 def test_record_init():
@@ -55,3 +56,13 @@ def test_record_buildUpdateClauses_two():
     clauses = r.buildUpdateClauses(data, fieldList)
     assert clauses['FieldNames'] == ['Bar = %s','Foo = %s']
     assert clauses['FieldData'] == ['two','one']
+
+
+def test_record_buildUpdateClauses_DOB():
+    r = Record()
+    r.connectDB()
+    data = {'Foo':'one','DOB':(1996,4,13,19,30,0,0,0,0)}
+    fieldList = ['Foo','DOB']
+    clauses = r.buildUpdateClauses(data, fieldList)
+    assert clauses['FieldNames'] == ['DOB = %s','Foo = %s']
+    assert clauses['FieldData'] == ['1996-04-13 19:30:00','one']
