@@ -113,6 +113,9 @@ class ImporterGoals(Importer):
             if (len(eventID) > 1):
                 # We have more than one record of this player/team/game/minute.
                 # This is a problem.
+                self.log.message('Error: ' +
+                                 str(len(eventID)) +
+                                 ' events found during lookup')
                 self.errored += 1
             elif (len(eventID) == 1):
                 # We already have a record of this event.
