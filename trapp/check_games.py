@@ -28,13 +28,17 @@ class CheckerGames(Checker):
 
     def checkGames(self):
         # What year are we starting our checks
-        startYear = 2012
+        startYear = 1990
+
+        # Label Columns
+        self.output.message('Competition,Year,Games')
 
         # Get Competitions list
         c = Competition()
         c.connectDB()
         competitions = c.loadAll()
 
+        # Do work
         [self.reviewCompetition(record['CompetitionID'], startYear)
          for record
          in competitions]
