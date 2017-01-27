@@ -19,9 +19,8 @@ def test_checkerGames_checkGames():
     c.checkGames()
     # Re-open output in read mode
     output.file = open('test.csv', 'r')
-    # Default start year is 2012, but sample games are in 1980.
-    # This is by design, to give a negative test.
-    assert output.file.readline() == ''
+    # Check for column labels in output
+    assert output.file.readline() == 'Competition,Year,Games\n'
 
 
 def test_checkerGames_reviewCompetition():
