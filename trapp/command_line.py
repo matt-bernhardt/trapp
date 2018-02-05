@@ -36,6 +36,16 @@ def checkDB(args):
     if (args.verbose):
         print(str(db.cursor))
         print('Warnings: ' + str(db.warnings()))
+        print('')
+
+    # list database tables
+    if (args.verbose):
+        print('Tables:')
+        sql = 'SHOW TABLES'
+        params = ()
+        records = db.query(sql, params).fetchall()
+        for table in records:
+            print(table)
 
 
 def checkGames(args):
