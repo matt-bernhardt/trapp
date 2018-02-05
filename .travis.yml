@@ -2,12 +2,11 @@ sudo: false
 notifications:
   email: false
 language: python
-env:
-  - TOX_ENV=py27
-  - TOX_ENV=py36
-  - TOX_ENV=coveralls
+python:
+  - "2.7"
+  - "3.6"
 install:
-  - pip install tox
+  - pip install tox-travis
 services:
   - mysql
 before_script:
@@ -25,4 +24,4 @@ before_script:
   - sh -c "mysql < tests/fixtures/tbl_venues.sql"
   - sh -c "mysql < tests/fixtures/test_data.sql"
 script:
-  - tox -e $TOX_ENV
+  - tox
