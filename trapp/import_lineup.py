@@ -4,6 +4,7 @@ from trapp.game import Game
 from trapp.gameminute import GameMinute
 from trapp.player import Player
 from datetime import datetime
+from time import sleep
 
 
 class ImporterLineups(Importer):
@@ -62,6 +63,7 @@ class ImporterLineups(Importer):
             gm.saveDict(player, self.log)
             self.imported += 1
         return True
+        sleep(0.25)
         gm.disconnectDB()
         del gm
 
@@ -111,6 +113,9 @@ class ImporterLineups(Importer):
 
         # At this point we have self.players - but need to store them
         [self.importPlayer(player) for player in self.players]
+
+        # Sleep
+        sleep(0.25)
 
         g.disconnectDB()
         del g
