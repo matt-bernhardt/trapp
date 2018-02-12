@@ -19,6 +19,9 @@ class CompilerGames(Compiler):
         # Transfer impact information to record
         record = dict(record, **impact[0])
 
+        ge.disconnectDB()
+        del ge
+
         return record
 
     def assembleStatLine(self, record):
@@ -82,12 +85,18 @@ class CompilerGames(Compiler):
             # Trying a delay to prevent buffer space problems
             time.sleep(0.01)
 
+            gs.disconnectDB()
+            del gs
+
         return True
 
     def getAppearanceList(self):
         gm = GameMinute()
         gm.connectDB()
-        return gm.lookupIDlistByYear()
+        result = gm.lookupIDlistByYear()
+        gm.disconnectDB()
+        del gm
+        return result
 
     def getEventSummary(self, item):
         ge = GameEvent()
@@ -96,4 +105,6 @@ class CompilerGames(Compiler):
         if(len(temp) == 0):
             temp = [{'Goals': 0, 'Ast': 0}]
         item = dict(list(item.items()) + list(temp[0].items()))
+        ge.disconnectDB()
+        del ge
         return item

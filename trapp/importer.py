@@ -103,6 +103,9 @@ class Importer():
         # At this point we know teamID is a list of length 1, so we return
         # the first value only
         return teamID[0]
+        # Clean up
+        team.disconnectDB()
+        del team
 
     def parseMinute(self, minute):
         # This reads in a string representing a minute denotation, and
