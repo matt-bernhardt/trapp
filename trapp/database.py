@@ -24,6 +24,7 @@ class Database():
     def disconnect(self):
         self.cursor.close()
         self.cnx.close()
+        del self.cnx
 
     def convertDate(self, date):
         # This converts a python date object into a MySQL-format date string
