@@ -30,4 +30,7 @@ class ImporterGames(Importer):
             # Something(s) found, so we skip
             self.processMissingRecord(found, len(found))
 
+        g.disconnectDB()
+        del g
+
         return True

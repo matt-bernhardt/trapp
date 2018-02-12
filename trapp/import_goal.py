@@ -82,6 +82,9 @@ class ImporterGoals(Importer):
             # Log the corrected record for later inspection
             self.log.message('  Outcome:\n  ' + str(record))
 
+        g.disconnectDB()
+        del g
+
         return True
 
     def disambiguatePlayers(self, record, result):
@@ -126,6 +129,9 @@ class ImporterGoals(Importer):
                 e.saveDict(item, self.log)
                 self.imported += 1
 
+            e.disconnectDB()
+            del e
+
         return True
 
     def lookupPlayerID(self, event):
@@ -138,6 +144,9 @@ class ImporterGoals(Importer):
         p.connectDB()
 
         PlayerID = p.lookupIDbyGoal(event, self.log)
+
+        p.disconnectDB()
+        del p
 
         # Swap team and opponent IDs back for own goals
         event = self.swapTeamIDs(event)
