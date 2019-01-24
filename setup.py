@@ -13,7 +13,7 @@ with io.open('LICENSE') as f:
 
 setup(
     name='trapp',
-    version='0.5.0-beta1',
+    version='0.5.0b2',
     description='Link, analyze, and extend soccer data',
     url='https://github.com/matt-bernhardt/trapp',
     license=license,
