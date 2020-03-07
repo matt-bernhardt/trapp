@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 import time
 from trapp.compiler import Compiler
 from trapp.gameevent import GameEvent
@@ -46,7 +45,7 @@ class CompilerGames(Compiler):
 
         # 1) Assemble list of player appearances
         self.appearances = self.getAppearanceList()
-        print("Processing " + str(len(self.appearances)) + " records")
+        print(("Processing " + str(len(self.appearances)) + " records"))
         self.log.message(str(len(self.appearances)) + " records\n")
 
         # 2) For each appearance:
@@ -96,5 +95,5 @@ class CompilerGames(Compiler):
         temp = ge.summarizeEvents(item, self.log)
         if(len(temp) == 0):
             temp = [{'Goals': 0, 'Ast': 0}]
-        item = dict(item.items() + temp[0].items())
+        item = dict(list(item.items()) + list(temp[0].items()))
         return item

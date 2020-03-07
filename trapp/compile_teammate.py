@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 import time
 from trapp.combo import Combo
 from trapp.compiler import Compiler
@@ -33,7 +32,7 @@ class CompilerTeammates(Compiler):
         # Second, for each team-season:
         for item in self.seasons:
 
-            print(str(item))
+            print((str(item)))
             self.log.message(str(item))
 
             # Get the list of players to have appeared in this season
@@ -47,12 +46,12 @@ class CompilerTeammates(Compiler):
                 continue
 
             self.log.message(str(len(self.players)) + ' players this season')
-            print(str(len(self.players)) + ' players')
+            print((str(len(self.players)) + ' players'))
 
             # Iterate over the list of players, building player pairs
             self.combos = self.assembleCombos(self.players)
             self.log.message(str(len(self.combos)) + ' combos this season')
-            print(str(len(self.combos)) + ' combos')
+            print((str(len(self.combos)) + ' combos'))
 
             # Make sure each pair is recorded initially
             self.lookupCombos()

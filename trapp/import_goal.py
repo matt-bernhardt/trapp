@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from trapp.importer import Importer
 from trapp.game import Game
 from trapp.gameevent import GameEvent
@@ -87,10 +86,10 @@ class ImporterGoals(Importer):
 
     def disambiguatePlayers(self, record, result):
         # Ask user to provide player ID
-        print('\nPlayerID lookup of _' + str(record['playername']) + '_' +
-              ' failed with ' + str(len(result)) + ' records\n')
-        print(str(record))
-        newID = int(raw_input('Player ID - provide null or 0 to skip: '))
+        print(('\nPlayerID lookup of _' + str(record['playername']) + '_' +
+              ' failed with ' + str(len(result)) + ' records\n'))
+        print((str(record)))
+        newID = int(input('Player ID - provide null or 0 to skip: '))
 
         return newID
 

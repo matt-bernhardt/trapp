@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from trapp.record import Record
 
 
@@ -161,7 +160,7 @@ class Player(Record):
             'DOB'
         ]
 
-        if ('PlayerID' in newData.keys()):
+        if ('PlayerID' in list(newData.keys())):
             # Update
             log.message('  ...Updating')
 
