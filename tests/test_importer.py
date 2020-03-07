@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pytest
-import mock
+from io import StringIO
 from trapp.log import Log
 from trapp.importer import Importer
 from trapp.import_game import ImporterGames
@@ -47,14 +47,19 @@ def test_importer_checkFields(excel):
     assert 'missing the following columns' in str(excinfo.value)
 
 
-def test_importer_disambiguatePlayers(excel):
+def test_importer_disambiguatePlayers(excel, monkeypatch):
+    # Mocked user input
+    mock_input = StringIO(u'1234\n')
+    # Sample record
+    record = {
+        'playername': 'Bogus Player'
+    }
+    # Run test
     log = Log('test.log')
     importer = ImporterGoals(excel, log)
-    with mock.patch('builtins.raw_input', return_value=1234):
-        record = {
-            'playername': 'Bogus Player'
-        }
-        assert importer.disambiguatePlayers(record, [0]) == 1234
+    monkeypatch.setattr('sys.stdin', mock_input)
+    result = importer.disambiguatePlayers(record, [0])
+    assert result == 1234
 
 
 def test_importer_generic_importRecord(excel):
@@ -90,14 +95,17 @@ def test_importer_lookupPlayerID_owngoal(excel):
     assert importer.skipped == 0
 
 
-def test_importer_lookupPlayerID_valid(excel):
+def test_importer_lookupPlayerID_valid(excel, monkeypatch):
+    # Mock user input
+    mock_input = StringIO(u'0\n')
+    # Sample record
+    event = {'playername': 'Invalid Player', 'TeamID': 2, 'GameID': 1, 'Event': 1}
+    # Run test
     log = Log('test.log')
     importer = ImporterGoals(excel, log)
-    # Invalid records get run through disambiguation
-    with mock.patch('builtins.raw_input', return_value=0):
-        event = {'playername': 'Invalid Player', 'TeamID': 2, 'GameID': 1, 'Event': 1}
-        assert importer.lookupPlayerID(event) is False
-        assert importer.skipped == 1
+    monkeypatch.setattr('sys.stdin', mock_input)
+    assert importer.lookupPlayerID(event) is False
+    assert importer.skipped == 1
 
 
 def test_importer_lookupTeamID(excel):
