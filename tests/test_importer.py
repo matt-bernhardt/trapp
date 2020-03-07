@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 import pytest
 import mock
 from trapp.log import Log
@@ -162,7 +161,7 @@ def test_importer_parseMinuteDoesNothing(excel):
     log = Log('test.log')
     importer = ImporterLineups(excel, log)
     assert importer.parseMinute(15) == 15
-    assert importer.parseMinute(unicode(45)) == 45
+    assert importer.parseMinute(str(45)) == 45
     assert importer.parseMinute('89') == 89
 
 

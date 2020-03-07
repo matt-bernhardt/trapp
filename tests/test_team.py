@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 import pytest
 from trapp.team import Team
 from trapp.log import Log
