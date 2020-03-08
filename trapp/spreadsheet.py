@@ -11,7 +11,8 @@ class Spreadsheet():
         self.records = []
         self.sheet = self.buildSheet()
         for row in range(1, self.sheet.nrows):
-            d = {self.fields[col]: self.sheet.cell(row, col).value for col in range(self.sheet.ncols)}
+            d = {self.fields[col]: self.sheet.cell(row, col).value
+                 for col in range(self.sheet.ncols)}
             # d['MatchTime'] = self.recoverDate(d['MatchTime'])
             self.records.append(d)
         return self.records
