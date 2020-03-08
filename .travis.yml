@@ -2,11 +2,26 @@ sudo: false
 notifications:
   email: false
 language: python
-env:
-  - TOX_ENV=py27
-  - TOX_ENV=coveralls
+matrix:
+  include:
+    - python: "2.7"
+      env: "COVERAGE=1"
+    - python: "3.5"
+    - python: "3.6"
+    - python: "3.7"
+      env: "COVERAGE=1"
+    - python: "3.8"
+    - python: "nightly"
+  allow_failures:
+    - python: "3.5"
+    - python: "3.6"
+    - python: "3.7"
+    - python: "3.8"
+    - python: "nightly"
 install:
-  - pip install tox
+  - pip install -r requirements.txt
+  - pip install pytest-cov
+  - pip install coveralls
 services:
   - mysql
 before_script:
@@ -24,4 +39,6 @@ before_script:
   - sh -c "mysql < tests/fixtures/tbl_venues.sql"
   - sh -c "mysql < tests/fixtures/test_data.sql"
 script:
-  - tox -e $TOX_ENV
+  - coverage run --source=trapp -m pytest tests/
+after_script:
+  - if [[ "$COVERAGE" == "1" ]]; then coveralls; fi
