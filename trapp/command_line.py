@@ -3,6 +3,7 @@ import argparse
 from trapp.database import Database
 from trapp.log import Log
 from trapp.check_games import CheckerGames
+from trapp.check_minutes import CheckerMinutes
 from trapp.compile_game import CompilerGames
 from trapp.compile_teammate import CompilerTeammates
 from trapp.import_game import ImporterGames
@@ -49,6 +50,24 @@ def checkGames(args):
 
     c = CheckerGames(log, output)
     c.checkGames()
+
+    output.end()
+
+    log.end()
+
+
+def checkMinutes(args):
+    print('Checking minute totals\n')
+
+    # Start log
+    log = Log('trapp-check-minutes.log')
+    log.message('Started')
+
+    # Output file
+    output = Log('trapp-check-minutes.csv')
+
+    c = CheckerMinutes(log, output)
+    c.checkMinutes()
 
     output.end()
 
@@ -199,6 +218,8 @@ def verbCheck(args):
         checkDB(args)
     elif (args.verb == 'check-games'):
         checkGames(args)
+    elif (args.verb == 'check-minutes'):
+        checkMinutes(args)
 
     return True
 
@@ -272,6 +293,7 @@ def main():
         'verb',
         choices=['check-db',
                  'check-games',
+                 'check-minutes',
                  'compile-games',
                  'compile-teammates',
                  'compile-years',
