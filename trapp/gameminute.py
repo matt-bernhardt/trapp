@@ -4,6 +4,30 @@ from trapp.record import Record
 
 class GameMinute(Record):
 
+    def loadRecord(self, data, log):
+        # Load a specific record of appearance data
+
+        # Check submitted data for format and fields
+        required = ['GameID', 'TeamID', 'PlayerID']
+        self.checkData(data, required)
+
+        sql = ('SELECT TimeOn, TimeOff, Ejected '
+               'FROM tbl_gameminutes '
+               'WHERE GameID = %s '
+               '  AND TeamID = %s '
+               '  AND PlayerID = %s')
+        rs = self.db.query(sql, (
+            data['GameID'],
+            data['TeamID'],
+            data['PlayerID']
+        ))
+        if (rs.with_rows):
+            records = rs.fetchall()
+        appearance = []
+        for item in records:
+            appearance.append(item)
+        return appearance
+
     def lookupID(self, data, log):
         # Do we have a record of player X appearing in game Y for team Z?
 

@@ -30,6 +30,32 @@ class Season(Record):
 
         return data
 
+    def loadGameList(self, data):
+        # This loads all games played by a team in a year
+
+        required = ['TeamID', 'Season']
+        self.checkData(data, required)
+
+        sql = ('SELECT ID '
+               'FROM tbl_games '
+               'WHERE (HTeamID = %s OR ATeamID = %s) '
+               '  AND YEAR(MatchTime) = %s '
+               'ORDER BY MatchTime ASC')
+        rs = self.db.query(sql, (
+            data['TeamID'],
+            data['TeamID'],
+            data['Season']
+        ))
+        if (rs.with_rows):
+            records = rs.fetchall()
+
+        games = []
+
+        for item in records:
+            games.append(item)
+
+        return games
+
     def loadPlayerList(self, data):
         # This loads all players to have appeared for a given team in a year
 

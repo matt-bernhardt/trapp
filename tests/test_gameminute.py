@@ -46,6 +46,27 @@ def test_gameminute_checkData():
     assert 'Submitted data is missing the following fields' in str(excinfo.value)
 
 
+def test_gameminute_loadRecord():
+    log = Log('test.log')
+    gm = GameMinute()
+    gm.connectDB()
+    needle = {
+        'GameID': 1,
+        'TeamID': 2,
+        'PlayerID': 3
+    }
+    result = gm.loadRecord(needle, log)
+    assert result == [(0, 90, 0)]
+    needle = {
+        'GameID': 1,
+        'TeamID': 2,
+        'PlayerID': 4
+    }
+    result = gm.loadRecord(needle, log)
+    assert result == [(0, 78, 1)]
+    gm.disconnectDB()
+
+
 def test_gameminute_lookupID():
     log = Log('test.log')
     gm = GameMinute()
