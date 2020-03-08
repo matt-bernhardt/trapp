@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 import argparse
 from trapp.database import Database
 from trapp.log import Log
@@ -22,20 +21,20 @@ def checkDB(args):
     # print out credentials in verbose mode
     if (args.verbose):
         print('Credentials:')
-        print('dbuser:   ' + str(connection['dbuser']))
-        print('dbpwd:    ' + str(connection['dbpwd']))
-        print('dbhost:   ' + str(connection['dbhost']))
-        print('dbschema: ' + str(connection['dbschema']))
+        print(('dbuser:   ' + str(connection['dbuser'])))
+        print(('dbpwd:    ' + str(connection['dbpwd'])))
+        print(('dbhost:   ' + str(connection['dbhost'])))
+        print(('dbschema: ' + str(connection['dbschema'])))
         print('')
 
     # Try to establish the connection
     db.connect()
 
     # print result
-    print(str(db.cnx))
+    print((str(db.cnx)))
     if (args.verbose):
-        print(str(db.cursor))
-        print('Warnings: ' + str(db.warnings()))
+        print((str(db.cursor)))
+        print(('Warnings: ' + str(db.warnings())))
 
 
 def checkGames(args):
@@ -89,7 +88,7 @@ def compileYears():
 
 def importGames(infile):
     # Feedback, setup
-    print('Importing games from ' + str(infile))
+    print(('Importing games from ' + str(infile)))
     log = Log('trapp-import-games.log')
     importer = ImporterGames(infile, log)
 
@@ -114,7 +113,7 @@ def importGames(infile):
 
 def importGoals(infile):
     # Feedback, setup
-    print('Importing goals from ' + str(infile))
+    print(('Importing goals from ' + str(infile)))
     log = Log('trapp-import-goals.log')
     importer = ImporterGoals(infile, log)
 
@@ -142,7 +141,7 @@ def importLineups(infile):
     # TODO: Lookup teams in a specified league and year?
     # TODO: Iterate over team list, with separate Importer for each?
     # Feedback, setup
-    print('Importing lineups from ' + str(infile))
+    print(('Importing lineups from ' + str(infile)))
     log = Log('trapp-import-lineups.log')
     importer = ImporterLineups(infile, log)
 
@@ -171,7 +170,7 @@ def importLineups(infile):
 
 def importPlayers(infile):
     # Feedback, setup
-    print('Importing players from ' + str(infile))
+    print(('Importing players from ' + str(infile)))
     log = Log('trapp-import-players.log')
     importer = ImporterPlayers(infile, log)
 

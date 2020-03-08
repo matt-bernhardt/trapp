@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 import xlrd
 from trapp.spreadsheet import Spreadsheet
 

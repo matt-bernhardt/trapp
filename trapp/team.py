@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from trapp.record import Record
 
 
 class Team(Record):
 
     def lookupID(self, data, log):
-        # Check for required parameters
+        # This takes a dictionary and validates it against existing records.
+        # Do we already have a record of this team?
+        # The data must have the following keys:
+        # - teamname (string - the colloquial name of the team,
+        #             i.e. "Columbus Crew")
         required = ['teamname']
         self.checkData(data, required)
 
-        # see if any team matches this name
+        # See if any team matches this name
         sql = ('SELECT ID '
                'FROM tbl_teams '
                'WHERE teamname = %s')

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from trapp.importer import Importer
 from trapp.game import Game
 from trapp.gameminute import GameMinute

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from trapp.spreadsheet import Spreadsheet
 from trapp.game import Game
 from trapp.team import Team
@@ -150,10 +149,10 @@ class Importer():
         self.log.message(str(self.updated) + ' updated')
         self.log.message(str(self.skipped) + ' skipped')
         self.log.message(str(self.errored) + ' errored')
-        print(str(self.imported) + ' imported')
-        print(str(self.updated) + ' updated')
-        print(str(self.skipped) + ' skipped')
-        print(str(self.errored) + ' errored')
+        print((str(self.imported) + ' imported'))
+        print((str(self.updated) + ' updated'))
+        print((str(self.skipped) + ' skipped'))
+        print((str(self.errored) + ' errored'))
         if (len(self.missing) > 0):
             self.log.message('\n')
             self.log.message(str(len(self.missing)) + ' missing records:')

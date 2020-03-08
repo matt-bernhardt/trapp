@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from trapp.record import Record
 
 
@@ -111,7 +110,7 @@ class Game(Record):
         # - ??
 
         # Check if dictionary contains a gameID
-        if ('MatchID' in newData.keys()):
+        if ('MatchID' in list(newData.keys())):
             # Update
             log.message('MatchID provided')
             sql = ('UPDATE tbl_games SET '

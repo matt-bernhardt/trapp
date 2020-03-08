@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from trapp.log import Log
 from trapp.compile_teammate import CompilerTeammates
 
