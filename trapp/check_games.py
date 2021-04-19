@@ -41,3 +41,6 @@ class CheckerGames(Checker):
         [self.reviewCompetition(record['CompetitionID'], startYear)
          for record
          in competitions]
+
+        c.disconnectDB()
+        del c

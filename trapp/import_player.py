@@ -39,4 +39,7 @@ class ImporterPlayers(Importer):
 
         self.log.message('')
 
+        p.disconnectDB()
+        del p
+
         return True
